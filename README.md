@@ -3,7 +3,7 @@
 **GROUPE 21:**
 
 Flavien Ledeux <<flavien.ledeux@telecomnancy.eu>>  
-Guilhem Roura <<guilhem.roura@telecomnancy.eu>>  
+Guilhèm Roura <<guilhem.roura@telecomnancy.eu>>  
 Céline Zhu <<celine.zhu@telecomnancy.eu>>  
 
 **PROFESSEURS:**
