@@ -1,0 +1,55 @@
+//// -- LEVEL 1
+//// -- Tables and References
+
+// Creating tables
+Table candidat as C {
+  cod int [pk, unique]
+  civ_lib int [not null]
+  // civ_live : 0= "M", 1="Mme"
+  nom text [not null]
+  prenom text [not null]
+  ad_1 text [not null]
+  ad_2 text
+  cod_pos int [not null]
+  com text [not null]
+  pay_adr text [not null]
+  mel text [not null]
+  tel text
+  por text
+  rang_ecrit int [not null]
+  rang_oral int [not null]
+  resultat text [not null]
+  // resultat contient au choix "admis", "admis-spe", "admissible", "admissible-spe"
+  // admis implique admis-spe (idem pour admissible)
+  fil int [not null]
+  // Index de la filière dans la table filiere 
+}
+
+Table voeux_ecole as V {
+  can_cod int [pk, unique]
+  voe_rang int [not null]
+  voe_ord int [not null]
+  eco_cod int [not null]
+ }
+
+Table ecole as Ec {
+  code int [pk, not null]
+  nom text [not null]
+}
+
+Table etablissement as E {
+  rne text [pk, not null]
+  type text [not null]
+  nom text [not null]
+  code_postal int [not null]
+  ville text [not null]
+  pays text [not null]
+}
+
+Table filiere as F {
+  liste_filiere text 
+}
+
+Ref: C.cod - V.can_cod
+Ref: V.eco_cod > Ec.code
+Ref: candidat.fil > filiere.liste_filiere
