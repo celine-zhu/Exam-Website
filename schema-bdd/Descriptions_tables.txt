@@ -5,20 +5,19 @@
 Table candidat as C {
   cod int [pk, unique]
   civ_lib int [not null]
-  // civ_live : 0= "M", 1="Mme"
   nom text [not null]
   prenom text [not null]
   ad_1 text [not null]
   ad_2 text
   cod_pos int [not null]
-  com text [not null]
-  pay_adr text [not null]
+  com int [not null]
+  pay_adr int [not null]
   mel text [not null]
   tel text
   por text
   rang_ecrit int [not null]
   rang_oral int [not null]
-  resultat text [not null]
+  resultat int [not null]
   // resultat contient au choix "admis", "admis-spe", "admissible", "admissible-spe"
   // admis implique admis-spe (idem pour admissible)
   fil int [not null]
@@ -43,13 +42,46 @@ Table etablissement as E {
   nom text [not null]
   code_postal int [not null]
   ville text [not null]
-  pays text [not null]
+  pays int [not null]
 }
 
-Table filiere as F {
+Table FILIERE as F {
+  filiere_code int [pk]
   liste_filiere text 
 }
 
-Ref: C.cod - V.can_cod
-Ref: V.eco_cod > Ec.code
-Ref: candidat.fil > filiere.liste_filiere
+Table PAYS as P {
+  country_code int [pk]
+  nom text [not null]
+}
+
+Table civilite as CIV{
+  civility_index int [pk]
+  civilite text [not null]
+}
+
+Table resultat as RES{
+  resultat_index int [pk]
+  resultat text [not null]
+}
+
+Table COMMUNE as COM{
+  commune_index int [pk]
+  commune text [not null]
+}
+
+// Creating references
+// You can also define relaionship separately
+// > many-to-one; < one-to-many; - one-to-one
+//Ref: U.country_code > countries.code  
+//Ref: merchants.country_code > countries.code
+
+//----------------------------------------------//
+Ref : C.com > COM.commune
+Ref : C.resultat > RES.resultat_index
+Ref : C.cod - V.can_cod
+Ref : V.eco_cod > Ec.code
+Ref : C.civ_lib > CIV.civility_index
+Ref : C.pay_adr > P.country_code
+Ref : E.pays > P.country_code
+Ref : "candidat"."fil" > FILIERE."filiere_code"
