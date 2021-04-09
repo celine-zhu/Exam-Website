@@ -51,12 +51,12 @@ Table FILIERE as F {
 }
 
 Table PAYS as P {
-  country_code int [pk]
+  pays_code int [pk]
   nom text [not null]
 }
 
 Table civilite as CIV{
-  civility_index int [pk]
+  civilite_code int [pk]
   civilite text [not null]
 }
 
@@ -81,7 +81,7 @@ Ref : C.com > COM.commune
 Ref : C.resultat > RES.resultat_index
 Ref : C.cod - V.can_cod
 Ref : V.eco_cod > Ec.code
-Ref : C.civ_lib > CIV.civility_index
-Ref : C.pay_adr > P.country_code
-Ref : E.pays > P.country_code
+Ref : C.civ_lib > CIV.civilite_code
+Ref : C.pay_adr > P.pays_code
+Ref : E.pays > P.pays_code
 Ref : "candidat"."fil" > FILIERE."filiere_code"
