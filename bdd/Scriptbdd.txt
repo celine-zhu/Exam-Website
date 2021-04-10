@@ -69,6 +69,6 @@ CREATE TABLE etablissement(
   code_postal integer not null,
   ville text not null,
   pays text not null,
-foreign key(pays) references pays(ind_liste_pays)
+foreign key(pays) references pays(pays_code)
 );
 
