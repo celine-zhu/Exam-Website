@@ -3,18 +3,45 @@
 
 // Creating tables
 Table candidat as C {
-  cod int [pk, unique]
+  code int [pk, unique]
   civ_lib int [not null]
   nom text [not null]
   prenom text [not null]
+  autre_prenoms text 
+  date_naissance int [not null]
+  arr_naissance int [not null]
+  ville_naissance text [not null]
+  code_pays_naissance int [not null]
+  francais int  [not null]
   ad_1 text [not null]
   ad_2 text
   cod_pos int [not null]
   com int [not null]
   pay_adr int [not null]
+  code_pay_natio int [not null]
   mel text [not null]
   tel text
   por text
+  email text
+  etablissement int [not null]
+  Epreuve_1 int [not null]
+  Option_1 int 
+  Option_2 int 
+  Option_3 int 
+  Option_4 int 
+  code_ville_ecr int [not null]
+  code_concours int [not null]
+  voie int [not null]
+  code_serie int [not null]
+  code_mention int [ not null]
+  bac_date int [not null]
+  sujet_tipe text [not null]
+  ine int [not null]
+  cod_csp_pere int [not null]
+  cod_csp_mere int [not null]
+  code_etat_dossier int [ not null]
+  handicap int [ not null]
+  can_dep_bac int [ not null]
   rang_ecrit int [not null]
   rang_oral int [not null]
   resultat int [not null]
@@ -22,6 +49,14 @@ Table candidat as C {
   // admis implique admis-spe (idem pour admissible)
   fil int [not null]
   // Index de la filière dans la table filiere 
+}
+Table csp as csp{
+  code_csp int [pk]
+  csp text [not null]
+}
+Table epreuve as ep{
+  epreuve_code int [pk, unique]
+  epreuve text [not null]
 }
 
 Table voeux_ecole as V {
@@ -69,7 +104,26 @@ Table COMMUNE as COM{
   commune_index int [pk]
   commune text [not null]
 }
-
+Table villeecrit as vile{
+  vil_code int [pk]
+  ville text [not null]
+}
+Table concours as co{
+  code_concours int [pk]
+  concours text [not null]
+}
+Table seriebac as sb{
+  code_serie int [pk]
+  serie text [not null]
+}
+Table mention as me{
+  code_mention int [pk]
+  mention text [not null]
+}
+Table voie as vo{
+  code_voie int [not null]
+  voie text [not null]
+}
 // Creating references
 // You can also define relaionship separately
 // > many-to-one; < one-to-many; - one-to-one
@@ -78,10 +132,27 @@ Table COMMUNE as COM{
 
 //----------------------------------------------//
 Ref : C.com > COM.commune
+Ref : C.Epreuve_1 > ep.epreuve_code
+Ref : C.Option_1 > ep.epreuve_code
+Ref : C.Option_2 > ep.epreuve_code
+Ref : C.Option_3 > ep.epreuve_code
+Ref : C.Option_4 > ep.epreuve_code
 Ref : C.resultat > RES.resultat_index
-Ref : C.cod - V.can_cod
+Ref : C.code_pays_naissance > P.pays_code
+Ref : C.code_pay_natio > P.pays_code
+Ref : C.code_ville_ecr > vile.ville
+Ref : C.cod_csp_mere > csp.code_csp
+Ref : C.cod_csp_pere > csp.code_csp
+Ref : C.code_concours > co.code_concours
+Ref : C.etablissement > etablissement.rne
+Ref : C.code_serie > sb.code_serie
+Ref : C.code_mention > me.code_mention
+Ref : C.voie > vo.voie 
+Ref : C.code - V.can_cod
 Ref : V.eco_cod > Ec.code
 Ref : C.civ_lib > CIV.civilite_code
 Ref : C.pay_adr > P.pays_code
 Ref : E.pays > P.pays_code
 Ref : "candidat"."fil" > FILIERE."filiere_code"
+
+// Creating references
