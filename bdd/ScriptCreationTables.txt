@@ -1,0 +1,167 @@
+CREATE TABLE civilite(
+  civilite_index integereger primary key,
+  civilite text not null
+);
+
+CREATE TABLE resultat (
+  resultat_index integereger primary key,
+  resultat text not null
+);
+
+CREATE TABLE commune(
+  commune_index integereger primary key,
+  commune text not null
+);
+
+CREATE TABLE filiere (
+  filiere_code integereger primary key,
+liste_filiere text
+);
+
+CREATE TABLE pays(
+pays_code integereger primary key,
+liste_pays text
+);
+
+CREATE TABLE candidat (
+  code integer PRIMARY_KEY,
+  civ_lib integer not null,
+  nom text not null,
+  prenom text not null,
+  autre_prenoms text,
+  date_naissance integer not null,
+  arr_naissance integer not null,
+  ville_naissance text not null,
+  code_pays_naissance integer not null,
+  francais integer  not null,
+  ad_1 text not null,
+  ad_2 text,
+  cod_pos integer not null,
+  com integer not null,
+  pay_adr integer not null,
+  code_pay_natio integer not null,
+  mel text not null,
+  tel text,
+  por text,
+  email text,
+  etablissement integer not null,
+  Epreuve_1 integer not null,
+  Option_1 integer, 
+  Option_2 integer, 
+  Option_3 integer, 
+  Option_4 integer, 
+  code_ville_ecr integer not null,
+  code_concours integer not null,
+  voie integer not null,
+  code_serie integer not null,
+  code_mention integer not null,
+  bac_date integer not null,
+  sujet_tipe text not null,
+  ine integer not null,
+  cod_csp_pere integer not null,
+  cod_csp_mere integer not null,
+  code_etat_dossier integer not null,
+  handicap integer not null,
+  can_dep_bac integer not null,
+  rang_ecrit integer not null,
+  rang_oral integer not null,
+  resultat integer not null,
+  // resultat contient au choix "admis", "admis-spe", "admissible", "admissible-spe"
+  // admis implique admis-spe (idem pour admissible)
+  fil integer not null,
+  // Index de la filière dans la CREATE TABLE filiere 
+  
+  foreign key(code_pays_naissance) references pays(pays_code),
+  foreign key(pay_adr) references pays(pays_code),
+  foreign key(code_pay_natio) references pays(pays_code),
+  foreign key(etablissement) references etablissement(rne),
+  foreign key(com) references commune(commune_index),
+  foreign key(civ_lib) references civilite(civilite_index),
+  foreign key(Epreuve_1) references epreuve(epreuve_code),
+  foreign key(Option_1) references epreuve(epreuve_code),
+  foreign key(Option_2) references epreuve(epreuve_code),
+  foreign key(Option_3) references epreuve(epreuve_code),
+  foreign key(Option_4) references epreuve(epreuve_code),
+  foreign key(code_ville_ecr) references villeecrit(vil_code),
+  foreign key(code_serie) references seriebac(code_serie),
+  foreign key(code_concours) references concours(code_concours),
+  foreign key(voie) references voie(code_voie),
+  foreign key(code_mention) references mention(code_mention),
+  foreign key(cod_csp_pere) references csp(code_csp),
+  foreign key(cod_csp_mere) references csp(code_csp),
+  foreign key(resultat) references resultat(resultat_index),
+  foreign key(fil) references filiere(filiere_code)
+
+);
+CREATE TABLE ecole (
+  code integereger primary key,
+  nom text not null
+);
+
+CREATE TABLE voeux_ecole  (
+  can_cod integereger primary key,
+  voe_rang integereger not null,
+  voe_ord integereger not null,
+  eco_cod integereger not null,
+foreign key(can_code) references candidat(cod),
+foreign key(eco_code) references ecole(code)
+ );
+
+
+CREATE TABLE etablissement(
+  rne text primary key,
+  type text not null,
+  nom text not null,
+  code_postal integereger not null,
+  ville text not null,
+  pays text not null,
+foreign key(pays) references pays(ind_liste_pays)
+);
+
+CREATE TABLE epreuve(
+  epreuve_code integer primary key,
+  epreuve text not null
+);
+
+CREATE TABLE villeecrit (
+  vil_code integer primary key,
+  ville text not null
+);
+
+CREATE TABLE concours (
+  code_concours integer primary key,
+  concours text not null
+);
+
+CREATE TABLE seriebac (
+  code_serie integer primary key,
+  serie text not null
+);
+
+CREATE TABLE mention (
+  code_mention integer primary key,
+  mention text not null
+);
+
+CREATE TABLE csp (
+  code_csp int primary key,
+  csp text not null
+);
+
+CREATE TABLE voie (
+  code_voie integer not null,
+  voie text not null
+);
+
+CREATE TABLE notes (
+  Num integer,
+  rang integer,
+  total integer,
+  Moyenne integer,
+  Bonification integer,
+  Maths integer,
+  Scphy integer,
+  Fr integer,
+  Si integer,
+  Ang integer
+);
