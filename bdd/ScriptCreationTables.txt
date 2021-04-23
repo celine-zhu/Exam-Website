@@ -29,10 +29,10 @@ CREATE TABLE ecole (
 );
 
 CREATE TABLE voeux_ecole  (
-  can_cod integer primary key,
+  can_code integer primary key,
   voe_rang integer not null,
   voe_ord integer not null,
-  eco_cod integer not null,
+  eco_code integer not null,
 foreign key(can_code) references candidat(cod),
 foreign key(eco_code) references ecole(code)
  );
