@@ -1,4 +1,10 @@
 @ECHO OFF
+
+::todo
+::mettre un rem
+::commenter
+::tester la création du venv
+
 SET _TMPOutput=TMPOutput.txt
 SET _TMPOutput2=TMPOutput2.txt
 IF EXIST %_TMPOutput% DEL %_TMPOutput%
@@ -16,16 +22,10 @@ FOR /F "tokens=* USEBACKQ" %%F IN (`findstr Python %_TMPOutput%`) DO (
 
 IF NOT EXIST %_TMPOutput2% goto FullSearch
 
-::check if a python version is already in the path
-FOR /F "tokens=* USEBACKQ" %%F IN (%_TMPOutput2%) DO (
-    SET _PythonPath=%%F
-    %_PythonPath% --version > %_TMPOutput%
-    for /f "tokens=*" %%s in (%_TMPOutput%) do (
-        SET _PythonInfo=%%s
-        IF %_PythonInfo:~7,3%==3.8 goto InstallDependancy
-        IF %_PythonInfo:~7,3%==3.9 goto InstallDependancy
-    )   
-)
+
+SET _ContainPat=%_TMPOutput2%
+CALL :PyVersionVerification
+IF %_found%==true goto InstallDependancy
 
 :FullSearch
 ECHO python not found in environnement path
@@ -51,15 +51,9 @@ for /F "tokens=* USEBACKQ" %%F in (`findstr /vi \venv\Scripts %_TMPOutput2%`) do
 )
 
 
-for /F "tokens=*" %%F in (%_TMPOutput%) do (
-    SET _PythonPath=%%F
-    %_PythonPath% --version > %_TMPOutput2%
-    for /f "tokens=*" %%G in (%_TMPOutput2%) do (
-        SET _PythonInfo=%%G
-        IF %_PythonInfo:~7,3%==3.8 goto InstallDependancy
-        IF %_PythonInfo:~7,3%==3.9 goto InstallDependancy
-    )     
-)
+SET _ContainPat=%_TMPOutput%
+CALL :PyVersionVerification
+IF %_found%==true goto InstallDependancy
 
 :InstallPython
 IF EXIST %_TMPOutput% DEL %_TMPOutput%
@@ -74,8 +68,6 @@ FOR /F "tokens=* USEBACKQ" %%F IN (`systeminfo`) DO (
     SET /a _count=!_count!+1
 )
 ENDLOCAL & SET _Version=%_var3:~27,3%& SET _Systype=%_var14:~28,2% 
-
-ECHO %_Version% --- %_Systype%
 
 ::check windows Vista
 IF %_Version%==6.0 goto DownloadPythonOld
@@ -117,20 +109,25 @@ SET _PythonPath =C:\Users\%username%\AppData\Local\Programs\Python\%LAST%
 
 
 :InstallDependancy
-SET str=%_PythonPath%
-for /l %%a in (1,1,31) do if "!str:~-1!"==" " set str=!str:~0,-1!
 
-SET _PythonPathDirectory=%str:~0,-10%
+ECHO Installing dependancy
+ECHO %_PythonPath%
+
+SET _current=a
+:loop
+SET _current=%_PythonPath:~-1%%_current%
+SET _PythonPath=%_PythonPath:~0,-1%
+SET _extracted=%_current:~0,10%
+ECHO %_extracted%
+IF "%_extracted%" NEQ "python.exe" goto loop
+
+ECHO %_PythonPath%>PythonPath
+
 DEL %_TMPOutput%
 DEL %_TMPOutput2%
 
-ECHO %_PythonPathDirectory% > PythonPath
 
-goto EOF
-
-
-
-python -m venv %~dp0\ProjectEnvironnement
+%_PythonPath%python -m venv %~dp0\ProjectEnvironnement
 %~dp0\ProjectEnvironnement\Scripts\activate
 python -m pip install --upgrade pip
 pip install click
@@ -138,10 +135,36 @@ pip install flask
 
 goto EOF
 
+:PyVersionVerification
+
+SETLOCAL ENABLEDELAYEDEXPANSION
+::check if a python version is already in the path
+
+SET _found=false
+
+FOR /F "tokens=* USEBACKQ" %%F IN (%_ContainPat%) DO (
+    SET "_LPythonPath=%%F"
+    !_LPythonPath! --version>TEMPFILE
+    for /F "tokens=*" %%H in (TEMPFILE) do (
+        SET "_PythonInfo=%%H"
+        SET "_version=!_PythonInfo:~7,3!"
+        IF !_version!==3.8 SET _found=true
+        IF !_version!==3.9 SET _found=true
+        IF !_found!==true goto breakloop
+    )   
+)
+
+
+:breakloop
+
+DEL TEMPFILE
+ENDLOCAL & SET _PythonPath=%_LPythonPath%& SET _Found=%_found%
+EXIT /B 0
+
+
 :InstallPythonFaillure
 ECHO "OS not handled by the installer, please install python manually"
 ::EXIT 1
-
 
 :EOF
 cd %~dp0
