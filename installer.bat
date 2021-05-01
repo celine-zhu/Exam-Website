@@ -3,7 +3,6 @@
 ::todo
 ::mettre un rem
 ::commenter
-::tester la création du venv
 
 SET _TMPOutput=TMPOutput.txt
 SET _TMPOutput2=TMPOutput2.txt
@@ -118,7 +117,6 @@ SET _current=a
 SET _current=%_PythonPath:~-1%%_current%
 SET _PythonPath=%_PythonPath:~0,-1%
 SET _extracted=%_current:~0,10%
-ECHO %_extracted%
 IF "%_extracted%" NEQ "python.exe" goto loop
 
 ECHO %_PythonPath%>PythonPath
@@ -126,19 +124,16 @@ ECHO %_PythonPath%>PythonPath
 DEL %_TMPOutput%
 DEL %_TMPOutput2%
 
-
+mkdir ProjectEnvironnement
 %_PythonPath%python -m venv %~dp0\ProjectEnvironnement
-%~dp0\ProjectEnvironnement\Scripts\activate
-python -m pip install --upgrade pip
-pip install click
-pip install flask
+%~dp0\ProjectEnvironnement\Scripts\python.exe -m pip install --upgrade pip
+%~dp0\ProjectEnvironnement\Scripts\pip.exe install click
+%~dp0\ProjectEnvironnement\Scripts\pip.exe install flask
 
 goto EOF
 
 :PyVersionVerification
-
 SETLOCAL ENABLEDELAYEDEXPANSION
-::check if a python version is already in the path
 
 SET _found=false
 
@@ -153,8 +148,6 @@ FOR /F "tokens=* USEBACKQ" %%F IN (%_ContainPat%) DO (
         IF !_found!==true goto breakloop
     )   
 )
-
-
 :breakloop
 
 DEL TEMPFILE
@@ -164,9 +157,9 @@ EXIT /B 0
 
 :InstallPythonFaillure
 ECHO "OS not handled by the installer, please install python manually"
-::EXIT 1
+EXIT 1
 
 :EOF
 cd %~dp0
 PAUSE
-::EXIT 0
+EXIT 0
