@@ -1,0 +1,35 @@
+* Pour le fichier Inscription (correspond à la table "candidats")
+
+Contraintes sur les valeurs
+
+E (CIVILITE) = 1 ou 2
+F (DATE_NAISSANCE) = JJ/MM/AAAA
+H/K/Q (CODE_PAYS_NAISSANCE/CODE_PAYS_NATIONALITE/CODE_PAYS) = Nombre à 3 chiffres
+J (FRANCAIS) = 0 (On peut supposer que c'est une erreur et que ça vaut 0 ou 1 normalement)
+O (CP) = Nombre à 5 chiffres
+W (PUISSANCE) = "3/2", "5/2" ou "7/2"
+AJ (CODE_CONCOURS) = Nombre à 3 chiffres
+AM (ANNE_BAC) = Nombre à 4 chiffres, < ou = à 2021
+AN (MOIS_BAC) = Nombre entre 1 et 12
+AO (CODE_SERIE) = Nombre à moins de 2 chiffres
+AQ (MENTION) = "AB", "B", "TB" ou "S"
+AT/AV (COD_CSP_PERE/COD_CSP_MERE) = Nombre de 11 à 86, et 99 (Pour "non renseigné") : Code CSP 2020
+AX (CODE_ETAT_DOSSIER) = Ne vaut que "4"
+AY (CODE_ETAT_DOSSIER) = ne vaut que "Enregistrées"
+AZ (ARRONDISSEMENT_NAISSANCE) = Ne vaut que "0"
+BA (DECLARATION HANDICAP) = "oui" ou "non"
+BB (QUALITE) = Vide, "Boursier" ou "Pupille"
+BC (CAN_DEP_BAC) = Nombre: 01-95, 971-978, 984, 986-989. Autres valeurs : Vide et 99
+Note : Les départements sont 01-95 et 971,972,973,974,976.
+Les autre sont des territoires avec status particuliers, mais sont des valeurs valides
+
+Liens entre les valeurs
+Par exemple, si on a "- A et C", alors pour une entrée, la valeur en A défini celle en C, et inversement
+
+- Q (CODE_PAYS) et R (LIBELLE_PAYS)
+- K (CODE_PAYS_NATIONALITE) et L (AUTRE_NATIONALITE)
+- H (CODE_PAYS_NAISSANCE) et I (PAYS_NAISSANCE)
+- AO (CODE_SERIE) et AP (SERIE)
+- AT (CODE_CSP_PERE) et AU (LIB_CSP_PERE)
+- AV (CODE_CSP_MERE) et AW (LIB_CSP_MERE)
+Probablement : - AX (CODE_ETAT_DOSSIER) et AY (LIBELLE_ETAT_DOSSIER)
