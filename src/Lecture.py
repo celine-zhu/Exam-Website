@@ -15,7 +15,7 @@ def lectxl(NOM):
     SheetNameList = workbook.sheet_names()
     worksheet = workbook.sheet_by_name(SheetNameList[0])
     num_rows = worksheet.nrows 
-    f=[]
+    f=[NOM]
     for curr_row  in range(0,num_rows):
         row = worksheet.row(curr_row)
         f.append(row)
@@ -27,7 +27,7 @@ def lectcsv(NOM):
     des fichiers"""
     #NOM=input("nom du fichier:")#interactif
     #NOM=str(NOM +".csv")
-    c=[]
+    c=[NOM]
     #ouverture du fichier et recuperation du contenu
     with open(NOM) as f:
        contenu = csv.reader(f, delimiter=' ', quotechar='|')
@@ -45,15 +45,11 @@ def allfiles():
     #initialisation liste
     fil=[]
     for k in range(0, len(name)):
-        Chemin=str("../data/public/"+name[k])
-        @click.command()
-        @click.argument('file_path', default=Chemin, type=click.Path(exists=True))
-        def chemin(file_path,name):
-            enorme=[]
-            if '.xlsx' in name:
-                enorme.append([name,lectxl(Chemin)])
-            else:
-                enorme.append([name,lectcsv(Chemin)])
-            return enorme
-        fil.append(chemin(name[k]))
+        Chemin=str("../data/public/" + name[k])
+        enorme=[]
+        if '.xlsx' in name[k]:
+            enorme.append(lectxl(Chemin))
+        else:
+            enorme.append(lectcsv(Chemin))
+        fil.append(enorme)
     return fil
