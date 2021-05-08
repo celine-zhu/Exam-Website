@@ -6,7 +6,7 @@ function LinuxInstallation() {
         echo "python non trouvé --> installation de python"
         echo "detection du package manager:"
         which apt-get &> /dev/null
-        if [[ $? -eq 0 && -z $_Package ]]; then
+        if [[ $? -eq 0 && -z $enc pyt   _Package ]]; then
             echo "DPKG package manager found"
             _Package="apt-get"
         fi
@@ -15,7 +15,7 @@ function LinuxInstallation() {
             echo "Dandified YUM package manager found"
             _Package="dnf"
         fi
-        which dnf &> /dev/null
+        which yum &> /dev/null
         if [[ $? -eq 0 && -z $_Package ]]; then
             echo "Yellowdog Updater Modified package manager found"
             _Package="yum"
@@ -49,7 +49,11 @@ if [[ $unameOut == Darwin ]]; then
     echo "darwin"
     DarwinInstallation
 elif [[ $unameOut == Linux ]]; then
-    echo "machien linux"
+    echo "machine linux"
+    if [[ $EUID -neq 0 ]]; then
+        echo "resquesting sudo privilege"
+        exec sudo $0
+    fi
     LinuxInstallation
 else
     echo "machine non reconnue ou nongérer par le script : installation manuel obligatoire"

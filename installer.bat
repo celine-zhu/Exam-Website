@@ -2,55 +2,61 @@
 
 ::todo
 ::mettre un rem
-::commenter
+REM The script install python if no suitable version is found
+REM It then install a click and flask in a virtual environnement
 
 SET _TMPOutput=TMPOutput.txt
 SET _TMPOutput2=TMPOutput2.txt
 IF EXIST %_TMPOutput% DEL %_TMPOutput%
 IF EXIST %_TMPOutput2% DEL %_TMPOutput2%
 
+::check if the path to python is in an environnement variable
 FOR /F "tokens=* USEBACKQ" %%F IN (`where python`) DO (
     ECHO %%F >> %_TMPOutput%
 )
-
 IF NOT EXIST %_TMPOutput% goto FullSearch
 
+
+::the output is cleared of erronous path
 FOR /F "tokens=* USEBACKQ" %%F IN (`findstr Python %_TMPOutput%`) DO (
     ECHO %%F >> %_TMPOutput2%   
 )
-
 IF NOT EXIST %_TMPOutput2% goto FullSearch
 
-
-SET _ContainPat=%_TMPOutput2%
+::if a correct version of python was found
+::we skip the part where we install python
+SET _ContainPath=%_TMPOutput2%
 CALL :PyVersionVerification
 IF %_found%==true goto InstallDependancy
 
+
 :FullSearch
 ECHO python not found in environnement path
-::If not found, we check in the entire repository of the user
+::If python not found, we check in the entire repository of the user
 IF EXIST %_TMPOutput% DEL %_TMPOutput%
 IF EXIST %_TMPOutput2% DEL %_TMPOutput2%
+
 FOR /F "tokens=* USEBACKQ" %%F IN (`where /R C:\Users\%username% python`) DO (
     ECHO %%F >> %_TMPOutput%
 )
-
 IF NOT EXIST %_TMPOutput% goto InstallPython
 
+::the output is cleared of erronous path
 FOR /F "tokens=* USEBACKQ" %%F IN (`findstr Python %_TMPOutput%`) DO (
     ECHO %%F >> %_TMPOutput2%   
 )
-
 IF NOT EXIST %_TMPOutput2% goto InstallPython
-
 DEL %_TMPOutput%
 
+
+::the output is cleared of the virtual environnement path
 for /F "tokens=* USEBACKQ" %%F in (`findstr /vi \venv\Scripts %_TMPOutput2%`) do (
     ECHO %%F >> %_TMPOutput%
 )
 
-
-SET _ContainPat=%_TMPOutput%
+::if a correct version of python was found
+::we skip the part where we install python
+SET _ContainPath=%_TMPOutput%
 CALL :PyVersionVerification
 IF %_found%==true goto InstallDependancy
 
@@ -67,6 +73,7 @@ FOR /F "tokens=* USEBACKQ" %%F IN (`systeminfo`) DO (
     SET /a _count=!_count!+1
 )
 ENDLOCAL & SET _Version=%_var3:~27,3%& SET _Systype=%_var14:~28,2% 
+
 
 ::check windows Vista
 IF %_Version%==6.0 goto DownloadPythonOld
@@ -95,23 +102,31 @@ goto InstallPython
 
 
 :InstallPython
+::download python -> the file download depends on the link
+::_dnld is the application and the arguments used to download
 set "_dnld=bitsadmin /transfer PythonDownloading /download /priority normal"
 %_dnld% %_link% %cd%\pythonInstall.exe
+::auto install python -> still display a progress bar
 pythonInstall.exe /passive InstallAllUsers=0
-::DEL pythonInstall.exe
+DEL pythonInstall.exe
+
 SET _PythonPath =C:\Users\%username%\AppData\Local\Programs\Python
 cd %_PythonPath%
-for /f %%i in ('dir /ad/od/b') do set LAST=%%i
+
+::return the last created directory
+for /F %%i in ('dir /ad/od/b') do set LAST=%%i
 SET _PythonPath =C:\Users\%username%\AppData\Local\Programs\Python\%LAST%
 
 
 
 
 :InstallDependancy
+IF EXIST %_TMPOutput% DEL %_TMPOutput%
+IF EXIST %_TMPOutput2% DEL %_TMPOutput2%
 
 ECHO Installing dependancy
-ECHO %_PythonPath%
 
+::trim the path to python in order to contain only the repository
 SET _current=a
 :loop
 SET _current=%_PythonPath:~-1%%_current%
@@ -119,11 +134,8 @@ SET _PythonPath=%_PythonPath:~0,-1%
 SET _extracted=%_current:~0,10%
 IF "%_extracted%" NEQ "python.exe" goto loop
 
-ECHO %_PythonPath%>PythonPath
-
-DEL %_TMPOutput%
-DEL %_TMPOutput2%
-
+:: create a virtual environnement in a new folder
+:: and install flask and click
 mkdir ProjectEnvironnement
 %_PythonPath%python -m venv %~dp0\ProjectEnvironnement
 %~dp0\ProjectEnvironnement\Scripts\python.exe -m pip install --upgrade pip
@@ -133,11 +145,13 @@ mkdir ProjectEnvironnement
 goto EOF
 
 :PyVersionVerification
+::check the version for each python version
+::where its path is in the file _ContainPath
 SETLOCAL ENABLEDELAYEDEXPANSION
 
 SET _found=false
 
-FOR /F "tokens=* USEBACKQ" %%F IN (%_ContainPat%) DO (
+FOR /F "tokens=* USEBACKQ" %%F IN (%_ContainPath%) DO (
     SET "_LPythonPath=%%F"
     !_LPythonPath! --version>TEMPFILE
     for /F "tokens=*" %%H in (TEMPFILE) do (
@@ -155,11 +169,14 @@ ENDLOCAL & SET _PythonPath=%_LPythonPath%& SET _Found=%_found%
 EXIT /B 0
 
 
+:EOF
+:: return where we executed the script
+cd %~dp0
+ECHO "Installation complete"
+PAUSE
+EXIT 0
+
 :InstallPythonFaillure
 ECHO "OS not handled by the installer, please install python manually"
 EXIT 1
 
-:EOF
-cd %~dp0
-PAUSE
-EXIT 0
