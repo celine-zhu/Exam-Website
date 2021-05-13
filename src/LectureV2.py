@@ -17,7 +17,7 @@ def lectxl(NOM):
     for curr_row in worksheet.iter_rows():
         row = []
         for curr_cell in curr_row:
-            row.append((curr_cell.data_type, curr_cell.value))
+            row.append(curr_cell.value)
         f.append(row)
     return f
 
