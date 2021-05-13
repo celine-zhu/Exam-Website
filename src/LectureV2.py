@@ -43,13 +43,13 @@ def allfiles():
     de listes contenat les contenus de tous les fichiers"""
 
     # recuperation des noms de fichiers dans ../data/public
-    name = os.listdir('../data/public')
+    list_name = os.listdir('../data/public')
     # initialisation liste
     fil = []
-    for k in range(0, len(name)):
-        Chemin = str("../data/public/" + name[k])
+    for name in list_name:
+        Chemin = str("../data/public/" + name)
         enorme = []
-        if '.xlsx' in name[k]:
+        if '.xlsx' in name:
             enorme.append(lectxl(Chemin))
         else:
             enorme.append(lectcsv(Chemin))
