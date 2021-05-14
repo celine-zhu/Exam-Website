@@ -1,7 +1,5 @@
 @ECHO OFF
 
-::todo
-::mettre un rem
 REM The script install python if no suitable version is found
 REM It then install a click and flask in a virtual environnement
 
