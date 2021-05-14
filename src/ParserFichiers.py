@@ -1,7 +1,9 @@
+import os.path
 import sqlite3
 import sys
-
+from src.PolyMorph_Lecture import *
 # ------------------- Fonctions parsant les différents fichiers -------------------
+
 
 DB_PATH = "../bdd/project.db"
 
@@ -83,3 +85,87 @@ def pars_inscription(file: list):
     con.commit()
     con.close()
     return nom_champs, list_champ
+
+
+def ReadFile(path_to_file):
+
+    assert (os.path.isfile(path_to_file)), "file not found"
+
+    splited = path_to_file.split(".")
+    extention = splited[len(splited)-1]
+
+
+    switcher = {
+        "xlsx" : XLRS(),
+        "csv" : CVS()
+    }
+    reader = switcher.get(extention, False)
+    assert reader, "format not handled"
+
+    data = reader.read(path_to_file)
+    return data
+
+#in progress
+def UploadAdmissible(list):
+
+    assert os.path.exists(DB_PATH), "database not found"
+
+    data = list[2:]
+
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+    cividico = {
+        "M." : 1,
+        "Mme" : 2
+    }
+    for line in data:
+        #we check if the data exist already
+        cur.execute("SELECT code FROM candidat WHERE code=?",(line[0],))
+        res = cur.fetchall()
+        #if we already have a candidate, we juste update it's value
+        if res:
+            #can commune dans autre table
+            #can_pay _adr dans autre table
+            #value de rang?
+            #virer les not null qui sont partout
+            cur.execute("UPDATE candidat SET civ_lib=?, nom=?, prenom=?, ad_1=?, ad_2=?, cod_pos=?, mel=?, tel=?,   WHERE code=?")
+        #else we create a new one
+
+    con.commit()
+
+    con.close()
+
+def AddCommune(name :str):
+    #add the commune to the bdd if it doesn't exist and return it's code
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+
+
+    cur.execute("SELECT commune_index FROM commune WHERE commune=?", (name,))
+    res = cur.fetchall()
+    if not res:
+        cur.execute("INSERT INTO commune(commune) VALUES(?)", (name,))
+        cur.execute("SELECT commune_index FROM commune WHERE commune=?", (name,))
+        res = cur.fetchall()
+    con.commit()
+
+    con.close()
+    return res
+
+def AddCountry(name :str):
+    #add the commune to the bdd if it doesn't exist and return it's code
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+
+
+    cur.execute("SELECT pays_code FROM pays WHERE liste_pays=?", (name,))
+    res = cur.fetchall()
+    if not res:
+        cur.execute("INSERT INTO pays(liste_pays) VALUES(?)", (name,))
+        cur.execute("SELECT pays_code FROM pays WHERE liste_pays=?", (name,))
+        res = cur.fetchall()
+    con.commit()
+
+    con.close()
+    return res[0][0]
+
