@@ -1,6 +1,5 @@
-#! /usr/bin/env python
+#! /usr/bin/python3
 import xlrd # module de lecture des fichiers excel (microsoft)
-import numpy as np #module mathematique numpy
 import click
 import os
 import csv
@@ -46,10 +45,8 @@ def allfiles():
     fil=[]
     for k in range(0, len(name)):
         Chemin=str("../data/public/" + name[k])
-        enorme=[]
         if '.xlsx' in name[k]:
-            enorme.append(lectxl(Chemin))
+            fil.append(lectxl(Chemin))
         else:
-            enorme.append(lectcsv(Chemin))
-        fil.append(enorme)
+            fil.append(lectcsv(Chemin))
     return fil
