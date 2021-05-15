@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 import os.path
 import sqlite3
 import sys
@@ -86,7 +87,29 @@ def pars_inscription(file: list):
     con.close()
     return nom_champs, list_champ
 
-
+def pars_etabli(file: list):
+    name = file[0]
+    if name.split("/")[-1] != "listeEtablissements.xlsx":
+        print("Attention, ce n'est peut-être pas le bon fichier", file=sys.stderr)
+    nom_champs = file[2]  # En-tête : contient le nom de chaque colonne (fichier[1] vide)
+    list_champ = []
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+    for line in file[3:]:
+        champ ={
+            "rne": line[0], 
+            "type" : line[1], 
+            "nom" : line[2], 
+            "code_postal" : line[3], 
+            "ville" : line[4], 
+            "pays" : line[5]
+            }
+        str_excl = "(" + "?, "*len(champ.keys()) + ")"  #
+        cur.execute(f"insert into etablissement {tuple(champ.keys())} values {str_excl}", tuple(champ.values()))
+        list_champ.append(champ)
+    con.commit()
+    con.close()
+    return nom_champs, list_champ
 def ReadFile(path_to_file):
 
     assert (os.path.isfile(path_to_file)), "file not found"
@@ -166,6 +189,21 @@ def AddCountry(name :str):
         res = cur.fetchall()
     con.commit()
 
+    con.close()
+    return res[0][0]
+
+def AddEtabl(name :str):
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+    
+    cur.execute("SELECT rne FROM etablissement WHERE etabl=?", (name,))
+    res = cur.fetchall()
+    if not res:
+        cur.execute("INSERT INTO etablissement(etabl) VALUES(?)", (name,))
+        cur.execute("SELECT rne FROM etablissement WHERE etabl=?", (name,))
+        res = cur.fetchall()
+        
+    con.commit()
     con.close()
     return res[0][0]
 
