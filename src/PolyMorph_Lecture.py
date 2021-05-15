@@ -2,6 +2,7 @@
 import openpyxl as xl  # module de lecture des fichiers excel (microsoft)
 import csv
 from abc import *
+import os
 
 class FileReading(ABC):
     @abstractmethod
@@ -46,3 +47,20 @@ class CVS(FileReading):
             for row in contenu:
                 c.append(row[0].split(';'))  # separation du string
         return c
+
+
+def ReadFile(path_to_file):
+    assert (os.path.isfile(path_to_file)), "file not found"
+
+    splited = path_to_file.split(".")
+    extention = splited[len(splited) - 1]
+
+    switcher = {
+        "xlsx": XLRS(),
+        "csv": CVS()
+    }
+    reader = switcher.get(extention, False)
+    assert reader, "format not handled"
+
+    data = reader.read(path_to_file)
+    return data

@@ -91,6 +91,7 @@ def pars_inscription(file: list):
     con.close()
     return nom_champs, list_champ
 
+
 def pars_etabli(file: list):
     name = file[0]
     if name.split("/")[-1] != "listeEtablissements.xlsx":
@@ -114,23 +115,6 @@ def pars_etabli(file: list):
     con.commit()
     con.close()
     return nom_champs, list_champ
-def ReadFile(path_to_file):
-
-    assert (os.path.isfile(path_to_file)), "file not found"
-
-    splited = path_to_file.split(".")
-    extention = splited[len(splited)-1]
-
-
-    switcher = {
-        "xlsx" : XLRS(),
-        "csv" : CVS()
-    }
-    reader = switcher.get(extention, False)
-    assert reader, "format not handled"
-
-    data = reader.read(path_to_file)
-    return data
 
 
 # a tester,
@@ -160,13 +144,14 @@ def UploadAdmissible(list):
             # value de rang?
             # virer les not null qui sont partout
             query = "UPDATE candidat SET civ_lib=?, nom=?, prenom=?, ad_1=?, ad_2=?, cod_pos=?, com=?, pay_adr=?, mel=?, tel=?, resultat=?,  WHERE code=?"
-            cur.execute(query, (line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9], line[10], code_resultat, line[0],))
+            cur.execute(query, (line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9], pars.telephone([10]), code_resultat, line[0],))
             # else we create a new one
         else:
             query = "INSERT INTO candidat(code, civ_lib, nom, prenom, ad_1, ad_2, cod_pos, com, pay_adr, mel, tel, resultat) VALUES(?,?,?,?,?,?,?,?,?,?,?)"
-            cur.execute(query, (line[0], line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9], line[10], code_resultat,))
+            cur.execute(query, (line[0], line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9], pars.telephone([10]), code_resultat,))
     con.commit()
     con.close()
+
 
 def UploadAdmis(list):
     # pas de champs rang dans la bdd
@@ -193,11 +178,11 @@ def UploadAdmis(list):
             # value de rang?
             # virer les not null qui sont partout
             query = "UPDATE candidat SET civ_lib=?, nom=?, prenom=?, ad_1=?, ad_2=?, cod_pos=?, com=?, pay_adr=?, mel=?, tel=?, resultat=?  WHERE code=?"
-            cur.execute(query, (line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9], line[10], code_resultat, line[0],))
+            cur.execute(query, (line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9], pars.telephone([10]), code_resultat, line[0],))
             # else we create a new one
         else:
             query = "INSERT INTO candidat(code, civ_lib, nom, prenom, ad_1, ad_2, cod_pos, com, pay_adr, mel, tel, resultat) VALUES(?,?,?,?,?,?,?,?,?,?,?)"
-            cur.execute(query, (line[0], line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9], line[10], code_resultat,))
+            cur.execute(query, (line[0], line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9], pars.telephone([10]), code_resultat,))
     con.commit()
     con.close()
 
