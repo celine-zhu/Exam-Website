@@ -128,7 +128,8 @@ def ReadFile(path_to_file):
     data = reader.read(path_to_file)
     return data
 
-#in progress
+
+# a tester,
 def UploadAdmissible(list):
 
     assert os.path.exists(DB_PATH), "database not found"
@@ -142,27 +143,30 @@ def UploadAdmissible(list):
         "Mme" : 2
     }
     for line in data:
-        #we check if the data exist already
+        # we check if the data exist already
+
+        id_commune = AddCommune(line[7])
+        id_contry = AddCountry(line[8])
         cur.execute("SELECT code FROM candidat WHERE code=?",(line[0],))
         res = cur.fetchall()
-        #if we already have a candidate, we juste update it's value
+#       if we already have a candidate, we juste update it's value
         if res:
-            #can commune dans autre table
-            #can_pay _adr dans autre table
-            #value de rang?
-            #virer les not null qui sont partout
-            cur.execute("UPDATE candidat SET civ_lib=?, nom=?, prenom=?, ad_1=?, ad_2=?, cod_pos=?, mel=?, tel=?,   WHERE code=?")
-        #else we create a new one
-
+            # value de rang?
+            # virer les not null qui sont partout
+            query = "UPDATE candidat SET civ_lib=?, nom=?, prenom=?, ad_1=?, ad_2=?, cod_pos=?, com=?, pay_adr=?, mel=?, tel=?,   WHERE code=?"
+            cur.execute(query, (line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9], line[10], line[0],))
+            # else we create a new one
+        else:
+            query = "INSERT INTO candidat(code, civ_lib, nom, prenom, ad_1, ad_2, cod_pos, com, pay_adr, mel, tel) VALUES(?,?,?,?,?,?,?,?,?,?)"
+            cur.execute(query, (line[0], line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9], line[10]))
     con.commit()
-
     con.close()
 
+
 def AddCommune(name :str):
-    #add the commune to the bdd if it doesn't exist and return it's code
+    # add the commune to the bdd if it doesn't exist and return it's code
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
-
 
     cur.execute("SELECT commune_index FROM commune WHERE commune=?", (name,))
     res = cur.fetchall()
@@ -175,11 +179,11 @@ def AddCommune(name :str):
     con.close()
     return res
 
+
 def AddCountry(name :str):
-    #add the commune to the bdd if it doesn't exist and return it's code
+    # add the commune to the bdd if it doesn't exist and return it's code
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
-
 
     cur.execute("SELECT pays_code FROM pays WHERE liste_pays=?", (name,))
     res = cur.fetchall()
