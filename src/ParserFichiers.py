@@ -1,5 +1,6 @@
 import sqlite3
 import sys
+import ParserDonnee as pars
 
 # ------------------- Fonctions parsant les différents fichiers -------------------
 
@@ -33,8 +34,8 @@ def pars_inscription(file: list):
                  "ville": line[15],
                  "code_pays": line[16],  # int,
                  "lib_pays": line[17],
-                 "tel": line[18],
-                 "por": line[19],
+                 "tel": pars.telephone(line[18]),
+                 "por": pars.telephone(line[19]),
                  "mel": line[20],
                  "classe": line[21],
                  "puissance": line[22],
@@ -76,7 +77,9 @@ def pars_inscription(file: list):
 
         # Avant d'inserer le champ, il faut remplir les tables auxiliaires, afin d'avoir éventuellement l'index associé
         # a mettre dans l'entrée de "candidat"
-        str_excl = "(" + "?, "*len(champ.keys()) + ")"  #
+        str_excl = "(" + "?, " * len(champ.keys())
+        str_excl = str_excl[:-2] + ")"  # Donne "(?, ?, ?, ?, ?)" avec autant de "?" que de données
+
         cur.execute(f"insert into candidat {tuple(champ.keys())} values {str_excl}", tuple(champ.values()))
         list_champ.append(champ)
 
