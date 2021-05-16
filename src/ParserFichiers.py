@@ -186,7 +186,20 @@ def UploadAdmis(list):
     con.commit()
     con.close()
 
+def UploadEcole(list):
+    # pas de champs rang dans la bdd
+    assert os.path.exists(DB_PATH), "database not found"
 
+    data = list[2:]
+
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+    for line in data:
+        # we check if the data exist already
+        query = "INSERT INTO ecole(code, nom) VALUES(?,?)"
+        cur.execute(query, (line[0], line[1],))
+    con.commit()
+    con.close()
 
 
 
