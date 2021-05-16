@@ -117,6 +117,21 @@ def pars_etabli(file: list):
     return nom_champs, list_champ
 
 
+def UploadListeVoeux(list):
+    #erreur pb
+    assert os.path.exists(DB_PATH), "database not found"
+
+    data = list[2:]
+
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+    for line in data:
+        # we check if the data exist already
+        query = "INSERT INTO voeux_ecole(can_code, voe_rang, voe_ord, eco_code) VALUES(?,?,?,?)"
+        cur.execute(query, (line[0], line[1],line[2],line[3]))
+    con.commit()
+    con.close()
+
 # a tester,
 def UploadAdmissible(list):
 
