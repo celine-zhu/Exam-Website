@@ -84,17 +84,38 @@ CREATE TABLE voie (
   voie text not null
 );
 
+//CREATE TABLE notes (
+//  Num integer,
+//  rang integer,
+//  total integer,
+//  Moyenne integer,
+//  Bonification integer,
+//  Maths integer,
+//  Scphy integer,
+//  Fr integer,
+//  Si integer,
+//  Ang integer
+//);
+
 CREATE TABLE notes (
-  Num integer,
-  rang integer,
-  total integer,
-  Moyenne integer,
-  Bonification integer,
-  Maths integer,
-  Scphy integer,
-  Fr integer,
-  Si integer,
-  Ang integer
+    can_code integer,
+    matiere_id integer,
+    type_id integer,
+    value real,
+    primary key(can_code, matiere_id, type),
+    foreign key(can_code) references candidat(cod),
+    foreign key(matiere_id) references matiere(matiere_id)
+)
+
+CREATE TABLE matiere (
+    matiere_id integer primary key,
+    label text not null,
+    code integer
+);
+
+CREATE TABLE typeExam (
+    type_id integer primary key,
+    label text not null
 );
 
 CREATE TABLE candidat (
@@ -137,8 +158,6 @@ CREATE TABLE candidat (
   code_etat_dossier integer not null,
   handicap integer not null,
   can_dep_bac integer not null,
-  rang_ecrit integer not null,
-  rang_oral integer not null,
   resultat integer not null,
   // resultat contient au choix "admis", "admis-spe", "admissible", "admissible-spe"
   // admis implique admis-spe (idem pour admissible)
