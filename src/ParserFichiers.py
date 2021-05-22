@@ -223,18 +223,17 @@ def UploadNote(liste, typeExam: str):
     data = liste[3:]
 
     id_matiere = []
-    type = AddTypeExam(typeExam)
+    typeE = AddTypeExam(typeExam)
     for i in range(1, len(liste[1])):
         id_matiere.append(AddMatiere(liste[1][i], liste[2][i]))
 
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
-    query = "INSERT INTO notes(can_code, matiere_id,type, value) VALUES(?,?,?,?)"
+    query = "INSERT INTO notes(can_code, matiere_id,type_id, value) VALUES(?,?,?,?)"
     for line in data:
-        for i in range(1, len(liste[1])):
-
+        for i in range(1, len(line)):
             if line[i]:
-                cur.execute(query, (line[0], id_matiere[i], type, line[i],))
+                cur.execute(query, (line[0], id_matiere[i-1], typeE, line[i],))
     con.commit()
     con.close()
 
