@@ -4,9 +4,10 @@ import csv
 from abc import *
 import os
 
+
 class FileReading(ABC):
     @abstractmethod
-    def read(self, NOM : str):
+    def read(self, NOM: str):
         pass
 
 
@@ -14,8 +15,8 @@ class XLRS(FileReading):
     def __init__(self):
         pass
 
-    def read(self, NOM : str):
-        """fonction de lecture de fichiers excel utilisant le module xlrd,
+    def read(self, NOM: str):
+        """fonction de lecture de fichiers excel utilisant le module openpyxl,
             prenant en argument le nom du fichier et retourne une liste de liste des
             lignes du fichier"""
         # NOM=input("nom du fichier:")#interactif
@@ -30,11 +31,12 @@ class XLRS(FileReading):
             f.append(row)
         return f
 
+
 class CVS(FileReading):
     def __init__(self):
         pass
 
-    def read(self, NOM : str):
+    def read(self, NOM: str):
         """fonction de lecture des fichiers csv utilisant le module csv,
         prenant en argument le nom du fichier csv et retourne une liste de liste
         des fichiers"""

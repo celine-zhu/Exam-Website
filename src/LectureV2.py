@@ -1,12 +1,12 @@
 #! /usr/bin/env python
+
 import openpyxl as xl  # module de lecture des fichiers excel (microsoft)
-import numpy as np  # module mathematique numpy
 import os
 import csv
 
 
 def lectxl(NOM):
-    """fonction de lecture de fichiers excel utilisant le module xlrd,
+    """fonction de lecture de fichiers excel utilisant le module openpyxl,
     prenant en argument le nom du fichier et retourne une liste de liste des 
     lignes du fichier"""
     # NOM=input("nom du fichier:")#interactif
