@@ -102,10 +102,11 @@ CREATE TABLE notes (
     matiere_id integer,
     type_id integer,
     value real,
-    primary key(can_code, matiere_id, type),
-    foreign key(can_code) references candidat(cod),
-    foreign key(matiere_id) references matiere(matiere_id)
-)
+    primary key(can_code, matiere_id, type_id),
+    foreign key(can_code) references candidat(code),
+    foreign key(matiere_id) references matiere(matiere_id),
+    foreign key(type_id) references typeExam(type_id)
+);
 
 CREATE TABLE matiere (
     matiere_id integer primary key,
