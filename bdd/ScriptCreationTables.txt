@@ -54,10 +54,6 @@ CREATE TABLE epreuve(
   epreuve text not null
 );
 
-CREATE TABLE villeecrit (
-  vil_code integer primary key,
-  ville text not null
-);
 
 CREATE TABLE concours (
   code_concours integer primary key,
@@ -176,7 +172,7 @@ CREATE TABLE candidat (
   foreign key(Option_2) references epreuve(epreuve_code),
   foreign key(Option_3) references epreuve(epreuve_code),
   foreign key(Option_4) references epreuve(epreuve_code),
-  foreign key(code_ville_ecr) references villeecrit(vil_code),
+  foreign key(code_ville_ecr) references civilite(civilite_index),
   foreign key(code_serie) references seriebac(code_serie),
   foreign key(code_concours) references concours(code_concours),
   foreign key(voie) references voie(code_voie),

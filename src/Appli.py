@@ -24,8 +24,9 @@ def Index():
 def Candidat():
     
     return 'template pour les infos à créer'
-@app.route('/Candidat',methods=['POST', 'GET'])
+@app.route('/Candidat',methods=['POST','GET'])
 def cand():
+    error = None
     if request.method == 'POST':
         candidat = request.form["candidat"]
         numero = request.form["numero"]
@@ -43,9 +44,9 @@ def cand():
             # store the user id in a new session and return to the index
             return redirect(url_for('Candidat',name = candidat))
 
-    return '''<div> Error, please check that your name and candidate serial are correct<div>
+        return '''<div> Error, please check that your name and candidate serial are correct<div>
              <div> <a href="http://127.0.0.1:5000"> retour<div>'''
-            
+    return render_template('cand.html', error=error)   
    
 @app.route('/Candidat/<name>/edit')
 def changinfo():
