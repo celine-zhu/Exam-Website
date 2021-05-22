@@ -118,12 +118,25 @@ def pars_etabli(file: list):
     return nom_champs, list_champ
 
 
-# a tester,
-def UploadAdmissible(list):
-
+def UploadListeVoeux(liste):
     assert os.path.exists(DB_PATH), "database not found"
 
     data = list[2:]
+
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+    for line in data:
+        query = "INSERT INTO voeux_ecole(can_code, voe_rang, voe_ord, eco_code) VALUES(?,?,?,?)"
+        cur.execute(query, (line[0], line[1],line[2],line[3]))
+    con.commit()
+    con.close()
+
+# a tester,
+def UploadAdmissible(liste):
+
+    assert os.path.exists(DB_PATH), "database not found"
+
+    data = liste[2:]
 
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
@@ -154,11 +167,11 @@ def UploadAdmissible(list):
     con.close()
 
 
-def UploadAdmis(list):
+def UploadAdmis(liste):
     # pas de champs rang dans la bdd
     assert os.path.exists(DB_PATH), "database not found"
 
-    data = list[2:]
+    data = liste[2:]
 
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
@@ -188,9 +201,74 @@ def UploadAdmis(list):
     con.close()
 
 
+def UploadEcole(liste):
+    # pas de champs rang dans la bdd
+    assert os.path.exists(DB_PATH), "database not found"
+
+    data = liste[2:]
+
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+    for line in data:
+        # we check if the data exist already
+        query = "INSERT INTO ecole(code, nom) VALUES(?,?)"
+        cur.execute(query, (line[0], line[1],))
+    con.commit()
+    con.close()
 
 
+def UploadNote(liste, typeExam: str):
+    # type exam is a string that correspond to a type of exam such a written, oral, ...
+    assert os.path.exists(DB_PATH), "database not found"
 
+    data = liste[3:]
+
+    id_matiere = []
+    typeE = AddTypeExam(typeExam)
+    for i in range(1, len(liste[1])):
+        id_matiere.append(AddMatiere(liste[1][i], liste[2][i]))
+
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+    query = "INSERT INTO notes(can_code, matiere_id,type_id, value) VALUES(?,?,?,?)"
+    for line in data:
+        for i in range(1, len(line)):
+            if line[i]:
+                cur.execute(query, (line[0], id_matiere[i-1], typeE, line[i],))
+    con.commit()
+    con.close()
+
+
+def AddTypeExam(name: str):
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+
+    cur.execute("SELECT type_id FROM typeExam WHERE label=?", (name,))
+    res = cur.fetchall()
+    if not res:
+        cur.execute("INSERT INTO typeExam(label) VALUES(?)", (name,))
+        cur.execute("SELECT type_id FROM typeExam WHERE label=?", (name,))
+        res = cur.fetchall()
+    con.commit()
+
+    con.close()
+    return res[0][0]
+
+
+def AddMatiere(name: str, code = None):
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+
+    cur.execute("SELECT matiere_id FROM matiere WHERE label=?", (name,))
+    res = cur.fetchall()
+    if not res:
+        cur.execute("INSERT INTO matiere(label,code) VALUES(?,?)", (name,code,))
+        cur.execute("SELECT matiere_id FROM matiere WHERE label=?", (name,))
+        res = cur.fetchall()
+    con.commit()
+
+    con.close()
+    return res[0][0]
 
 
 def AddCommune(name: str):
@@ -207,10 +285,10 @@ def AddCommune(name: str):
     con.commit()
 
     con.close()
-    return res
+    return res[0][0]
 
 
-def AddCountry(name :str):
+def AddCountry(name: str):
     # add the country to the bdd if it doesn't exist and return it's code
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
@@ -227,7 +305,7 @@ def AddCountry(name :str):
     return res[0][0]
 
 
-def AddResultat(name :str):
+def AddResultat(name: str):
     # add the result of the admission to the bdd if it doesn't exist and return it's code
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
@@ -244,7 +322,7 @@ def AddResultat(name :str):
     return res[0][0]
 
 
-def AddEtabl(name :str):
+def AddEtabl(name: str):
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
     
