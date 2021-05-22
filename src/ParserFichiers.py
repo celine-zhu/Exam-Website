@@ -11,7 +11,7 @@ from src.PolyMorph_Lecture import *
 DB_PATH = "../bdd/project.db"
 
 
-def pars_inscription(file: list):
+def UploadInscription(file: list):
     name = file[0]
     if name.split("/")[-1] != "Inscription.xlsx":
         print("Attention, ce n'est peut-être pas le bon fichier", file=sys.stderr)
@@ -66,9 +66,9 @@ def pars_inscription(file: list):
                  "sujet_tipe": line[43],
                  "ine": line[44],
                  "cod_csp_pere": line[45],  # int,
-                 "lib_csp_pere": line[46],
+                 #"lib_csp_pere": line[46],
                  "cod_csp_mere": line[47],  # int,
-                 "lib_csp_mere": line[48],
+                 #"lib_csp_mere": line[48],
                  "code_etat_dossier": line[49],  # int,
                  "lib_etat_dossier": line[50],
                  "arr_naissance": line[51],  # int,
@@ -76,6 +76,10 @@ def pars_inscription(file: list):
                  "qualite": line[53],
                  "can_dep_bac": line[54],  # int
                  }
+
+        AddCSP(champ["cod_csp_pere"], line[46])
+        AddCSP(champ["cod_csp_mere"], line[48])
+
         # Il faut verifier si l'entrée existe déjà (avec le code_candidat)
         # Si oui: on met à jour. Sinon: on crée et on rempli le champ
 
@@ -237,6 +241,20 @@ def UploadNote(liste, typeExam: str):
                 cur.execute(query, (line[0], id_matiere[i-1], typeE, line[i],))
     con.commit()
     con.close()
+
+
+def AddCSP(code: int, lib: str):
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+
+    cur.execute("SELECT csp FROM csp WHERE code_csp=?", (code,))
+    res = cur.fetchall()
+    if not res:
+        cur.execute("INSERT INTO csp(code_csp, csp) VALUES(?, ?)", (code, lib,))
+    con.commit()
+
+    con.close()
+    return code, lib
 
 
 def AddTypeExam(name: str):
