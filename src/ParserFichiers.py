@@ -81,6 +81,7 @@ def pars_inscription(file: list):
 
         # Avant d'inserer le champ, il faut remplir les tables auxiliaires, afin d'avoir éventuellement l'index associé
         # a mettre dans l'entrée de "candidat"
+
         str_excl = "(" + "?, " * len(champ.keys())
         str_excl = str_excl[:-2] + ")"  # Donne "(?, ?, ?, ?, ?)" avec autant de "?" que de données
 
