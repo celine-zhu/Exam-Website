@@ -30,28 +30,27 @@ def Candidat():
 
 @app.route('/Candidat', methods=['POST', 'GET'])
 def cand():
+    error = None
     if request.method == 'POST':
-        candidat = request.form.get('Nom du candidat')
-        num = request.form.get('Numéro de Dossier')
-        b = str("select nom from candidat where code=" + str(num))
-        c = getdb().cursor()
-        c.execute(b)
-        content = []
-        for i in c.fetchall():
-            content.append(i)
-        if candidat == content[0]:
-            return redirect(url_for('Candidat', name=candidat))
-        else:
-            return '''<div> Error, please check that your name and candidate serial are correct<div>
-             <div> <a href="http://127.0.0.1:5000"> retour<div>'''
+        candidat = request.form["candidat"]
+        numero = request.form["numero"]
+        db = getdb()
+        error = None
+        user = db.execute(
+            "SELECT nom FROM candidat WHERE code = ?", (numero,)
+        ).fetchone()
+        if user is None:
+            return " numéro de candidat incorrect"
+        elif user != candidat:
+            error = "Incorrect password."
 
-    return '''
-              <form method="POST">
-                  <div><label>Nom du candidat: <input type="text" name="Nom"></label></div>
-                  <div><label>Numéro de Dossier: <input type="text" name="Num"></label></div>
-                  <input type="submit" value="Submit">
-              </form>
-              <div> <a href="http://127.0.0.1:5000"> retour<div>'''
+        if error is None:
+            # store the user id in a new session and return to the index
+            return redirect(url_for('Candidat', name=candidat))
+
+        return '''<div> Error, please check that your name and candidate serial are correct<div>
+             <div> <a href="http://127.0.0.1:5000"> retour<div>'''
+    return render_template('cand.html', error=error)
 
 
 @app.route('/Candidat/<name>/edit')
@@ -61,34 +60,19 @@ def changinfo():
 
 @app.route('/Ecole')
 @app.route('/Ecole/<name>')
-def get_ecol(name=None):
-    return render_template('template/ecole.html', name=name)
+def ecole():
+    return '<div> <a href="http://127.0.0.1:5000"> retour<div>'
 
 
 @app.route('/Prof')
 @app.route('/Prof/<name>')
-def getelev():
-    return 'mamamia'
+def prof():
+    return '<div> <a href="http://127.0.0.1:5000"> retour<div>'
 
 
 @app.route('/Register')
 def nouveau():
-    return
-
-
-@app.route('/success/<name>')
-def success(name):
-    return 'welcome %s' % name
-
-
-@app.route('/login', methods=['POST', 'GET'])
-def login():
-    if request.method == 'POST':
-        user = request.form['nm']
-        return redirect(url_for('success', name=user))
-    else:
-        user = request.args.get('nm')
-        return redirect(url_for('success', name=user))
+    return '<div> <a href="http://127.0.0.1:5000"> retour<div>'
 
 
 if __name__ == '__main__':
