@@ -41,11 +41,11 @@ foreign key(eco_code) references ecole(code)
 
 CREATE TABLE etablissement(
   rne text primary key,
-  type text not null,
+  type text,
   nom text not null,
-  code_postal integer not null,
+  code_postal integer,
   ville text not null,
-  pays text not null,
+  pays text,
 foreign key(pays) references pays(ind_liste_pays)
 );
 
@@ -73,11 +73,6 @@ CREATE TABLE mention (
 CREATE TABLE csp (
   code_csp integer primary key,
   csp text not null
-);
-
-CREATE TABLE voie (
-  code_voie integer not null,
-  voie text not null
 );
 
 //CREATE TABLE notes (
