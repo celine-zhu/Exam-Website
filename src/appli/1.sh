@@ -7,6 +7,5 @@ pip3 freeze
 pip3 freeze > requirements.txt 
 pip3 install -r requirements.txt 
 pip3 install click
-pip3 install sqlite3
 deactivate
 exit $?
