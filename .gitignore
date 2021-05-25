@@ -1,0 +1,5 @@
+/venv/
+/src/pycache/
+/.idea/
+# Temp file when opening an Excel file
+/data/public/~$*
