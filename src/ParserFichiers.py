@@ -138,7 +138,7 @@ def UploadEtabli(file: list):
 def UploadListeVoeux(liste):
     assert os.path.exists(DB_PATH), "database not found"
 
-    data = list[2:]
+    data = liste[2:]
 
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
@@ -150,26 +150,29 @@ def UploadListeVoeux(liste):
 
 
 # a tester,
-def UploadAdmissible(liste):
+def UploadAdm(liste, resulttype: str = "Admissible"):
     assert os.path.exists(DB_PATH), "database not found"
 
     data = liste[2:]
 
-    con = sqlite3.connect(DB_PATH)
-    cur = con.cursor()
     cividico = {
         "M.": 1,
         "Mme": 2
     }
-    code_resultat = AddResultat("admissible")
+    code_resultat = AddResultat(resulttype)
 
     for line in data:
         # we check if the data exist already
 
         id_commune = AddCommune(line[7])
         id_contry = AddCountry(line[8])
+
+        con = sqlite3.connect(DB_PATH)
+        cur = con.cursor()
         cur.execute("SELECT code FROM candidat WHERE code=?", (line[0],))
+
         res = cur.fetchall()
+
         #       if we already have a candidate, we juste update it's value
         if res:
             # value de rang?
@@ -177,53 +180,15 @@ def UploadAdmissible(liste):
             query = "UPDATE candidat SET civ_lib=?, nom=?, prenom=?, ad_1=?, ad_2=?, cod_pos=?, com=?, pay_adr=?, mel=?, tel=?, resultat=? WHERE code=?"
             cur.execute(query, (
             line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9],
-            pars.telephone([10]), code_resultat, line[0],))
+            pars.telephone(line[10]), code_resultat, line[0],))
             # else we create a new one
         else:
-            query = "INSERT INTO candidat(code, civ_lib, nom, prenom, ad_1, ad_2, cod_pos, com, pay_adr, mel, tel, resultat) VALUES(?,?,?,?,?,?,?,?,?,?,?)"
+            query = "INSERT INTO candidat(code, civ_lib, nom, prenom, ad_1, ad_2, cod_pos, com, pay_adr, mel, tel, resultat) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)"
             cur.execute(query, (
             line[0], line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9],
-            pars.telephone([10]), code_resultat,))
-    con.commit()
-    con.close()
-
-
-def UploadAdmis(liste):
-    # pas de champs rang dans la bdd
-    assert os.path.exists(DB_PATH), "database not found"
-
-    data = liste[2:]
-
-    con = sqlite3.connect(DB_PATH)
-    cur = con.cursor()
-    cividico = {
-        "M.": 1,
-        "Mme": 2
-    }
-    code_resultat = AddResultat("admissible")
-    for line in data:
-        # we check if the data exist already
-
-        id_commune = AddCommune(line[7])
-        id_contry = AddCountry(line[8])
-        cur.execute("SELECT code FROM candidat WHERE code=?", (line[0],))
-        res = cur.fetchall()
-        #       if we already have a candidate, we juste update it's value
-        if res:
-            # value de rang?
-            # virer les not null qui sont partout
-            query = "UPDATE candidat SET civ_lib=?, nom=?, prenom=?, ad_1=?, ad_2=?, cod_pos=?, com=?, pay_adr=?, mel=?, tel=?, resultat=?  WHERE code=?"
-            cur.execute(query, (
-            line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9],
-            pars.telephone([10]), code_resultat, line[0],))
-            # else we create a new one
-        else:
-            query = "INSERT INTO candidat(code, civ_lib, nom, prenom, ad_1, ad_2, cod_pos, com, pay_adr, mel, tel, resultat) VALUES(?,?,?,?,?,?,?,?,?,?,?)"
-            cur.execute(query, (
-            line[0], line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9],
-            pars.telephone([10]), code_resultat,))
-    con.commit()
-    con.close()
+            pars.telephone(line[10]), code_resultat,))
+        con.commit()
+        con.close()
 
 
 def UploadEcole(liste):
@@ -241,7 +206,7 @@ def UploadEcole(liste):
     con.commit()
     con.close()
 
-
+#fonction a utiliser pour upload les fichiers de ResulttatEcrit, ResultatOral et CMT_Oral
 def UploadNote(liste, typeExam: str):
     # type exam is a string that correspond to a type of exam such a written, oral, ...
     assert os.path.exists(DB_PATH), "database not found"
@@ -251,7 +216,9 @@ def UploadNote(liste, typeExam: str):
     id_matiere = []
     typeE = AddTypeExam(typeExam)
     for i in range(1, len(liste[1])):
-        id_matiere.append(AddMatiere(liste[1][i], liste[2][i]))
+        if liste[1][i]:
+            print(liste[1][i], liste[2][i])
+            id_matiere.append(AddMatiere(liste[1][i], liste[2][i]))
 
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
