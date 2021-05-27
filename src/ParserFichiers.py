@@ -265,7 +265,7 @@ def UploadNote(liste, typeExam: str):
 
 
 def AddCSP(code: int, lib: str):
-    """Add the CSP to the DB if doesn't exist, using his code as index. return its code"""
+    """Add the CSP to the DB if it doesn't exist, using his code as index. return its code"""
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
 
