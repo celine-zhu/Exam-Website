@@ -89,8 +89,8 @@ elif [[ $unameOut == Linux ]]; then
     ./ProjectEnvironnement/bin/python3 -m pip install --upgrade pip
     
     echo "installing dependancy"
-    ./ProjectEnvironnement/bin/pip install click
-    ./ProjectEnvironnement/bin/pip install flask
+	#manque un module pour les fichier exel dans le requirements.txt
+    ./ProjectEnvironnement/bin/pip install -r src/appli/requirements.txt
 
 else
     echo "OS not recognised or handled by the script script : manual installation required" 1>&2
