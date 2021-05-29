@@ -2,41 +2,38 @@
 
 function CheckAPT(){
     which apt-get &> /dev/null
-    if [[ $? -eq 0]]; then
+    if [[ $? -eq 0 ]]; then
         echo "DPKG package manager found"
         _Package="apt-get"
         echo "updating link to repository"
-        eval "$_Package update"
+        $_Package update
         return 0
-    else
-        return 1
     fi
-    
+	return 1  
 }
+
 function CheckDNF(){
     which dnf &> /dev/null
-    if [[ $? -eq 0]]; then
+    if [[ $? -eq 0 ]]; then
         echo "Dandified YUM package manager found"
         _Package="dnf"
         echo "updating link to repository"
-        eval "$_Package clean all" 
+        $_Package clean all
         return 0
-    else
-        return 1
     fi
-    
+		return 1
 }
+
 function CheckYUM(){
     which yum &> /dev/null
     if [[ $? -eq 0 && -z $_Package ]]; then
         echo "Yellowdog Updater Modified package manager found"
         _Package="yum"
         echo "updating link to repository"
-        eval "$_Package clean all"
+        $_Package clean all
         return 0 
-    else
-        return 1
     fi
+    return 1
 }
 
 function LinuxInstallation() {
@@ -44,7 +41,7 @@ function LinuxInstallation() {
     
     CheckAPT || CheckDNF || CheckYUM
 
-    if [[ $? -gt 0]]; then
+    if [[ $? -gt 0 ]]; then
         echo "package manager not handled"
         return 1    
     fi
@@ -52,19 +49,17 @@ function LinuxInstallation() {
     env python3 --version &> /dev/null
     if [ $? -gt 0 ]; then
         echo "python not found --> installing python3"
-        eval "$_Package -y install python3"
+        $_Package -y install python3
     fi
     
     echo "installing python package"
-    eval "$_Package -y install python3-venv"
-    
-    return 0
+    $_Package -y install python3-venv
 }
 
 
 function DarwinInstallation() {
     echo "not implemented yet"
-    return 1
+    exit 1
 }
 
 unameOut="$(uname -s)"
@@ -98,6 +93,6 @@ elif [[ $unameOut == Linux ]]; then
     ./ProjectEnvironnement/bin/pip install flask
 
 else
-    echo "OS not recognised or handled by the script script : manual installation required" 1>&2s
+    echo "OS not recognised or handled by the script script : manual installation required" 1>&2
     exit 1
 fi
