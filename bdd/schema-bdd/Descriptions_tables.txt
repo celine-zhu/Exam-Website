@@ -165,7 +165,7 @@ Ref : candidat.Option_4 > epreuve.epreuve_code
 Ref : candidat.cod_csp_mere > csp.code_csp
 Ref : candidat.cod_csp_pere > csp.code_csp
 
-Ref : candidat.com > commune.commune
+Ref : candidat.com > commune.commune_index
 Ref : candidat.code_ville_ecr > civilite.civilite_index
 
 Ref : candidat.resultat > resultat.resultat_index
@@ -186,8 +186,8 @@ Ref : voeux.eco_cod > ecole.code
 
 Ref : etablissement.pays > pays.pays_code
 
-Ref : notes.can_code < candidat.code
-Ref : notes.matiere_id < matiere.matiere_id
-Ref : notes.type_id < typeExam.type_id
+Ref : notes.can_code > candidat.code
+Ref : notes.matiere_id > matiere.matiere_id
+Ref : notes.type_id > typeExam.type_id
 
 // Creating references
