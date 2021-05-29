@@ -2,128 +2,149 @@
 //// -- Tables and References
 
 // Creating tables
-Table candidat as C {
+Table candidat {
   code int [pk, unique]
-  civ_lib int [not null]
-  nom text [not null]
-  prenom text [not null]
+  civ_lib int
+  nom text
+  prenom text
   autre_prenoms text 
-  date_naissance int [not null]
-  arr_naissance int [not null]
-  ville_naissance text [not null]
-  code_pays_naissance int [not null]
-  francais int  [not null]
-  ad_1 text [not null]
+  date_naissance int
+  arr_naissance int
+  ville_naissance text
+  code_pays_naissance int
+  francais int
+  ad_1 text
   ad_2 text
-  cod_pos int [not null]
-  com int [not null]
-  pay_adr int [not null]
-  code_pay_natio int [not null]
-  mel text [not null]
+  cod_pos int
+  com int
+  pay_adr int
+  code_pay_natio int
+  mel text
   tel text
   por text
   email text
-  etablissement int [not null]
-  Epreuve_1 int [not null]
+  etablissement int
+  Epreuve_1 int
   Option_1 int 
   Option_2 int 
   Option_3 int 
   Option_4 int 
-  code_ville_ecr int [not null]
-  code_concours int [not null]
-  voie int [not null]
-  code_serie int [not null]
-  code_mention int [ not null]
-  bac_date int [not null]
-  sujet_tipe text [not null]
-  ine int [not null]
-  cod_csp_pere int [not null]
-  cod_csp_mere int [not null]
-  code_etat_dossier int [ not null]
-  handicap int [ not null]
-  can_dep_bac int [ not null]
-  rang_ecrit int [not null]
-  rang_oral int [not null]
-  resultat int [not null]
+  code_ville_ecr int
+  code_concours int
+  voie int
+  code_serie int
+  code_mention int
+  bac_date int
+  sujet_tipe text
+  ine int
+  cod_csp_pere int
+  cod_csp_mere int
+  code_etat_dossier int
+  handicap int
+  can_dep_bac int
+  resultat int
   // resultat contient au choix "admis", "admis-spe", "admissible", "admissible-spe"
   // admis implique admis-spe (idem pour admissible)
-  fil int [not null]
+  fil int
   // Index de la filière dans la table filiere 
 }
-Table csp as csp{
+
+Table civilite{
+  civilite_index int [pk]
+  civilite text [not null]
+}
+
+Table commune {
+  commune_index int [pk]
+  commune text [not null]
+}
+
+Table concours {
+  code_concours int [pk]
+  concours text [not null]
+}
+
+//code sociaux professionnel 
+Table csp {
   code_csp int [pk]
   csp text [not null]
 }
-Table epreuve as ep{
-  epreuve_code int [pk, unique]
-  epreuve text [not null]
-}
 
-Table voeux_ecole as V {
-  can_cod int [pk, unique]
-  voe_rang int [not null]
-  voe_ord int [not null]
-  eco_cod int [not null]
- }
-
-Table ecole as Ec {
+Table ecole {
   code int [pk, not null]
   nom text [not null]
 }
 
-Table etablissement as E {
-  rne text [pk, not null]
-  type text [not null]
-  nom text [not null]
-  code_postal int [not null]
-  ville text [not null]
-  pays int [not null]
+Table epreuve {
+  epreuve_code int [pk, unique]
+  epreuve text [not null]
 }
 
-Table FILIERE as F {
+Table etablissement {
+  rne text [pk, not null]
+  type text 
+  nom text [not null]
+  code_postal int
+  ville text
+  pays int
+}
+
+Table filiere {
   filiere_code int [pk]
   liste_filiere text 
 }
 
-Table PAYS as P {
+Table matiere {
+  matiere_id int [pk]
+  label text [not null]
+  code int
+}
+
+Table mention {
+  code_mention int [pk]
+  mention text [not null]
+}
+
+Table notes {
+  can_code int [pk]
+  matiere_id int [pk]
+  type_id int [pk]
+  value real
+}
+
+Table pays {
   pays_code int [pk]
   nom text [not null]
 }
 
-Table civilite as CIV{
-  civilite_code int [pk]
-  civilite text [not null]
-}
-
-Table resultat as RES{
+Table resultat{
   resultat_index int [pk]
   resultat text [not null]
 }
 
-Table COMMUNE as COM{
-  commune_index int [pk]
-  commune text [not null]
-}
-Table villeecrit as vile{
-  vil_code int [pk]
-  ville text [not null]
-}
-Table concours as co{
-  code_concours int [pk]
-  concours text [not null]
-}
-Table seriebac as sb{
+Table seriebac {
   code_serie int [pk]
   serie text [not null]
 }
-Table mention as me{
-  code_mention int [pk]
-  mention text [not null]
+
+
+Table typeExam {
+  type_id int [pk]
+  label text [not null]
 }
-Table voie as vo{
+
+Table voeux_ecole as voeux {
+  can_cod int [pk]
+  eco_cod int [pk]
+  voe_rang int [not null]
+  voe_ord int [not null]
+}
+
+Table voie {
   code_voie int [not null]
   voie text [not null]
 }
+
 // Creating references
 // You can also define relaionship separately
 // > many-to-one; < one-to-many; - one-to-one
@@ -131,28 +152,42 @@ Table voie as vo{
 //Ref: merchants.country_code > countries.code
 
 //----------------------------------------------//
-Ref : C.com > COM.commune
-Ref : C.Epreuve_1 > ep.epreuve_code
-Ref : C.Option_1 > ep.epreuve_code
-Ref : C.Option_2 > ep.epreuve_code
-Ref : C.Option_3 > ep.epreuve_code
-Ref : C.Option_4 > ep.epreuve_code
-Ref : C.resultat > RES.resultat_index
-Ref : C.code_pays_naissance > P.pays_code
-Ref : C.code_pay_natio > P.pays_code
-Ref : C.code_ville_ecr > vile.ville
-Ref : C.cod_csp_mere > csp.code_csp
-Ref : C.cod_csp_pere > csp.code_csp
-Ref : C.code_concours > co.code_concours
-Ref : C.etablissement > etablissement.rne
-Ref : C.code_serie > sb.code_serie
-Ref : C.code_mention > me.code_mention
-Ref : C.voie > vo.voie 
-Ref : C.code - V.can_cod
-Ref : V.eco_cod > Ec.code
-Ref : C.civ_lib > CIV.civilite_code
-Ref : C.pay_adr > P.pays_code
-Ref : E.pays > P.pays_code
-Ref : "candidat"."fil" > FILIERE."filiere_code"
+Ref : candidat.code_pays_naissance > pays.pays_code
+Ref : candidat.code_pay_natio > pays.pays_code
+Ref : candidat.pay_adr > pays.pays_code
+
+Ref : candidat.Epreuve_1 > epreuve.epreuve_code
+Ref : candidat.Option_1 > epreuve.epreuve_code
+Ref : candidat.Option_2 > epreuve.epreuve_code
+Ref : candidat.Option_3 > epreuve.epreuve_code
+Ref : candidat.Option_4 > epreuve.epreuve_code
+
+Ref : candidat.cod_csp_mere > csp.code_csp
+Ref : candidat.cod_csp_pere > csp.code_csp
+
+Ref : candidat.com > commune.commune
+Ref : candidat.code_ville_ecr > civilite.civilite_index
+
+Ref : candidat.resultat > resultat.resultat_index
+
+Ref : candidat.code_concours > concours.code_concours
+Ref : candidat.etablissement > etablissement.rne
+
+Ref : candidat.code_serie > seriebac.code_serie
+Ref : candidat.code_mention > mention.code_mention
+
+Ref : candidat.voie > voie.voie 
+
+Ref : candidat.civ_lib > civilite.civilite_index
+Ref : candidat.fil > filiere.filiere_code
+
+Ref : voeux.can_cod > candidat.code
+Ref : voeux.eco_cod > ecole.code
+
+Ref : etablissement.pays > pays.pays_code
+
+Ref : notes.can_code < candidat.code
+Ref : notes.matiere_id < matiere.matiere_id
+Ref : notes.type_id < typeExam.type_id
 
 // Creating references
