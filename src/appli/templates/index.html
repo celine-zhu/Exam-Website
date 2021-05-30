@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="column is-4 is-offset-4">
+    <h3 class="title">JE SUIS</h3>
+    &thinsp;
+    <div class="box">
+        <form method="POST" action="/login">
+            <div class="field">
+                <div class="control">
+                     <div> <a href="http://127.0.0.1:5000/Candidat"  class="button is-block is-info is-large is-fullwidth"> Un candidat </a> <div>
+                </div>
+            </div>
+            </div>
+            <br>
+            <div class="field">
+                <div class="control">
+                     <div> <a href="http://127.0.0.1:5000/Prof" class="button is-block is-info is-large is-fullwidth"> Un professeur</a><div>
+                </div>
+            </div>
+            <div>
+            &nbsp;
+            </div>
+             <div class="field">
+                <div class="control">
+                     <div> <a href="http://127.0.0.1:5000/Register" class="button is-block is-info is-large is-fullwidth"> Un nouveau candidat</a><div>
+                </div>
+              <div>
+            &nbsp;
+            </div>  
+            </div>
+             <div class="field">
+                <div class="control">
+                     <div> <a href="http://127.0.0.1:5000/Admin" class="button is-block is-info is-large is-fullwidth"> Un administrateur</a><div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

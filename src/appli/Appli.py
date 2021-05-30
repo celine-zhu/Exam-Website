@@ -1,10 +1,12 @@
 from flask import Flask, Blueprint, render_template, abort, request, redirect, url_for
 from flask import g
+from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash
 # from reportlab.pdfgen.canvas import Canvas
 import sqlite3
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
-DATABASE = "../bdd/project.db"
+DATABASE = "../../bdd/project.db"
 
 
 def getdb():
@@ -29,7 +31,7 @@ def Candidat(name):
             "SELECT * FROM candidat WHERE code = ?", (name,)
         ).fetchall()
     
-    return 'template pour les infos à créer'
+    return render_template( 'candidat.html', **locals())
 
 
 @app.route('/Candidat',methods=['POST','GET'])

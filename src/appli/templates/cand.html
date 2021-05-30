@@ -1,10 +1,90 @@
-<html>
+{% extends "base.html" %}
+
+{% block content %}
    <body>
       <form action = "http://localhost:5000/Candidat" method = "post">
-         <p>Enter Name:</p>
-         <p><input type = "text" name = "nm" /></p>
-         <p><input type = "text" code = "nm" /></p>
-         <p><input type = "submit" value = "submit" /></p>
+         <p>  code  PRIMARY_KEY</p>
+         <p>{{user[]}}</p>
+         <p>civ_lib  </p>
+         <p>{{user[]}}</p>
+         <p>  nom   </p>
+         <p>{{user[]}}</p>
+         <p>  prenom </p>
+         <p>{{user[]}}</p>
+         <p>  autre_prenoms </p>
+         <p>{{user[]}}</p>
+         <p>  date_naissance  </p>
+         <p>{{user[]}}</p>
+         <p>  arr_naissance  </p>
+         <p>{{user[]}}</p>
+         <p>ville_naissance  </p>
+         <p>{{user[]}}</p>
+         <p>  code_pays_naissance  </p>
+         <p>{{user[]}}</p>            
+         <p>  francais  </p>
+         <p>{{user[]}}</p>         
+         <p>  ad_1  </p>
+         <p>{{user[]}}</p>         
+         <p>ad_2 </p>
+         <p>{{user[]}}</p>v         
+         <p>  cod_pos  </p>
+         <p>{{user[]}}</p>         
+         <p>  com </p>
+         <p>{{user[]}}</p>         
+         <p>  pay_adr  </p>
+         <p>{{user[]}}</p>      
+         <p>  code_pay_natio  </p>
+         <p>{{user[]}}</p>         
+         <p>  mel  </p>
+         <p>{{user[]}}</p>         
+         <p>  tel </p>
+         <p>{{user[]}}</p>         
+         <p>  por </p>
+         <p>{{user[]}}</p>         
+         <p>email </p>
+         <p>{{user[]}}</p>
+         <p>  etablissement  </p>
+         <p>{{user[]}}</p>
+         <p>  Epreuve_1  </p>
+         <p>{{user[]}}</p>
+         <p>  Option_1 </p>
+         <p>{{user[]}}</p>
+         <p> Option_2 </p>
+         <p>{{user[]}}</p>
+         <p>Option_3 </p>
+         <p>{{user[]}}</p>
+         <p>  Option_4 </p>
+         <p>{{user[]}}</p>
+         <p>  code_ville_ecr </p>
+         <p>{{user[]}}</p>
+         <p> code_concours  </p>
+         <p>{{user[]}}</p>
+         <p> voie  </p>
+         <p>{{user[]}}</p>
+         <p> code_serie </p>
+         <p>{{user[]}}</p>
+         <p>  code_mention  </p>
+         <p>{{user[]}}</p>
+         <p>  bac_date  </p>
+         <p>{{user[]}}</p>
+         <p>sujet_tipe  </p>
+         <p>{{user[]}}</p>
+         <p> ine </p>
+         <p>{{user[]}}</p>
+         <p>  cod_csp_pere  </p>
+         <p>{{user[]}}</p>
+         <p>  cod_csp_mere </p>
+         <p>{{user[]}}</p>
+         <p>  code_etat_dossier  </p>
+         <p>{{user[]}}</p>
+         <p> handicap </p>
+         <p>{{user[]}}</p>
+         <p>can_dep_bac  </p>
+         <p>{{user[]}}</p>
+         <p>resultat </p>
+         <p>{{user[]}}</p>
+           
+         <p><input type = "submit" value = "obtenir pdf" /></p>
       </form>   
    </body>
-</html>
+{% endblock %}
