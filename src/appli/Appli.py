@@ -1,5 +1,7 @@
 from flask import Flask, Blueprint, render_template, abort, request, redirect, url_for
 from flask import g
+from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash
 # from reportlab.pdfgen.canvas import Canvas
 import sqlite3
 

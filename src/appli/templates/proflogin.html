@@ -1,4 +1,6 @@
-<html>
+{% extends "base.html" %}
+
+{% block content %}
    <body>
       <form action = "http://localhost:5000/Prof" method = "post">
          <p>Enter School Name:</p>
@@ -9,4 +11,4 @@
       </form> 
       <div> <a href="http://127.0.0.1:5000"> retour<div>  
    </body>
-</html>
+{% endblock %}
