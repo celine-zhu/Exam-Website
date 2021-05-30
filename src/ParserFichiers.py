@@ -149,15 +149,16 @@ def UploadListeVoeux(liste):
     con.close()
 
 
-# a tester,
+
 def UploadAdm(liste, resulttype: str = "Admissible"):
     assert os.path.exists(DB_PATH), "database not found"
 
     data = liste[2:]
-
+    m = AddCivilite("M.")
+    mme = AddCivilite("Mme")
     cividico = {
-        "M.": 1,
-        "Mme": 2
+        "M.": m,
+        "Mme": mme
     }
     code_resultat = AddResultat(resulttype)
 
@@ -177,18 +178,20 @@ def UploadAdm(liste, resulttype: str = "Admissible"):
         if res:
             # value de rang?
             # virer les not null qui sont partout
-            query = "UPDATE candidat SET civ_lib=?, nom=?, prenom=?, ad_1=?, ad_2=?, cod_pos=?, com=?, pay_adr=?, mel=?, tel=?, resultat=? WHERE code=?"
+            query = "UPDATE candidat SET civ_lib=?, nom=?, prenom=?, ad_1=?, ad_2=?, cod_pos=?, com=?, pay_adr=?, mel=?, tel=?, por=?, resultat=? WHERE code=?"
             cur.execute(query, (
             line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9],
-            pars.telephone(line[10]), code_resultat, line[0],))
+            pars.telephone(line[10]),pars.telephone(line[11]),code_resultat, line[0],))
             # else we create a new one
         else:
-            query = "INSERT INTO candidat(code, civ_lib, nom, prenom, ad_1, ad_2, cod_pos, com, pay_adr, mel, tel, resultat) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)"
+            query = "INSERT INTO candidat(code, civ_lib, nom, prenom, ad_1, ad_2, cod_pos, com, pay_adr, mel, tel, por, resultat) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)"
             cur.execute(query, (
             line[0], line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9],
-            pars.telephone(line[10]), code_resultat,))
+            pars.telephone(line[10]), pars.telephone(line[11]), code_resultat,))
         con.commit()
         con.close()
+
+
 
 
 def UploadEcole(liste):
@@ -341,5 +344,21 @@ def AddEtabl(code: str, name: str, ville: str):
         res = cur.fetchall()
 
     con.commit()
+    con.close()
+    return res[0][0]
+
+def AddCivilite(name: str):
+    # add the commune to the bdd if it doesn't exist and return it's code
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+
+    cur.execute("SELECT civilite_index FROM civilite WHERE civilite=?", (name,))
+    res = cur.fetchall()
+    if not res:
+        cur.execute("INSERT INTO civilite(civilite) VALUES(?)", (name,))
+        cur.execute("SELECT civilite_index FROM civilite WHERE civilite=?", (name,))
+        res = cur.fetchall()
+    con.commit()
+
     con.close()
     return res[0][0]
