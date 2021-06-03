@@ -25,9 +25,13 @@ Table candidat {
   code_puissance int
   code_etabl int
   Epreuve_1 int
+  Option_1 int
   Epreuve_2 int
+  Option_2 int
   Epreuve_3 int
+  Option_3 int
   Epreuve_4 int
+  Option_4 int
   code_ville_ecr int
   code_concours int
   code_voie int
@@ -171,9 +175,14 @@ Ref : candidat.code_pay_natio > pays.pays_code
 Ref : candidat.pay_adr > pays.pays_code
 
 Ref : candidat.Epreuve_1 > epreuve.epreuve_code
+Ref : candidat.Option_1 > epreuve.epreuve_code
 Ref : candidat.Epreuve_2 > epreuve.epreuve_code
+Ref : candidat.Option_2 > epreuve.epreuve_code
 Ref : candidat.Epreuve_3 > epreuve.epreuve_code
+Ref : candidat.Option_3 > epreuve.epreuve_code
 Ref : candidat.Epreuve_4 > epreuve.epreuve_code
+Ref : candidat.Option_4 > epreuve.epreuve_code
+
 
 Ref : candidat.code_csp_mere > csp.code_csp
 Ref : candidat.code_csp_pere > csp.code_csp
