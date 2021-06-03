@@ -182,6 +182,7 @@ def UploadListeVoeux(liste):
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
     for line in data:
+        UpdateVoieCandidat(liste[0], line[0])
         query = "INSERT INTO voeux_ecole(can_code, voe_rang, voe_ord, eco_code, Ata_cod) VALUES(?,?,?,?,?)"
         cur.execute(query, (line[0], line[1], line[2], line[3],-11))
     con.commit()
@@ -249,7 +250,6 @@ def UploadEcole(liste):
 
 #fonction a utiliser pour upload les fichiers de ResulttatEcrit, ResultatOral et CMT_Oral
 def UploadNote(liste, typeExam: str = "ecrit"):
-
     # type exam is a string that correspond to a type of exam such a written, oral, ...
     assert os.path.exists(DB_PATH), "database not found"
 
@@ -258,14 +258,16 @@ def UploadNote(liste, typeExam: str = "ecrit"):
     id_matiere = []
     typeE = AddTypeExam(typeExam)
     for i in range(1, len(liste[1])):
+
         if liste[1][i]:
-            print(liste[1][i], liste[2][i])
             id_matiere.append(AddMatiere(liste[1][i], liste[2][i]))
 
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
     query = "INSERT INTO notes(can_code, matiere_id,type_id, value) VALUES(?,?,?,?)"
     for line in data:
+        if typeExam == "cmt":
+            UpdateVoieCandidat(liste[0],line[0])
         for i in range(1, len(line)):
             if line[i]:
                 cur.execute(query, (line[0], id_matiere[i - 1], typeE, line[i],))
@@ -375,6 +377,24 @@ def AddVoie(name: str):
         cur.execute("INSERT INTO voie(voie) VALUES(?)", (name,))
         cur.execute("SELECT code_voie FROM voie WHERE voie=?", (name,))
         res = cur.fetchall()
+    con.commit()
+
+    con.close()
+    return res[0][0]
+
+
+def UpdateVoieCandidat(filename: str, can_code):
+    # add the commune to the bdd if it doesn't exist and return it's code
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+
+    cur.execute("SELECT code FROM candidat WHERE code=?", (can_code,))
+    res = cur.fetchall()
+    if not res:
+        cur.execute("INSERT INTO candidat(code,code_voie) VALUES(?)", (can_code, AddVoie(pars.findVoie(filename)),))
+        res = cur.fetchall()
+    else:
+        cur.execute("UPDATE candidat SET code_voie=? WHERE code =?", (AddVoie(pars.findVoie(filename)),can_code,))
     con.commit()
 
     con.close()
