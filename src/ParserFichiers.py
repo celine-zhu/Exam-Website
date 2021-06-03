@@ -135,6 +135,18 @@ def UploadEtabli(file: list):
     return nom_champs, list_champ
 
 
+def UploadListReponse(liste):
+    assert os.path.exists(DB_PATH), "database not found"
+
+    data = liste[2:]
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+    for line in data:
+        query = "INSERT INTO reponse(Ata_cod, Ata_lib) VALUES(?,?)"
+        cur.execute(query, (line[0], line[1],))
+    con.commit()
+    con.close()
+
 def UploadListeVoeux(liste):
     assert os.path.exists(DB_PATH), "database not found"
 
@@ -143,14 +155,14 @@ def UploadListeVoeux(liste):
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
     for line in data:
-        query = "INSERT INTO voeux_ecole(can_code, voe_rang, voe_ord, eco_code) VALUES(?,?,?,?)"
-        cur.execute(query, (line[0], line[1], line[2], line[3]))
+        query = "INSERT INTO voeux_ecole(can_code, voe_rang, voe_ord, eco_code, Ata_cod) VALUES(?,?,?,?,?)"
+        cur.execute(query, (line[0], line[1], line[2], line[3],-11))
     con.commit()
     con.close()
 
 
 
-def UploadAdm(liste, resulttype: str = "Admissible"):
+def UploadAdm(liste, resulttype: str = "admissible"):
     assert os.path.exists(DB_PATH), "database not found"
 
     data = liste[2:]
@@ -177,7 +189,6 @@ def UploadAdm(liste, resulttype: str = "Admissible"):
         #       if we already have a candidate, we juste update it's value
         if res:
             # value de rang?
-            # virer les not null qui sont partout
             query = "UPDATE candidat SET civ_lib=?, nom=?, prenom=?, ad_1=?, ad_2=?, cod_pos=?, com=?, pay_adr=?, mel=?, tel=?, por=?, resultat=? WHERE code=?"
             cur.execute(query, (
             line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9],
@@ -190,9 +201,6 @@ def UploadAdm(liste, resulttype: str = "Admissible"):
             pars.telephone(line[10]), pars.telephone(line[11]), code_resultat,))
         con.commit()
         con.close()
-
-
-
 
 def UploadEcole(liste):
     # pas de champs rang dans la bdd
@@ -210,7 +218,7 @@ def UploadEcole(liste):
     con.close()
 
 #fonction a utiliser pour upload les fichiers de ResulttatEcrit, ResultatOral et CMT_Oral
-def UploadNote(liste, typeExam: str):
+def UploadNote(liste, typeExam: str = "ecrit"):
     # type exam is a string that correspond to a type of exam such a written, oral, ...
     assert os.path.exists(DB_PATH), "database not found"
 
