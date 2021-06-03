@@ -138,11 +138,17 @@ Table voeux_ecole as voeux {
   eco_cod int [pk]
   voe_rang int [not null]
   voe_ord int [not null]
+  Ata_cod int
 }
 
 Table voie {
-  code_voie int [not null]
+  code_voie int [pk]
   voie text [not null]
+}
+
+Table reponse {
+  Ata_cod int [pk]
+  Ata_lib text [not null]
 }
 
 // Creating references
@@ -166,7 +172,7 @@ Ref : candidat.cod_csp_mere > csp.code_csp
 Ref : candidat.cod_csp_pere > csp.code_csp
 
 Ref : candidat.com > commune.commune_index
-Ref : candidat.code_ville_ecr > civilite.civilite_index
+Ref : candidat.code_ville_ecr > commune.commune_index
 
 Ref : candidat.resultat > resultat.resultat_index
 
@@ -176,7 +182,7 @@ Ref : candidat.etablissement > etablissement.rne
 Ref : candidat.code_serie > seriebac.code_serie
 Ref : candidat.code_mention > mention.code_mention
 
-Ref : candidat.voie > voie.voie 
+Ref : candidat.voie > voie.code_voie 
 
 Ref : candidat.civ_lib > civilite.civilite_index
 Ref : candidat.fil > filiere.filiere_code
@@ -190,4 +196,5 @@ Ref : notes.can_code > candidat.code
 Ref : notes.matiere_id > matiere.matiere_id
 Ref : notes.type_id > typeExam.type_id
 
+Ref : voeux.Ata_cod > reponse.Ata_cod
 // Creating references
