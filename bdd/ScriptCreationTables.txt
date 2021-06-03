@@ -18,20 +18,20 @@ CREATE TABLE voie (
   voie text not null
 );
 
-CREATE TABLE puissance {
+CREATE TABLE puissance (
   code_puissance integer primary key,
   puissance text not null
-}
+);
 
-CREATE TABLE qualite {
+CREATE TABLE qualite (
   code_qualite integer primary key,
   qualite text not null
-}
+);
 
-CREATE TABLE etat_dossier {
+CREATE TABLE etat_dossier (
   code_etat_dossier integer primary key,
   etat_dossier text not null
-}
+);
 
 CREATE TABLE pays(
   pays_code integer primary key,
