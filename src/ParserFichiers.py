@@ -332,13 +332,13 @@ def InsertData(data: dict, name_id: str, name_table: str, name_select: str):
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
 
-    cur.execute(f"SELECT {name_id} FROM {name_table} WHERE {name_select}=?", tuple(data[name_select]))
+    cur.execute(f"SELECT {name_id} FROM {name_table} WHERE {name_select}=?", (data[name_select],))
     res = cur.fetchall()
     if not res:
         str_excl = "(" + "?, " * len(data.keys())
         str_excl = str_excl[:-2] + ")"  # Ne marche pas sinon
         cur.execute(f"INSERT INTO {name_table} {tuple(data.keys())} VALUES {str_excl}", tuple(data.values()))
-        cur.execute(f"SELECT {name_id} FROM {name_table} WHERE {name_select}=?", tuple(data.values()))
+        cur.execute(f"SELECT {name_id} FROM {name_table} WHERE {name_select}=?", (data[name_select],))
         res = cur.fetchall()
     con.commit()
 
