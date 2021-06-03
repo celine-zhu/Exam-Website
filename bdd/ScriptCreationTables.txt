@@ -13,14 +13,29 @@ CREATE TABLE commune(
   commune text not null
 );
 
-CREATE TABLE filiere (
-  filiere_code integer primary key,
-liste_filiere text
+CREATE TABLE voie (
+  code_voie integer primary key,
+  voie text not null
+);
+
+CREATE TABLE puissance (
+  code_puissance integer primary key,
+  puissance text not null
+);
+
+CREATE TABLE qualite (
+  code_qualite integer primary key,
+  qualite text not null
+);
+
+CREATE TABLE etat_dossier (
+  code_etat_dossier integer primary key,
+  etat_dossier text not null
 );
 
 CREATE TABLE pays(
-pays_code integer primary key,
-liste_pays text
+  pays_code integer primary key,
+  liste_pays text
 );
 
 CREATE TABLE ecole (
@@ -28,16 +43,23 @@ CREATE TABLE ecole (
   nom text not null
 );
 
+CREATE TABLE reponse (
+  Ata_cod integer primary key,
+  Ata_lib text not null
+)
+
 CREATE TABLE voeux_ecole  (
   can_code integer not null,
+  eco_code integer not null,
   voe_rang integer not null,
   voe_ord integer not null,
-  eco_code integer not null,
+  Ata_cod int,
+  
   PRIMARY KEY(can_code, eco_code),
-foreign key(can_code) references candidat(cod),
-foreign key(eco_code) references ecole(code)
+  foreign key(can_code) references candidat(cod),
+  foreign key(eco_code) references ecole(code),
+  foreign key(Ata_cod) references reponse(Ata_cod)
  );
-
 
 CREATE TABLE etablissement(
   rne text primary key,
@@ -53,7 +75,6 @@ CREATE TABLE epreuve(
   epreuve_code integer primary key,
   epreuve text not null
 );
-
 
 CREATE TABLE concours (
   code_concours integer primary key,
@@ -74,19 +95,6 @@ CREATE TABLE csp (
   code_csp integer primary key,
   csp text not null
 );
-
-//CREATE TABLE notes (
-//  Num integer,
-//  rang integer,
-//  total integer,
-//  Moyenne integer,
-//  Bonification integer,
-//  Maths integer,
-//  Scphy integer,
-//  Fr integer,
-//  Si integer,
-//  Ang integer
-//);
 
 CREATE TABLE notes (
     can_code integer,
@@ -127,54 +135,61 @@ CREATE TABLE candidat (
   com integer,
   pay_adr integer ,
   code_pay_natio integer ,
-  mel text ,
   tel text,
   por text,
   email text,
-  etablissement integer ,
-  Epreuve_1 integer ,
-  Option_1 integer, 
-  Option_2 integer, 
-  Option_3 integer, 
-  Option_4 integer, 
+  code_puissance integer,
+  code_etabl integer ,
+  epreuve_1 integer ,
+  option_1 integer, 
+  epreuve_2 integer ,
+  option_2 integer, 
+  epreuve_3 integer ,
+  option_3 integer, 
+  epreuve_4 integer ,
+  option_4 integer, 
   code_ville_ecr integer,
   code_concours integer ,
-  voie integer ,
+  code_voie integer ,
+  bac_date integer ,
   code_serie integer ,
   code_mention integer ,
-  bac_date integer ,
   sujet_tipe text ,
-  ine integer ,
-  cod_csp_pere integer ,
-  cod_csp_mere integer ,
+  ine text ,
+  code_csp_pere integer ,
+  code_csp_mere integer ,
   code_etat_dossier integer ,
   handicap integer,
+  code_qualite integer,
   can_dep_bac integer ,
   resultat integer ,
   // resultat contient au choix "admis", "admis-spe", "admissible", "admissible-spe"
   // admis implique admis-spe (idem pour admissible)
-  fil integer,
-  // Index de la filière dans la CREATE TABLE filiere 
   
   foreign key(code_pays_naissance) references pays(pays_code),
   foreign key(pay_adr) references pays(pays_code),
   foreign key(code_pay_natio) references pays(pays_code),
-  foreign key(etablissement) references etablissement(rne),
+  foreign key(code_etabl) references etablissement(rne),
   foreign key(com) references commune(commune_index),
   foreign key(civ_lib) references civilite(civilite_index),
-  foreign key(Epreuve_1) references epreuve(epreuve_code),
-  foreign key(Option_1) references epreuve(epreuve_code),
-  foreign key(Option_2) references epreuve(epreuve_code),
-  foreign key(Option_3) references epreuve(epreuve_code),
-  foreign key(Option_4) references epreuve(epreuve_code),
+  foreign key(epreuve_1) references epreuve(epreuve_code),
+  foreign key(option_1) references epreuve(epreuve_code),
+  foreign key(epreuve_2) references epreuve(epreuve_code),
+  foreign key(option_2) references epreuve(epreuve_code),
+  foreign key(epreuve_3) references epreuve(epreuve_code),
+  foreign key(option_3) references epreuve(epreuve_code),
+  foreign key(epreuve_4) references epreuve(epreuve_code),
+  foreign key(option_4) references epreuve(epreuve_code),
   foreign key(code_ville_ecr) references civilite(civilite_index),
   foreign key(code_serie) references seriebac(code_serie),
   foreign key(code_concours) references concours(code_concours),
-  foreign key(voie) references voie(code_voie),
+  foreign key(code_voie) references voie(code_voie),
+  foreign key(code_puissance) references puissance(code_puissance),
+  foreign key(code_qualite) references qualite(code_qualite),
+  foreign key(code_etat_dossier) references etat_dossier(code_etat_dossier),
   foreign key(code_mention) references mention(code_mention),
-  foreign key(cod_csp_pere) references csp(code_csp),
-  foreign key(cod_csp_mere) references csp(code_csp),
-  foreign key(resultat) references resultat(resultat_index),
-  foreign key(fil) references filiere(filiere_code)
+  foreign key(code_csp_pere) references csp(code_csp),
+  foreign key(code_csp_mere) references csp(code_csp),
+  foreign key(resultat) references resultat(resultat_index)
 
 );
