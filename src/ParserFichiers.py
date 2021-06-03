@@ -20,10 +20,16 @@ def UploadInscription(file: list):
 
     for line in file[3:]:
 
-        liste_int = [0, 4, 7, 9, 10, 14, 16, 35, 38, 39, 40, 45, 47, 49, 51, 54] # liste des champs contenant des entiers
+        liste_int = [0, 4, 7, 9, 10, 14, 16, 35, 38, 39, 40, 45, 47, 49, 51]  # liste des champs contenant des entiers
         for i in liste_int:  # Passe les nombres en int
             if not line[i] is None:
                 line[i] = int(line[i])
+        if line[54] == "2A":
+            line[54] = "201"
+        if line[54] == "2B":
+            line[54] = "202"
+        elif not line[54] is None:
+            line[54] = int(line[54])
 
         code_ville_naissance = AddCommune(line[6])
         code_pays_naissance = AddCountry(line[8])
@@ -65,14 +71,14 @@ def UploadInscription(file: list):
                  # "code_etabl": code_etabl,  # int, Fct AddEtabl / DB à changer
                  # "etabl": line[24],
                  # "ville_etabl": line[25],
-                 "epreuve_1": line[26],  # Nom champ à vérifier
-                 "option_1": line[27],
+                 "epreuve_1": line[26],
+                 # "option_1": line[27],
                  "epreuve_2": line[28],
-                 "option_2": line[29],
+                 # "option_2": line[29],
                  "epreuve_3": line[30],
-                 "option_3": line[31],
+                 # "option_3": line[31],
                  "epreuve_4": line[32],
-                 "option_4": line[33],
+                 # "option_4": line[33],
                  "code_ville_ecr": code_ville_ecr,
                  "code_concours": line[35],  # int,  # Fonction d'ajout à mettre
                  # "lib_concours": line[36],
@@ -102,10 +108,7 @@ def UploadInscription(file: list):
         # Avant d'inserer le champ, il faut remplir les tables auxiliaires, afin d'avoir éventuellement l'index associé
         # a mettre dans l'entrée de "candidat"
 
-        str_excl = "(" + "?, " * len(champ.keys())
-        str_excl = str_excl[:-2] + ")"  # Donne "(?, ?, ?, ?, ?)" avec autant de "?" que de données
-
-        cur.execute(f"insert into candidat {tuple(champ.keys())} values {str_excl}", tuple(champ.values()))
+        InsertData(champ, "code", "candidat", "code")
         list_champ.append(champ)
 
         con.commit()
@@ -272,128 +275,89 @@ def UploadNote(liste, typeExam: str = "ecrit"):
 
 def AddCSP(code: int, lib: str):
     """Add the CSP to the DB if it doesn't exist, using his code as index. return its code"""
-    con = sqlite3.connect(DB_PATH)
-    cur = con.cursor()
 
-    cur.execute("SELECT csp FROM csp WHERE code_csp=?", (code,))
-    res = cur.fetchall()
-    if not res:
-        cur.execute("INSERT INTO csp(code_csp, csp) VALUES(?, ?)", (code, lib,))
-    con.commit()
+    data = {"code_csp": code, "csp": lib}
+    code_csp = InsertData(data, "code_csp", "csp", "code_csp")
 
-    con.close()
-    return code
+    return code_csp
 
 
 def AddTypeExam(name: str):
-    con = sqlite3.connect(DB_PATH)
-    cur = con.cursor()
 
-    cur.execute("SELECT type_id FROM typeExam WHERE label=?", (name,))
-    res = cur.fetchall()
-    if not res:
-        cur.execute("INSERT INTO typeExam(label) VALUES(?)", (name,))
-        cur.execute("SELECT type_id FROM typeExam WHERE label=?", (name,))
-        res = cur.fetchall()
-    con.commit()
+    data = {"label": name}
+    type_id = InsertData(data, "type_id", "typeExam", "label")
 
-    con.close()
-    return res[0][0]
+    return type_id
 
 
 def AddMatiere(name: str, code=None):
-    con = sqlite3.connect(DB_PATH)
-    cur = con.cursor()
 
-    cur.execute("SELECT matiere_id FROM matiere WHERE label=?", (name,))
-    res = cur.fetchall()
-    if not res:
-        cur.execute("INSERT INTO matiere(label,code) VALUES(?,?)", (name, code,))
-        cur.execute("SELECT matiere_id FROM matiere WHERE label=?", (name,))
-        res = cur.fetchall()
-    con.commit()
+    data = {"label": name, "code": code}
+    matiere_id = InsertData(data, "matiere_id", "matiere", "label")
 
-    con.close()
-    return res[0][0]
+    return matiere_id
 
 
 def AddCommune(name: str):
-    # add the commune to the bdd if it doesn't exist and return it's code
-    con = sqlite3.connect(DB_PATH)
-    cur = con.cursor()
+    """add the commune to the bdd if it doesn't exist and return it's code """
 
-    cur.execute("SELECT commune_index FROM commune WHERE commune=?", (name,))
-    res = cur.fetchall()
-    if not res:
-        cur.execute("INSERT INTO commune(commune) VALUES(?)", (name,))
-        cur.execute("SELECT commune_index FROM commune WHERE commune=?", (name,))
-        res = cur.fetchall()
-    con.commit()
+    data = {"commune": name}
+    commune_index = InsertData(data, "commune_index", "commune", "commune")
 
-    con.close()
-    return res[0][0]
+    return commune_index
 
 
 def AddCountry(name: str):
-    # add the country to the bdd if it doesn't exist and return it's code
-    con = sqlite3.connect(DB_PATH)
-    cur = con.cursor()
+    """ add the country to the bdd if it doesn't exist and return it's code """
 
-    cur.execute("SELECT pays_code FROM pays WHERE liste_pays=?", (name,))
-    res = cur.fetchall()
-    if not res:
-        cur.execute("INSERT INTO pays(liste_pays) VALUES(?)", (name,))
-        cur.execute("SELECT pays_code FROM pays WHERE liste_pays=?", (name,))
-        res = cur.fetchall()
-    con.commit()
+    data = {"liste_pays": name}
+    pays_code = InsertData(data, "pays_code", "pays", "liste_pays")
 
-    con.close()
-    return res[0][0]
+    return pays_code
 
 
 def AddResultat(name: str):
-    # add the result of the admission to the bdd if it doesn't exist and return it's code
-    con = sqlite3.connect(DB_PATH)
-    cur = con.cursor()
+    """ add the result of the admission to the bdd if it doesn't exist and return it's code"""
 
-    cur.execute("SELECT resultat_index FROM resultat WHERE resultat=?", (name,))
-    res = cur.fetchall()
-    if not res:
-        cur.execute("INSERT INTO resultat(resultat) VALUES(?)", (name,))
-        cur.execute("SELECT resultat_index FROM resultat WHERE resultat=?", (name,))
-        res = cur.fetchall()
-    con.commit()
-
-    con.close()
-    return res[0][0]
+    data = {"resultat": name}
+    resultat_index = InsertData(data, "resultat_index", "resultat", "resultat")
+    return resultat_index
 
 
 def AddEtabl(code: str, name: str, ville: str):
-    con = sqlite3.connect(DB_PATH)
-    cur = con.cursor()
 
-    cur.execute("SELECT rne FROM etablissement WHERE nom=?", (name,))
-    res = cur.fetchall()
-    if not res:
-        cur.execute("INSERT INTO etablissement(rne, nom, ville) VALUES(?, ?, ?)", (code, name, ville,))
-        cur.execute("SELECT rne FROM etablissement WHERE nom=?", (name,))
-        res = cur.fetchall()
-
-    con.commit()
-    con.close()
-    return res[0][0]
+    data = {"rne": code, "nom": name, "ville": ville}
+    rne = InsertData(data, "rne", "etablissement", "nom")
+    return rne
 
 
 def AddCivilite(name: str):
-    # add the commune to the bdd if it doesn't exist and return it's code
+    """ add the commune to the bdd if it doesn't exist and return it's code """
+
+    data = {"civilite": name}
+    civilite_index = InsertData(data, "civilite_index", "civilite", "civilite")
+    return civilite_index
+
+
+def InsertData(data: dict, name_id: str, name_table: str, name_select: str):
+    """
+    Insert data in the DB. THis function generalize the code for insertion and avoid repetition of similar code
+    :param data: Dict with an entrie for each entrie in the DB. Key=Name of the attribute / Value=Value of the attribute
+    :param name_id: Attribute used as Primary Key
+    :param name_table: Name of the table used
+    :param name_select: Attribute used to check if the entrie already exist
+    :return: Value used to reference the entrie in an other table
+    """
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
 
-    cur.execute("SELECT civilite_index FROM civilite WHERE civilite=?", (name,))
+    cur.execute(f"SELECT {name_id} FROM {name_table} WHERE {name_select}=?", (data[name_select],))
     res = cur.fetchall()
     if not res:
-        cur.execute("INSERT INTO civilite(civilite) VALUES(?)", (name,))
-        cur.execute("SELECT civilite_index FROM civilite WHERE civilite=?", (name,))
+        str_excl = "(" + "?, " * len(data.keys())
+        str_excl = str_excl[:-2] + ")"  # Ne marche pas sinon
+        cur.execute(f"INSERT INTO {name_table} {tuple(data.keys())} VALUES {str_excl}", tuple(data.values()))
+        cur.execute(f"SELECT {name_id} FROM {name_table} WHERE {name_select}=?", (data[name_select],))
         res = cur.fetchall()
     con.commit()
 
