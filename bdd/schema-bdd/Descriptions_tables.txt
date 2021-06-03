@@ -139,22 +139,22 @@ Table voeux_ecole as voeux {
 }
 
 Table voie {
-  code_voie int [not null]
+  code_voie int [pk]
   voie text [not null]
 }
 
 Table puissance {
-  code_puissance int [not null]
+  code_puissance int [pk]
   puissance text [not null]
 }
 
 Table qualite {
-  code_qualite int [not null]
+  code_qualite int [pk]
   qualite text [not null]
 }
 
 Table etat_dossier {
-  code_etat_dossier int [not null]
+  code_etat_dossier int [pk]
   etat_dossier text [not null]
 }
 
