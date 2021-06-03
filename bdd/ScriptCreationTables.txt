@@ -28,14 +28,22 @@ CREATE TABLE ecole (
   nom text not null
 );
 
+CREATE TABLE reponse (
+  Ata_cod integer primary key,
+  Ata_lib text not null
+)
+
 CREATE TABLE voeux_ecole  (
   can_code integer not null,
+  eco_code integer not null,
   voe_rang integer not null,
   voe_ord integer not null,
-  eco_code integer not null,
+  Ata_cod int,
+  
   PRIMARY KEY(can_code, eco_code),
-foreign key(can_code) references candidat(cod),
-foreign key(eco_code) references ecole(code)
+  foreign key(can_code) references candidat(cod),
+  foreign key(eco_code) references ecole(code),
+  foreign key(Ata_cod) references reponse(Ata_cod)
  );
 
 
