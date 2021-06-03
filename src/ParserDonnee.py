@@ -28,6 +28,18 @@ def telephone(str_tel: str):
         print("Le numéro de téléphone n'est pas dans un format pris en compte", file=sys.stderr)
         return str_tel
 
+def findVoie(filename: str):
+    if "_MP" in filename:
+        return "MP"
+    if "_PC" in filename:
+        return "PC"
+    if "_PSI" in filename:
+        return "PSI"
+    if "_PT" in filename:
+        return "PT"
+    if "_TSI" in filename:
+        return "TSI"
+    return None
 """
 Test:
 tel_possible = ['+33 (0)8 06 39 06 32', '05 94 40 87 21', '0256932111', '+33 5 49 50 46 69']
