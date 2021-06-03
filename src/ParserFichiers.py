@@ -231,6 +231,54 @@ def UploadAdm(liste, resulttype: str = "admissible"):
         con.commit()
         con.close()
 
+def UploadOralEcrit(liste, typeExam : str = "ecrit"):
+    assert os.path.exists(DB_PATH), "database not found"
+
+    code_voie = AddVoie(pars.findVoie(liste[0]))
+    data = liste[2:]
+    m = AddCivilite("M.")
+    mme = AddCivilite("Mme")
+    cividico = {
+        "M.": m,
+        "Mme": mme
+    }
+
+    for line in data:
+        # we check if the data exist already
+
+        id_commune = AddCommune(line[7])
+        id_contry = AddCountry(line[8])
+
+        con = sqlite3.connect(DB_PATH)
+        cur = con.cursor()
+        cur.execute("SELECT code FROM candidat WHERE code=?", (line[0],))
+
+        res = cur.fetchall()
+
+        #       if we already have a candidate, we juste update it's value
+        if res:
+            # value de rang?
+            query = "UPDATE candidat SET civ_lib=?, nom=?, prenom=?, ad_1=?, ad_2=?, cod_pos=?, com=?, pay_adr=?, email=?, tel=?, por=?,code_voie=?WHERE code=?"
+            cur.execute(query, (
+                line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9],
+                pars.telephone(line[10]), pars.telephone(line[11]), code_voie, line[0],))
+            # else we create a new one
+        else:
+            query = "INSERT INTO candidat(code, civ_lib, nom, prenom, ad_1, ad_2, cod_pos, com, pay_adr, email, tel, por, code_voie) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)"
+            cur.execute(query, (
+                line[0], line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry,
+                line[9], pars.telephone(line[10]), pars.telephone(line[11]), code_voie,))
+        # update du rang de la catégorie
+        ty = AddTypeExam(typeExam)
+        mat = AddMatiere("rang")
+        cur.execute("SELECT * FROM notes WHERE can_code=? AND matiere_id=? AND type_id=?", (line[0], mat, ty,))
+        res = cur.fetchall()
+        if not res:
+            cur.execute("INSERT INTO notes(can_code, matiere_id, type_id, value) VALUES(?,?,?,?)", (line[0], mat, ty, line[12],))
+        else:
+            cur.execute("UPDATE notes SET value=? WHERE can_code=? AND matiere_id=? AND type_id=?", (line[12], line[0], mat, ty,))
+        con.commit()
+        con.close()
 
 def UploadEcole(liste):
     # pas de champs rang dans la bdd
@@ -286,7 +334,7 @@ def AddCSP(code: int, lib: str):
 
 def AddTypeExam(name: str):
 
-    data = {"label": name}
+    data = {"label": name.lower()}
     type_id = InsertData(data, "type_id", "typeExam", "label")
 
     return type_id
@@ -294,7 +342,7 @@ def AddTypeExam(name: str):
 
 def AddMatiere(name: str, code=None):
 
-    data = {"label": name, "code": code}
+    data = {"label": name.lower(), "code": code}
     matiere_id = InsertData(data, "matiere_id", "matiere", "label")
 
     return matiere_id
