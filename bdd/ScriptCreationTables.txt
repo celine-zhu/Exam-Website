@@ -46,7 +46,7 @@ CREATE TABLE ecole (
 CREATE TABLE reponse (
   Ata_cod integer primary key,
   Ata_lib text not null
-)
+);
 
 CREATE TABLE voeux_ecole  (
   can_code integer not null,
