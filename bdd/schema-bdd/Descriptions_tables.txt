@@ -23,30 +23,33 @@ Table candidat {
   tel text
   por text
   email text
-  etablissement int
+  code_puissance int
+  code_etabl int
   Epreuve_1 int
-  Option_1 int 
-  Option_2 int 
-  Option_3 int 
+  Option_1 int
+  Epreuve_2 int
+  Option_2 int
+  Epreuve_3 int
+  Option_3 int
+  Epreuve_4 int
   Option_4 int 
   code_ville_ecr int
   code_concours int
-  voie int
+  code_voie int
+  bac_date int
   code_serie int
   code_mention int
-  bac_date int
   sujet_tipe text
   ine int
-  cod_csp_pere int
-  cod_csp_mere int
+  code_csp_pere int
+  code_csp_mere int
   code_etat_dossier int
   handicap int
+  code_qualite int
   can_dep_bac int
   resultat int
   // resultat contient au choix "admis", "admis-spe", "admissible", "admissible-spe"
   // admis implique admis-spe (idem pour admissible)
-  fil int
-  // Index de la filière dans la table filiere 
 }
 
 Table civilite{
@@ -87,11 +90,6 @@ Table etablissement {
   code_postal int
   ville text
   pays int
-}
-
-Table filiere {
-  filiere_code int [pk]
-  liste_filiere text 
 }
 
 Table matiere {
@@ -145,6 +143,21 @@ Table voie {
   voie text [not null]
 }
 
+Table puissance {
+  code_puissance int [not null]
+  puissance text [not null]
+}
+
+Table qualite {
+  code_qualite int [not null]
+  qualite text [not null]
+}
+
+Table etat_dossier {
+  code_etat_dossier int [not null]
+  etat_dossier text [not null]
+}
+
 // Creating references
 // You can also define relaionship separately
 // > many-to-one; < one-to-many; - one-to-one
@@ -158,12 +171,15 @@ Ref : candidat.pay_adr > pays.pays_code
 
 Ref : candidat.Epreuve_1 > epreuve.epreuve_code
 Ref : candidat.Option_1 > epreuve.epreuve_code
+Ref : candidat.Epreuve_2 > epreuve.epreuve_code
 Ref : candidat.Option_2 > epreuve.epreuve_code
+Ref : candidat.Epreuve_3 > epreuve.epreuve_code
 Ref : candidat.Option_3 > epreuve.epreuve_code
+Ref : candidat.Epreuve_4 > epreuve.epreuve_code
 Ref : candidat.Option_4 > epreuve.epreuve_code
 
-Ref : candidat.cod_csp_mere > csp.code_csp
-Ref : candidat.cod_csp_pere > csp.code_csp
+Ref : candidat.code_csp_mere > csp.code_csp
+Ref : candidat.code_csp_pere > csp.code_csp
 
 Ref : candidat.com > commune.commune_index
 Ref : candidat.code_ville_ecr > civilite.civilite_index
@@ -171,15 +187,20 @@ Ref : candidat.code_ville_ecr > civilite.civilite_index
 Ref : candidat.resultat > resultat.resultat_index
 
 Ref : candidat.code_concours > concours.code_concours
-Ref : candidat.etablissement > etablissement.rne
+Ref : candidat.code_etabl > etablissement.rne
 
 Ref : candidat.code_serie > seriebac.code_serie
 Ref : candidat.code_mention > mention.code_mention
 
-Ref : candidat.voie > voie.voie 
+Ref : candidat.code_voie > voie.code_voie
+
+Ref : candidat.code_puissance > puissance.code_puissance
+
+Ref : candidat.code_qualite > qualite.code_qualite 
+
+Ref : candidat.code_etat_dossier > etat_dossier.code_etat_dossier
 
 Ref : candidat.civ_lib > civilite.civilite_index
-Ref : candidat.fil > filiere.filiere_code
 
 Ref : voeux.can_cod > candidat.code
 Ref : voeux.eco_cod > ecole.code
