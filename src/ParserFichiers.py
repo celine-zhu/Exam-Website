@@ -20,10 +20,16 @@ def UploadInscription(file: list):
 
     for line in file[3:]:
 
-        liste_int = [0, 4, 7, 9, 10, 14, 16, 35, 38, 39, 40, 45, 47, 49, 51, 54] # liste des champs contenant des entiers
+        liste_int = [0, 4, 7, 9, 10, 14, 16, 35, 38, 39, 40, 45, 47, 49, 51]  # liste des champs contenant des entiers
         for i in liste_int:  # Passe les nombres en int
             if not line[i] is None:
                 line[i] = int(line[i])
+        if line[54] == "2A":
+            line[54] = "201"
+        if line[54] == "2B":
+            line[54] = "202"
+        elif not line[54] is None:
+            line[54] = int(line[54])
 
         code_ville_naissance = AddCommune(line[6])
         code_pays_naissance = AddCountry(line[8])
@@ -65,14 +71,14 @@ def UploadInscription(file: list):
                  # "code_etabl": code_etabl,  # int, Fct AddEtabl / DB à changer
                  # "etabl": line[24],
                  # "ville_etabl": line[25],
-                 "epreuve_1": line[26],  # Nom champ à vérifier
-                 "option_1": line[27],
+                 "epreuve_1": line[26],
+                 # "option_1": line[27],
                  "epreuve_2": line[28],
-                 "option_2": line[29],
+                 # "option_2": line[29],
                  "epreuve_3": line[30],
-                 "option_3": line[31],
+                 # "option_3": line[31],
                  "epreuve_4": line[32],
-                 "option_4": line[33],
+                 # "option_4": line[33],
                  "code_ville_ecr": code_ville_ecr,
                  "code_concours": line[35],  # int,  # Fonction d'ajout à mettre
                  # "lib_concours": line[36],
