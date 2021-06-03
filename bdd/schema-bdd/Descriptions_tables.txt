@@ -19,7 +19,6 @@ Table candidat {
   com int
   pay_adr int
   code_pay_natio int
-  mel text
   tel text
   por text
   email text
@@ -40,7 +39,7 @@ Table candidat {
   code_serie int
   code_mention int
   sujet_tipe text
-  ine int
+  ine text
   code_csp_pere int
   code_csp_mere int
   code_etat_dossier int

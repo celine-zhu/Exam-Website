@@ -53,7 +53,6 @@ foreign key(can_code) references candidat(cod),
 foreign key(eco_code) references ecole(code)
  );
 
-
 CREATE TABLE etablissement(
   rne text primary key,
   type text,
@@ -68,7 +67,6 @@ CREATE TABLE epreuve(
   epreuve_code integer primary key,
   epreuve text not null
 );
-
 
 CREATE TABLE concours (
   code_concours integer primary key,
@@ -89,19 +87,6 @@ CREATE TABLE csp (
   code_csp integer primary key,
   csp text not null
 );
-
-//CREATE TABLE notes (
-//  Num integer,
-//  rang integer,
-//  total integer,
-//  Moyenne integer,
-//  Bonification integer,
-//  Maths integer,
-//  Scphy integer,
-//  Fr integer,
-//  Si integer,
-//  Ang integer
-//);
 
 CREATE TABLE notes (
     can_code integer,
@@ -142,7 +127,6 @@ CREATE TABLE candidat (
   com integer,
   pay_adr integer ,
   code_pay_natio integer ,
-  mel text ,
   tel text,
   por text,
   email text,
@@ -163,7 +147,7 @@ CREATE TABLE candidat (
   code_serie integer ,
   code_mention integer ,
   sujet_tipe text ,
-  ine integer ,
+  ine text ,
   code_csp_pere integer ,
   code_csp_mere integer ,
   code_etat_dossier integer ,
@@ -195,10 +179,9 @@ CREATE TABLE candidat (
   foreign key(code_puissance) references puissance(code_puissance),
   foreign key(code_qualite) references qualite(code_qualite),
   foreign key(code_etat_dossier) references etat_dossier(code_etat_dossier),
-  
   foreign key(code_mention) references mention(code_mention),
   foreign key(code_csp_pere) references csp(code_csp),
   foreign key(code_csp_mere) references csp(code_csp),
-  foreign key(resultat) references resultat(resultat_index),
+  foreign key(resultat) references resultat(resultat_index)
 
 );
