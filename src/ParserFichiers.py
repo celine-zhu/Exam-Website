@@ -213,13 +213,13 @@ def UploadAdm(liste, resulttype: str = "admissible"):
         #       if we already have a candidate, we juste update it's value
         if res:
             # value de rang?
-            query = "UPDATE candidat SET civ_lib=?, nom=?, prenom=?, ad_1=?, ad_2=?, cod_pos=?, com=?, pay_adr=?, mel=?, tel=?, por=?, resultat=? WHERE code=?"
+            query = "UPDATE candidat SET civ_lib=?, nom=?, prenom=?, ad_1=?, ad_2=?, cod_pos=?, com=?, pay_adr=?, email=?, tel=?, por=?, resultat=? WHERE code=?"
             cur.execute(query, (
                 line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9],
                 pars.telephone(line[10]), pars.telephone(line[11]), code_resultat, line[0],))
             # else we create a new one
         else:
-            query = "INSERT INTO candidat(code, civ_lib, nom, prenom, ad_1, ad_2, cod_pos, com, pay_adr, mel, tel, por, resultat) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)"
+            query = "INSERT INTO candidat(code, civ_lib, nom, prenom, ad_1, ad_2, cod_pos, com, pay_adr, email, tel, por, resultat) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)"
             cur.execute(query, (
                 line[0], line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry,
                 line[9],
