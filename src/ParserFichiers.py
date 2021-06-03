@@ -124,7 +124,9 @@ def UploadEtabli(file: list):
             for e in champ.keys():
                 res += e + " = ?,"
             res = res[:-1]
-            cur.execute(f"UPDATE etablissement SET {res}", tuple(champ.values()))
+            tmp = list(champ.values())
+            tmp.append(champ["rne"])
+            cur.execute(f"UPDATE etablissement SET {res} WHERE rne=?", tuple(tmp))
         else:
             str_excl = "(" + "?, " * len(champ.keys())
             str_excl = str_excl[:-2] + ")"  # Ne marche pas sinon
@@ -147,7 +149,6 @@ def UploadListeVoeux(liste):
         cur.execute(query, (line[0], line[1], line[2], line[3]))
     con.commit()
     con.close()
-
 
 
 def UploadAdm(liste, resulttype: str = "Admissible"):
@@ -192,8 +193,6 @@ def UploadAdm(liste, resulttype: str = "Admissible"):
         con.close()
 
 
-
-
 def UploadEcole(liste):
     # pas de champs rang dans la bdd
     assert os.path.exists(DB_PATH), "database not found"
@@ -209,7 +208,8 @@ def UploadEcole(liste):
     con.commit()
     con.close()
 
-#fonction a utiliser pour upload les fichiers de ResulttatEcrit, ResultatOral et CMT_Oral
+
+# fonction a utiliser pour upload les fichiers de ResulttatEcrit, ResultatOral et CMT_Oral
 def UploadNote(liste, typeExam: str):
     # type exam is a string that correspond to a type of exam such a written, oral, ...
     assert os.path.exists(DB_PATH), "database not found"
@@ -346,6 +346,7 @@ def AddEtabl(code: str, name: str, ville: str):
     con.commit()
     con.close()
     return res[0][0]
+
 
 def AddCivilite(name: str):
     # add the commune to the bdd if it doesn't exist and return it's code
