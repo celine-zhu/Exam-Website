@@ -46,11 +46,13 @@ def AddCommune(name: str):
     return commune_index
 
 
-def AddCountry(code: int, name: str):
+def AddCountry(name: str, code: int=None):
     """ add the country to the bdd if it doesn't exist and return it's code """
-
-    data = {"pays_code": code, "liste_pays": name}
-    pays_code = InsertData(data, "pays_code", "pays", "liste_pays")
+    if code is not None:
+        data = {"pays_code": code, "liste_pays": name}
+    else:
+        data = {"liste_pays": name}
+    pays_code = InsertData(data, "pays_id", "pays", "liste_pays")
 
     return pays_code
 
@@ -66,8 +68,8 @@ def AddResultat(name: str):
 def AddEtabl(code: str, name: str, ville: str):
 
     data = {"rne": code, "nom": name, "ville": ville}
-    pays_id = InsertData(data, "pays_id", "etablissement", "rne")
-    return pays_id
+    etabl_id = InsertData(data, "etabl_id", "etablissement", "rne")
+    return etabl_id
 
 
 def AddCivilite(name: str):

@@ -33,7 +33,7 @@ def UploadInscription(file: list):
             line[54] = int(line[54])
 
         code_ville_naissance = AddCommune(line[6])
-        code_pays_naissance = AddCountry(line[7], line[8])
+        code_pays_naissance = AddCountry(line[8], line[7])
         code_com = AddCommune(line[15])
         code_etabl = AddEtabl(line[23], line[24], line[25])
         code_ville_ecr = AddCommune(line[34])
@@ -121,17 +121,21 @@ def UploadEtabli(file: list):
         print("Attention, ce n'est peut-être pas le bon fichier", file=sys.stderr)
     nom_champs = file[2]  # En-tête : contient le nom de chaque colonne (fichier[1] vide)
     list_champ = []
-    con = sqlite3.connect(DB_PATH)
-    cur = con.cursor()
 
     for line in file[3:]:
+
+        pays_id = AddCountry(line[5])
+
+        con = sqlite3.connect(DB_PATH)
+        cur = con.cursor()
+
         champ = {
             "rne": line[0],
             "type": line[1],
             "nom": line[2],
             "code_postal": line[3],
             "ville": line[4],
-            "pays": line[5]
+            "code_pays": pays_id
         }
 
         cur.execute("SELECT rne FROM etablissement WHERE rne=?", (champ["rne"],))
@@ -150,8 +154,9 @@ def UploadEtabli(file: list):
             str_excl = str_excl[:-2] + ")"  # Ne marche pas sinon
             cur.execute(f"INSERT INTO etablissement {tuple(champ.keys())} VALUES {str_excl}", tuple(champ.values()))
         list_champ.append(champ)
-    con.commit()
-    con.close()
+        con.commit()
+        con.close()
+
     return nom_champs, list_champ
 
 
