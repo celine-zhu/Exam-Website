@@ -35,14 +35,27 @@ def UploadInscription(file: list):
         code_ville_naissance = AddCommune(line[6])
         code_pays_naissance = AddCountry(line[8], line[7])
         code_com = AddCommune(line[15])
+        code_puissance = AddPuissance(line[22])
         code_etabl = AddEtabl(line[23], line[24], line[25])
         code_ville_ecr = AddCommune(line[34])
+        code_concours = AddConcours(line[35], line[36])
         code_voie = AddVoie(line[37])
+        code_serie = AddSerie(line[40], line[41])
+        code_mention = AddMention(line[42])
         code_csp_pere = AddCSP(line[45], line[46])
         code_csp_mere = AddCSP(line[47], line[48])
         code_etat_dossier = AddEtatDossier(line[49], line[50])
         code_handicap = AjoutHandicap(line[52])
         code_qualite = AddQualite(line[53])
+
+        epreuve_1 = AddEpreuve(line[26])
+        option_1 = AddEpreuve(line[27])
+        epreuve_2 = AddEpreuve(line[28])
+        option_2 = AddEpreuve(line[29])
+        epreuve_3 = AddEpreuve(line[30])
+        option_3 = AddEpreuve(line[31])
+        epreuve_4 = AddEpreuve(line[32])
+        option_4 = AddEpreuve(line[33])
 
         champ = {"code": line[0],  # int,
                  "civ_lib": line[4],  # int
@@ -68,28 +81,28 @@ def UploadInscription(file: list):
                  "por": pars.telephone(line[19]),
                  "email": line[20],
                  # "classe": line[21],
-                 # "code_puissance": line[22],  # Fct d'ajout à mettre
+                 "code_puissance": code_puissance,
                  "code_etabl": code_etabl,  # int
                  # "etabl": line[24],
                  # "ville_etabl": line[25],
-                 "epreuve_1": line[26],
-                 # "option_1": line[27],
-                 "epreuve_2": line[28],
-                 # "option_2": line[29],
-                 "epreuve_3": line[30],
-                 # "option_3": line[31],
-                 "epreuve_4": line[32],
-                 # "option_4": line[33],
+                 "epreuve_1": epreuve_1,
+                 "option_1": option_1,
+                 "epreuve_2": epreuve_2,
+                 "option_2": option_2,
+                 "epreuve_3": epreuve_3,
+                 "option_3": option_3,
+                 "epreuve_4": epreuve_4,
+                 "option_4": option_4,
                  "code_ville_ecr": code_ville_ecr,
-                 "code_concours": line[35],  # int,  # Fonction d'ajout à mettre
+                 "code_concours": code_concours,  # int,
                  # "lib_concours": line[36],
                  "code_voie": code_voie,
                  "bac_date": int(str(line[38]) + str(line[39]).zfill(2)),  # Date au format "AAAAMM"
                  # "ann_bac": line[38],  # int,
                  # "mois_bac": line[39],  # int,
-                 # "code_serie": line[40],  # int,  # Fonction d'ajout à mettre
+                 "code_serie": code_serie,  # int,
                  # "serie": line[41],
-                 # "code_mention": line[42],  # Fonction d'ajout à mettre
+                 "code_mention": code_mention,
                  "sujet_tipe": line[43],
                  "ine": line[44],
                  "code_csp_pere": code_csp_pere,  # int,  # Ajout effectué en dessous

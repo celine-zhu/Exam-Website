@@ -87,11 +87,47 @@ def AddEtatDossier(code: str, name: str):
     return code_etat_dossier
 
 
+def AddConcours(code: str, name: str):
+
+    data = {"code_concours": code, "concours": name}
+    code_concours = InsertData(data, "code_concours", "concours", "code_concours")
+    return code_concours
+
+
+def AddSerie(code: str, name: str):
+
+    data = {"code_serie": code, "serie": name}
+    code_serie = InsertData(data, "code_serie", "seriebac", "code_serie")
+    return code_serie
+
+
 def AddQualite(name: str):
 
     data = {"qualite": name}
     code_qualite = InsertData(data, "code_qualite", "qualite", "qualite")
     return code_qualite
+
+
+def AddMention(name: str):
+
+    data = {"mention": name}
+    code_mention = InsertData(data, "code_mention", "mention", "mention")
+    return code_mention
+
+
+def AddPuissance(name: str):
+
+    data = {"puissance": name}
+    code_puissance = InsertData(data, "code_puissance", "puissance", "puissance")
+    return code_puissance
+
+
+def AddEpreuve(name: str):
+    if name is not None:
+        data = {"epreuve": name}
+        epreuve_code = InsertData(data, "epreuve_code", "epreuve", "epreuve")
+        return epreuve_code
+    return None
 
 
 def AddVoie(name: str):
