@@ -62,7 +62,8 @@ CREATE TABLE voeux_ecole  (
  );
 
 CREATE TABLE etablissement(
-  rne text primary key,
+  pays_id integer primary key,
+  rne text not null,
   type text,
   nom text not null,
   code_postal integer,
@@ -171,7 +172,7 @@ CREATE TABLE candidat (
   foreign key(code_pays_naissance) references pays(pays_code),
   foreign key(pay_adr) references pays(pays_code),
   foreign key(code_pay_natio) references pays(pays_code),
-  foreign key(code_etabl) references etablissement(rne),
+  foreign key(code_etabl) references etablissement(pays_id),
   foreign key(com) references commune(commune_index),
   foreign key(civ_lib) references civilite(civilite_index),
   foreign key(epreuve_1) references epreuve(epreuve_code),

@@ -46,10 +46,10 @@ def AddCommune(name: str):
     return commune_index
 
 
-def AddCountry(name: str):
+def AddCountry(code: int, name: str):
     """ add the country to the bdd if it doesn't exist and return it's code """
 
-    data = {"liste_pays": name}
+    data = {"pays_code": code, "liste_pays": name}
     pays_code = InsertData(data, "pays_code", "pays", "liste_pays")
 
     return pays_code
@@ -66,8 +66,8 @@ def AddResultat(name: str):
 def AddEtabl(code: str, name: str, ville: str):
 
     data = {"rne": code, "nom": name, "ville": ville}
-    rne = InsertData(data, "rne", "etablissement", "nom")
-    return rne
+    pays_id = InsertData(data, "pays_id", "etablissement", "rne")
+    return pays_id
 
 
 def AddCivilite(name: str):
@@ -102,7 +102,8 @@ def AddVoie(name: str):
 
 def InsertData(data: dict, name_id: str, name_table: str, name_select: str):
     """
-    Insert data in the DB. THis function generalize the code for insertion and avoid repetition of similar code
+    Insert data in the DB. This function generalize the code for insertion and avoid repetition of similar code
+
     :param data: Dict with an entrie for each entrie in the DB. Key=Name of the attribute / Value=Value of the attribute
     :param name_id: Attribute used as Primary Key
     :param name_table: Name of the table used

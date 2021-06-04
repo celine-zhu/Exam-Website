@@ -33,7 +33,7 @@ def UploadInscription(file: list):
             line[54] = int(line[54])
 
         code_ville_naissance = AddCommune(line[6])
-        code_pays_naissance = AddCountry(line[8])
+        code_pays_naissance = AddCountry(line[7], line[8])
         code_com = AddCommune(line[15])
         code_etabl = AddEtabl(line[23], line[24], line[25])
         code_ville_ecr = AddCommune(line[34])
@@ -69,7 +69,7 @@ def UploadInscription(file: list):
                  "email": line[20],
                  # "classe": line[21],
                  # "code_puissance": line[22],  # Fct d'ajout à mettre
-                 # "code_etabl": code_etabl,  # int, Fct AddEtabl / DB à changer
+                 "code_etabl": code_etabl,  # int
                  # "etabl": line[24],
                  # "ville_etabl": line[25],
                  "epreuve_1": line[26],
@@ -138,12 +138,13 @@ def UploadEtabli(file: list):
         res = cur.fetchall()
         #       if we already have the school, we juste update it's value
         if res:
+            line_set = ""
             for e in champ.keys():
-                res += e + " = ?,"
-            res = res[:-1]
+                line_set += e + " = ?,"
+            line_set = line_set[:-1]
             tmp = list(champ.values())
             tmp.append(champ["rne"])
-            cur.execute(f"UPDATE etablissement SET {res} WHERE rne=?", tuple(tmp))
+            cur.execute(f"UPDATE etablissement SET {line_set} WHERE rne=?", tuple(tmp))
         else:
             str_excl = "(" + "?, " * len(champ.keys())
             str_excl = str_excl[:-2] + ")"  # Ne marche pas sinon
