@@ -83,7 +83,8 @@ def checkMail(email: str):
 
     # Note: La vérification poussée de validité d'un mail est un vrai problème en raison de ce qui accepté par les RFC
     pattern = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
-    if re.findall(pattern, email)[0] == email:
+    res = re.findall(pattern, email)
+    if len(res) == 1 and res[0] == email:
         return 0
     else:
         return -1
