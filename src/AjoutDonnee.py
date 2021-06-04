@@ -132,3 +132,45 @@ def InsertData(data: dict, name_id: str, name_table: str, name_select: str):
 
     con.close()
     return res[0][0]
+
+
+def InsertOrUpdateData(data: dict, name_id: str, name_table: str, name_select: str):
+    """
+    Insert data in the DB. This function generalize the code for insertion and avoid repetition of similar code
+    It update the DB if an entry with the same "name_id" already exist
+
+    :param data: Dict with an entrie for each entrie in the DB. Key=Name of the attribute / Value=Value of the attribute
+    :param name_id: Attribute used as Primary Key
+    :param name_table: Name of the table used
+    :param name_select: Attribute used to check if the entrie already exist
+    :return: Value used to reference the entrie in an other table
+    """
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+
+    cur.execute(f"SELECT {name_id} FROM {name_table} WHERE {name_select}=?", (data[name_select],))
+    res = cur.fetchall()
+    #       if we already have an entrie, it is updated with the new values
+    if res:
+        line_set = ""
+        for e in data.keys():
+            line_set += e + " = ?,"
+        line_set = line_set[:-1]
+        tmp = list(data.values())
+        tmp.append(data[name_id])
+        cur.execute(f"UPDATE {name_table} SET {line_set} WHERE {name_select}=?", tuple(tmp))
+    else:
+        str_excl = "(" + "?, " * len(data.keys())
+        str_excl = str_excl[:-2] + ")"  # Ne marche pas sinon
+        query = ""
+        if len(data.keys()) > 1:
+            query = f"INSERT INTO {name_table} {tuple(data.keys())} VALUES {str_excl}"
+        else:
+            query = f"INSERT INTO {name_table} ({list(data.keys())[0]}) VALUES {str_excl}"
+        cur.execute(query, tuple(data.values()))
+        cur.execute(f"SELECT {name_id} FROM {name_table} WHERE {name_select}=?", (data[name_select],))
+        res = cur.fetchall()
+    con.commit()
+
+    con.close()
+    return res[0][0]

@@ -109,7 +109,7 @@ def UploadInscription(file: list):
         # Avant d'inserer le champ, il faut remplir les tables auxiliaires, afin d'avoir éventuellement l'index associé
         # a mettre dans l'entrée de "candidat"
 
-        InsertData(champ, "code", "candidat", "code")
+        InsertOrUpdateData(champ, "code", "candidat", "code")
         list_champ.append(champ)
 
     return nom_champs, list_champ
