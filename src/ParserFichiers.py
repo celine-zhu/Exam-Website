@@ -64,7 +64,7 @@ def UploadInscription(file: list):
                  "autre_prenoms": line[3],
                  "date_naissance": line[5],
                  "arr_naissance": line[51],  # int,
-                 "ville_naissance": code_ville_naissance,
+                 "code_ville_naissance": code_ville_naissance,
                  "code_pays_naissance": code_pays_naissance,
                  # "code_pays_naissance": line[7],  # int
                  # "pays_naissance": line[8],

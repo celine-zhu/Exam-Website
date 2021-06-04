@@ -128,7 +128,7 @@ CREATE TABLE candidat (
   autre_prenoms text,
   date_naissance integer ,
   arr_naissance integer ,
-  ville_naissance text ,
+  code_ville_naissance integer ,
   code_pays_naissance integer ,
   francais integer  ,
   ad_1 text ,
@@ -170,7 +170,8 @@ CREATE TABLE candidat (
   n_demi integer,
   // resultat contient au choix "admis", "admis-spe", "admissible", "admissible-spe"
   // admis implique admis-spe (idem pour admissible)
-  
+
+  foreign key(code_ville_naissance) references commune(commune_index),
   foreign key(code_pays_naissance) references pays(pays_id),
   foreign key(pay_adr) references pays(pays_id),
   foreign key(code_pay_natio) references pays(pays_id),
