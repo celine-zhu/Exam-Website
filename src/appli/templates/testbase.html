@@ -3,59 +3,27 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mystyle.scss') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/mystyle.css') }}">
     <link rel="icon" href="https://www.imt.fr/wp-content/uploads/2017/01/favicon.png" type="image/png">
-    
-    <script type="text/javascript">
-var slideIndex = 1;
-showSlides(slideIndex);
-
-// Next/previous controls
-function plusSlides(n) {
-  showSlides(slideIndex += n);
-}
-
-// Thumbnail image controls
-function currentSlide(n) {
-  showSlides(slideIndex = n);
-}
-
-function showSlides(n) {
-  var i;
-  var slides = document.getElementsByClassName("mySlides");
-  var dots = document.getElementsByClassName("dot");
-  if (n > slides.length) {slideIndex = 1}
-  if (n < 1) {slideIndex = slides.length}
-  for (i = 0; i < slides.length; i++) {
-      slides[i].style.display = "none";
-  }
-  for (i = 0; i < dots.length; i++) {
-      dots[i].className = dots[i].className.replace(" active", "");
-  }
-  slides[slideIndex-1].style.display = "block";
-  dots[slideIndex-1].className += " active";
-}
-</script>
-
 </head>
    <body>
-   <nav class="navbar is-fixed-top has-shadow">
-    <div class= " navbar is-transparent">
-    <div class="navbar-brand">
-     <img src="{{url_for('static', filename='T.png', width=800)}}" alt='Logo IMT'>
-         <div class="navbar-burger" data-target="navbarExampleTransparentExample">
+<nav class="navbar  is-fixed-top background-color: transparent !important background-image: none; !important">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="https://bulma.io">
+      <img src="https://bulma.io/images/bulma-logo.png" alt="Bulma: a modern CSS framework based on Flexbox" width="112" height="28">
+    </a>
+    <div class="navbar-burger" data-target="navbarExampleTransparentExample">
       <span></span>
       <span></span>
       <span></span>
     </div>
   </div>
-  </div>
-                <div class="container">
-                    <div id="navbarExampleTransparentExample" class="navbar-menu">
-     <div class="navbar-start">
-      <a class="navbar-item" href="http://localhost:5000/">
+
+  <div id="navbarExampleTransparentExample" class="navbar-menu">
+    <div class="navbar-start">
+      <a class="navbar-item" href="https://bulma.io/">
         Home
       </a>
       <div class="navbar-item has-dropdown is-hoverable">
@@ -115,11 +83,9 @@ function showSlides(n) {
     </div>
   </div>
 </nav>
-                        
+        <div class="hero-body">
+            <div class="container has-text-centered">
                {% block content %}
                {% endblock %}
-            </div>
-        </div>
-    </section>
-    </body>
+</body>
 </html>
