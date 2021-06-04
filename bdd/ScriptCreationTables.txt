@@ -34,7 +34,8 @@ CREATE TABLE etat_dossier (
 );
 
 CREATE TABLE pays(
-  pays_code integer primary key,
+  pays_id integer primary key,
+  pays_code integer,
   liste_pays text
 );
 
@@ -62,13 +63,14 @@ CREATE TABLE voeux_ecole  (
  );
 
 CREATE TABLE etablissement(
-  rne text primary key,
+  etabl_id integer primary key,
+  rne text not null,
   type text,
   nom text not null,
   code_postal integer,
   ville text not null,
-  pays text,
-foreign key(pays) references pays(ind_liste_pays)
+  code_pays int,
+foreign key(code_pays) references pays(pays_id)
 );
 
 CREATE TABLE epreuve(
@@ -169,10 +171,10 @@ CREATE TABLE candidat (
   // resultat contient au choix "admis", "admis-spe", "admissible", "admissible-spe"
   // admis implique admis-spe (idem pour admissible)
   
-  foreign key(code_pays_naissance) references pays(pays_code),
-  foreign key(pay_adr) references pays(pays_code),
-  foreign key(code_pay_natio) references pays(pays_code),
-  foreign key(code_etabl) references etablissement(rne),
+  foreign key(code_pays_naissance) references pays(pays_id),
+  foreign key(pay_adr) references pays(pays_id),
+  foreign key(code_pay_natio) references pays(pays_id),
+  foreign key(code_etabl) references etablissement(etabl_id),
   foreign key(com) references commune(commune_index),
   foreign key(civ_lib) references civilite(civilite_index),
   foreign key(epreuve_1) references epreuve(epreuve_code),

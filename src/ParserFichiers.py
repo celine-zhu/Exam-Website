@@ -4,6 +4,7 @@ import sqlite3
 import sys
 import ParserDonnee as pars
 from src.PolyMorph_Lecture import *
+from AjoutDonnee import *
 
 # ------------------- Fonctions parsant les différents fichiers -------------------
 
@@ -32,16 +33,16 @@ def UploadInscription(file: list):
             line[54] = int(line[54])
 
         code_ville_naissance = AddCommune(line[6])
-        code_pays_naissance = AddCountry(line[8])
+        code_pays_naissance = AddCountry(line[8], line[7])
         code_com = AddCommune(line[15])
         code_etabl = AddEtabl(line[23], line[24], line[25])
         code_ville_ecr = AddCommune(line[34])
+        code_voie = AddVoie(line[37])
         code_csp_pere = AddCSP(line[45], line[46])
         code_csp_mere = AddCSP(line[47], line[48])
-        code_handicap = AjoutHandicap(line[52]),
-
-        con = sqlite3.connect(DB_PATH)
-        cur = con.cursor()
+        code_etat_dossier = AddEtatDossier(line[49], line[50])
+        code_handicap = AjoutHandicap(line[52])
+        code_qualite = AddQualite(line[53])
 
         champ = {"code": line[0],  # int,
                  "civ_lib": line[4],  # int
@@ -68,7 +69,7 @@ def UploadInscription(file: list):
                  "email": line[20],
                  # "classe": line[21],
                  # "code_puissance": line[22],  # Fct d'ajout à mettre
-                 # "code_etabl": code_etabl,  # int, Fct AddEtabl / DB à changer
+                 "code_etabl": code_etabl,  # int
                  # "etabl": line[24],
                  # "ville_etabl": line[25],
                  "epreuve_1": line[26],
@@ -82,7 +83,7 @@ def UploadInscription(file: list):
                  "code_ville_ecr": code_ville_ecr,
                  "code_concours": line[35],  # int,  # Fonction d'ajout à mettre
                  # "lib_concours": line[36],
-                 # "code_voie": line[37], Fonction d'ajout à mettre
+                 "code_voie": code_voie,
                  "bac_date": int(str(line[38]) + str(line[39]).zfill(2)),  # Date au format "AAAAMM"
                  # "ann_bac": line[38],  # int,
                  # "mois_bac": line[39],  # int,
@@ -95,10 +96,10 @@ def UploadInscription(file: list):
                  # "lib_csp_pere": line[46],
                  "code_csp_mere": code_csp_mere,  # int,
                  # "lib_csp_mere": line[48],
-                 "code_etat_dossier": line[49],  # int,  # Fonction d'ajout à mettre
+                 "code_etat_dossier": code_etat_dossier,  # int,
                  # "lib_etat_dossier": line[50],
-                 # "handicap": code_handicap,
-                 # "code_qualite": line[53], #int  # Fonction d'ajout à mettre
+                 "handicap": code_handicap,
+                 "code_qualite": code_qualite,  # int
                  "can_dep_bac": line[54],  # int
                  }
 
@@ -111,16 +112,7 @@ def UploadInscription(file: list):
         InsertData(champ, "code", "candidat", "code")
         list_champ.append(champ)
 
-        con.commit()
-        con.close()
-
     return nom_champs, list_champ
-
-
-def AjoutHandicap(hand):
-    if hand == "oui":
-        return 1
-    return 0
 
 
 def UploadEtabli(file: list):
@@ -129,36 +121,42 @@ def UploadEtabli(file: list):
         print("Attention, ce n'est peut-être pas le bon fichier", file=sys.stderr)
     nom_champs = file[2]  # En-tête : contient le nom de chaque colonne (fichier[1] vide)
     list_champ = []
-    con = sqlite3.connect(DB_PATH)
-    cur = con.cursor()
 
     for line in file[3:]:
+
+        pays_id = AddCountry(line[5])
+
+        con = sqlite3.connect(DB_PATH)
+        cur = con.cursor()
+
         champ = {
             "rne": line[0],
             "type": line[1],
             "nom": line[2],
             "code_postal": line[3],
             "ville": line[4],
-            "pays": line[5]
+            "code_pays": pays_id
         }
 
         cur.execute("SELECT rne FROM etablissement WHERE rne=?", (champ["rne"],))
         res = cur.fetchall()
         #       if we already have the school, we juste update it's value
         if res:
+            line_set = ""
             for e in champ.keys():
-                res += e + " = ?,"
-            res = res[:-1]
+                line_set += e + " = ?,"
+            line_set = line_set[:-1]
             tmp = list(champ.values())
             tmp.append(champ["rne"])
-            cur.execute(f"UPDATE etablissement SET {res} WHERE rne=?", tuple(tmp))
+            cur.execute(f"UPDATE etablissement SET {line_set} WHERE rne=?", tuple(tmp))
         else:
             str_excl = "(" + "?, " * len(champ.keys())
             str_excl = str_excl[:-2] + ")"  # Ne marche pas sinon
             cur.execute(f"INSERT INTO etablissement {tuple(champ.keys())} VALUES {str_excl}", tuple(champ.values()))
         list_champ.append(champ)
-    con.commit()
-    con.close()
+        con.commit()
+        con.close()
+
     return nom_champs, list_champ
 
 
@@ -173,6 +171,7 @@ def UploadListReponse(liste):
         cur.execute(query, (line[0], line[1],))
     con.commit()
     con.close()
+
 
 def UploadListeVoeux(liste):
     assert os.path.exists(DB_PATH), "database not found"
@@ -218,7 +217,7 @@ def UploadAdm(liste, resulttype: str = "admissible"):
         #       if we already have a candidate, we juste update it's value
         if res:
             # value de rang?
-            query = "UPDATE candidat SET civ_lib=?, nom=?, prenom=?, ad_1=?, ad_2=?, cod_pos=?, com=?, pay_adr=?, email=?, tel=?, por=?, resultat=? code_voie=? rang=? WHERE code=?"
+            query = "UPDATE candidat SET civ_lib=?, nom=?, prenom=?, ad_1=?, ad_2=?, cod_pos=?, com=?, pay_adr=?, email=?, tel=?, por=?, resultat=?, code_voie=?, rang=? WHERE code=?"
             cur.execute(query, (
                 line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9],
                 pars.telephone(line[10]), pars.telephone(line[11]), code_resultat,code_voie, line[12], line[0],))
@@ -230,6 +229,7 @@ def UploadAdm(liste, resulttype: str = "admissible"):
                 line[9], pars.telephone(line[10]), pars.telephone(line[11]), code_resultat, code_voie, line[12],))
         con.commit()
         con.close()
+
 
 def UploadOralEcrit(liste, typeExam : str = "ecrit"):
     assert os.path.exists(DB_PATH), "database not found"
@@ -280,6 +280,7 @@ def UploadOralEcrit(liste, typeExam : str = "ecrit"):
         con.commit()
         con.close()
 
+
 def UploadEcole(liste):
     # pas de champs rang dans la bdd
     assert os.path.exists(DB_PATH), "database not found"
@@ -296,9 +297,10 @@ def UploadEcole(liste):
     con.close()
 
 
-#fonction a utiliser pour upload les fichiers de ResulttatEcrit, ResultatOral et CMT_Oral
+#
 def UploadNote(liste, typeExam: str = "ecrit"):
-    # type exam is a string that correspond to a type of exam such a written, oral, ...
+    """fonction a utiliser pour upload les fichiers de ResulttatEcrit, ResultatOral et CMT_Oral
+    type exam is a string that correspond to a type of exam such a written, oral, ..."""
     assert os.path.exists(DB_PATH), "database not found"
 
     data = liste[3:]
@@ -321,114 +323,6 @@ def UploadNote(liste, typeExam: str = "ecrit"):
                 cur.execute(query, (line[0], id_matiere[i - 1], typeE, line[i],))
     con.commit()
     con.close()
-
-
-def AddCSP(code: int, lib: str):
-    """Add the CSP to the DB if it doesn't exist, using his code as index. return its code"""
-
-    data = {"code_csp": code, "csp": lib}
-    code_csp = InsertData(data, "code_csp", "csp", "code_csp")
-
-    return code_csp
-
-
-def AddTypeExam(name: str):
-
-    data = {"label": name.lower()}
-    type_id = InsertData(data, "type_id", "typeExam", "label")
-
-    return type_id
-
-
-def AddMatiere(name: str, code=None):
-
-    data = {"label": name.lower(), "code": code}
-    matiere_id = InsertData(data, "matiere_id", "matiere", "label")
-
-    return matiere_id
-
-
-def AddCommune(name: str):
-    """add the commune to the bdd if it doesn't exist and return it's code """
-
-    data = {"commune": name}
-    commune_index = InsertData(data, "commune_index", "commune", "commune")
-
-    return commune_index
-
-
-def AddCountry(name: str):
-    """ add the country to the bdd if it doesn't exist and return it's code """
-
-    data = {"liste_pays": name}
-    pays_code = InsertData(data, "pays_code", "pays", "liste_pays")
-
-    return pays_code
-
-
-def AddResultat(name: str):
-    """ add the result of the admission to the bdd if it doesn't exist and return it's code"""
-
-    data = {"resultat": name}
-    resultat_index = InsertData(data, "resultat_index", "resultat", "resultat")
-    return resultat_index
-
-
-def AddEtabl(code: str, name: str, ville: str):
-
-    data = {"rne": code, "nom": name, "ville": ville}
-    rne = InsertData(data, "rne", "etablissement", "nom")
-    return rne
-
-
-def AddCivilite(name: str):
-    """ add the commune to the bdd if it doesn't exist and return it's code """
-
-    data = {"civilite": name}
-    civilite_index = InsertData(data, "civilite_index", "civilite", "civilite")
-    return civilite_index
-
-
-def InsertData(data: dict, name_id: str, name_table: str, name_select: str):
-    """
-    Insert data in the DB. THis function generalize the code for insertion and avoid repetition of similar code
-    :param data: Dict with an entrie for each entrie in the DB. Key=Name of the attribute / Value=Value of the attribute
-    :param name_id: Attribute used as Primary Key
-    :param name_table: Name of the table used
-    :param name_select: Attribute used to check if the entrie already exist
-    :return: Value used to reference the entrie in an other table
-    """
-    con = sqlite3.connect(DB_PATH)
-    cur = con.cursor()
-
-    cur.execute(f"SELECT {name_id} FROM {name_table} WHERE {name_select}=?", (data[name_select],))
-    res = cur.fetchall()
-    if not res:
-        str_excl = "(" + "?, " * len(data.keys())
-        str_excl = str_excl[:-2] + ")"  # Ne marche pas sinon
-        cur.execute(f"INSERT INTO {name_table} {tuple(data.keys())} VALUES {str_excl}", tuple(data.values()))
-        cur.execute(f"SELECT {name_id} FROM {name_table} WHERE {name_select}=?", (data[name_select],))
-        res = cur.fetchall()
-    con.commit()
-
-    con.close()
-    return res[0][0]
-
-def AddVoie(name: str):
-    # add the commune to the bdd if it doesn't exist and return it's code
-    con = sqlite3.connect(DB_PATH)
-    cur = con.cursor()
-
-    cur.execute("SELECT code_voie FROM voie WHERE voie=?", (name,))
-    res = cur.fetchall()
-    if not res:
-        cur.execute("INSERT INTO voie(voie) VALUES(?)", (name,))
-        cur.execute("SELECT code_voie FROM voie WHERE voie=?", (name,))
-        res = cur.fetchall()
-    con.commit()
-
-    con.close()
-    return res[0][0]
 
 
 def UpdateVoieCandidat(filename: str, can_code):
