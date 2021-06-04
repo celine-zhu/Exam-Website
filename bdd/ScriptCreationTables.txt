@@ -163,8 +163,9 @@ CREATE TABLE candidat (
   code_qualite integer,
   can_dep_bac integer ,
   resultat integer ,
-  rang int,
-  rang_classe int,
+  rang integer,
+  rang_classe integer,
+  n_demi integer,
   // resultat contient au choix "admis", "admis-spe", "admissible", "admissible-spe"
   // admis implique admis-spe (idem pour admissible)
   

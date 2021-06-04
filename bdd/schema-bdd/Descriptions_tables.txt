@@ -49,6 +49,7 @@ Table candidat {
   resultat int
   rang int
   rang_classe int
+  n_demi int
   // resultat contient au choix "admis", "admis-spe", "admissible", "admissible-spe"
   // admis implique admis-spe (idem pour admissible)
 }
