@@ -1,5 +1,6 @@
 from flask import Flask, Blueprint, render_template, abort, request, redirect, url_for
 from flask import g
+from flask_login import login_required, current_user,logout_user
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 # from reportlab.pdfgen.canvas import Canvas
@@ -20,9 +21,14 @@ def getdb():
 def Index():
     return render_template('index.html')
 
-
+@auth.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for(''))
 
 @app.route('/Candidat/<name>')
+@login_required
 def Candidat(name):
     
     db = getdb()
@@ -47,8 +53,7 @@ def candlogin():
             "SELECT nom FROM candidat WHERE code = ?", (numero,)
         ).fetchone()
         if user is None:
-                return'''<div> Error, please check that your name and candidate serial are correct<div>
-             <div> <a href="http://127.0.0.1:5000"> retour<div>'''
+                return render_template('error.html')
         elif user!=candidat:
                  error = '''<div> Error, please check that your name and candidate serial are correct<div>
              <div> <a href="http://127.0.0.1:5000"> retour<div>'''
