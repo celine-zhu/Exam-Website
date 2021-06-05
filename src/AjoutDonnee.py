@@ -87,11 +87,47 @@ def AddEtatDossier(code: str, name: str):
     return code_etat_dossier
 
 
+def AddConcours(code: str, name: str):
+
+    data = {"code_concours": code, "concours": name}
+    code_concours = InsertData(data, "code_concours", "concours", "code_concours")
+    return code_concours
+
+
+def AddSerie(code: str, name: str):
+
+    data = {"code_serie": code, "serie": name}
+    code_serie = InsertData(data, "code_serie", "seriebac", "code_serie")
+    return code_serie
+
+
 def AddQualite(name: str):
 
     data = {"qualite": name}
     code_qualite = InsertData(data, "code_qualite", "qualite", "qualite")
     return code_qualite
+
+
+def AddMention(name: str):
+
+    data = {"mention": name}
+    code_mention = InsertData(data, "code_mention", "mention", "mention")
+    return code_mention
+
+
+def AddPuissance(name: str):
+
+    data = {"puissance": name}
+    code_puissance = InsertData(data, "code_puissance", "puissance", "puissance")
+    return code_puissance
+
+
+def AddEpreuve(name: str):
+    if name is not None:
+        data = {"epreuve": name}
+        epreuve_code = InsertData(data, "epreuve_code", "epreuve", "epreuve")
+        return epreuve_code
+    return None
 
 
 def AddVoie(name: str):
@@ -118,6 +154,48 @@ def InsertData(data: dict, name_id: str, name_table: str, name_select: str):
     cur.execute(f"SELECT {name_id} FROM {name_table} WHERE {name_select}=?", (data[name_select],))
     res = cur.fetchall()
     if not res:
+        str_excl = "(" + "?, " * len(data.keys())
+        str_excl = str_excl[:-2] + ")"  # Ne marche pas sinon
+        query = ""
+        if len(data.keys()) > 1:
+            query = f"INSERT INTO {name_table} {tuple(data.keys())} VALUES {str_excl}"
+        else:
+            query = f"INSERT INTO {name_table} ({list(data.keys())[0]}) VALUES {str_excl}"
+        cur.execute(query, tuple(data.values()))
+        cur.execute(f"SELECT {name_id} FROM {name_table} WHERE {name_select}=?", (data[name_select],))
+        res = cur.fetchall()
+    con.commit()
+
+    con.close()
+    return res[0][0]
+
+
+def InsertOrUpdateData(data: dict, name_id: str, name_table: str, name_select: str):
+    """
+    Insert data in the DB. This function generalize the code for insertion and avoid repetition of similar code
+    It update the DB if an entry with the same "name_id" already exist
+
+    :param data: Dict with an entrie for each entrie in the DB. Key=Name of the attribute / Value=Value of the attribute
+    :param name_id: Attribute used as Primary Key
+    :param name_table: Name of the table used
+    :param name_select: Attribute used to check if the entrie already exist
+    :return: Value used to reference the entrie in an other table
+    """
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+
+    cur.execute(f"SELECT {name_id} FROM {name_table} WHERE {name_select}=?", (data[name_select],))
+    res = cur.fetchall()
+    #       if we already have an entrie, it is updated with the new values
+    if res:
+        line_set = ""
+        for e in data.keys():
+            line_set += e + " = ?,"
+        line_set = line_set[:-1]
+        tmp = list(data.values())
+        tmp.append(data[name_id])
+        cur.execute(f"UPDATE {name_table} SET {line_set} WHERE {name_select}=?", tuple(tmp))
+    else:
         str_excl = "(" + "?, " * len(data.keys())
         str_excl = str_excl[:-2] + ")"  # Ne marche pas sinon
         query = ""
