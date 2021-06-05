@@ -190,6 +190,14 @@ def UploadClasse(liste):
     ecrit_mat.append(AddMatiere("total"))
     ecrit_mat.append(AddMatiere("rang"))
     ecrit = AddTypeExam("ecrit")
+    oral = AddTypeExam("oral")
+    other_mat = []
+
+
+    other_mat.append( [AddMatiere("Mathématique harmonisé", 400), len(data[0])-13] )
+    other_mat.append( [AddMatiere("Mathématiques affiché",401), len(data[0])-12] )
+    other_mat.append( [AddMatiere("bonification"), len(data[0])-9] )
+    other_mat.append( [AddMatiere("total"), len(data[0])-8] )
     #i = i + 2
     #pos = 1
     #oral_mat = []
@@ -200,6 +208,7 @@ def UploadClasse(liste):
         "A": "admissible",
         "B": "admissible-spe"
     }
+
     for line in data[1:]:
         fil = AddVoie(line[3])
         type_admin = adminTypeDico.get(line[4])
@@ -221,6 +230,10 @@ def UploadClasse(liste):
                 #print(ecrit_mat[j]," : ",line[13+j])
                 cur.execute(query, (line[0], ecrit_mat[j], ecrit, line[13+j]))
             j = j + 1
+        for j in other_mat:
+            query = "INSERT INTO notes(can_code, matiere_id,type_id, value) VALUES(?,?,?,?)"
+            if line[j[1]]:
+                cur.execute(query, (line[0], j[0], oral, line[j[1]],))
 
         con.commit()
         con.close()
