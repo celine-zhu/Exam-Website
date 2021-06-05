@@ -55,6 +55,15 @@ Table candidat {
   // admis implique admis-spe (idem pour admissible)
 }
 
+Table ranginfo{
+  code_voie int [pk]
+  rang int [pk]
+  scei int
+  moyenne_generale double
+  etat int
+}
+
+
 Table civilite{
   civilite_index int [pk]
   civilite text [not null]
@@ -223,4 +232,6 @@ Ref : notes.matiere_id > matiere.matiere_id
 Ref : notes.type_id > typeExam.type_id
 
 Ref : voeux.Ata_cod > reponse.Ata_cod
+Ref : ranginfo.code_voie > voie.code_voie
+Ref : ranginfo.rang > candidat.rang
 // Creating references

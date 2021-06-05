@@ -165,7 +165,7 @@ CREATE TABLE candidat (
   code_qualite integer,
   can_dep_bac integer ,
   resultat integer ,
-  rang integer,
+  rang integer DEFAULT -1,
   rang_classe integer,
   n_demi integer,
   bonus_interclassement double,
@@ -199,4 +199,15 @@ CREATE TABLE candidat (
   foreign key(code_csp_mere) references csp(code_csp),
   foreign key(resultat) references resultat(resultat_index)
 
+);
+
+CREATE TABLE ranginfo (
+    rang integer,
+    code_voie integer,
+    scei int,
+    moyenne_generale double,
+    etat int,
+    primary key(rang, code_voie),
+    foreign key(rang) references candidat(rang),
+    foreign key(code_voie) references voie(code_voie)
 );
