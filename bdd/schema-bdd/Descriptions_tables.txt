@@ -57,7 +57,7 @@ Table candidat {
 
 Table ranginfo{
   code_voie int [pk]
-  rang int [pk]
+  rang_classe int [pk]
   scei int
   moyenne_generale double
   etat int
@@ -79,7 +79,7 @@ Table concours {
   concours text [not null]
 }
 
-//code sociaux professionnel 
+//code sociaux professionnel
 Table csp {
   code_csp int [pk]
   csp text [not null]
@@ -97,7 +97,7 @@ Table epreuve {
 
 Table etablissement {
   rne text [pk, not null]
-  type text 
+  type text
   nom text [not null]
   code_postal int
   ville text
@@ -179,7 +179,7 @@ Table etat_dossier {
 // Creating references
 // You can also define relaionship separately
 // > many-to-one; < one-to-many; - one-to-one
-//Ref: U.country_code > countries.code  
+//Ref: U.country_code > countries.code
 //Ref: merchants.country_code > countries.code
 
 //----------------------------------------------//
@@ -216,7 +216,7 @@ Ref : candidat.code_voie > voie.code_voie
 
 Ref : candidat.code_puissance > puissance.code_puissance
 
-Ref : candidat.code_qualite > qualite.code_qualite 
+Ref : candidat.code_qualite > qualite.code_qualite
 
 Ref : candidat.code_etat_dossier > etat_dossier.code_etat_dossier
 
@@ -233,5 +233,5 @@ Ref : notes.type_id > typeExam.type_id
 
 Ref : voeux.Ata_cod > reponse.Ata_cod
 Ref : ranginfo.code_voie > voie.code_voie
-Ref : ranginfo.rang > candidat.rang
+Ref : ranginfo.rang_classe > candidat.rang_classe
 // Creating references
