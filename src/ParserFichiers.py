@@ -159,6 +159,60 @@ def UploadEtabli(file: list):
 
     return nom_champs, list_champ
 
+def UploadClasse(liste):
+    assert os.path.exists(DB_PATH), "database not found"
+    i = 0
+    while liste[i][0] != "login":
+        i = i+1
+    data = liste[i:]
+
+
+    ecrit_mat = []
+    i = 13
+    while "(" in data[0][i]:
+        tmp = pars.ParsMatName(data[0][i])
+        ecrit_mat.append(AddMatiere(tmp[1], tmp[0]))
+        i = i + 1
+    ecrit_mat.append(AddMatiere("bonification"))
+    ecrit_mat.append(AddMatiere("total"))
+    ecrit_mat.append(AddMatiere("rang"))
+    ecrit = AddTypeExam("ecrit")
+    #i = i + 2
+    #pos = 1
+    #oral_mat = []
+    #while pos == int(data[0][i + pos].split()[0]):
+    #    oral_mat.append(pars.ParsMatName(data[0][i + pos]))
+    #    pos = pos + 1
+    adminTypeDico = {
+        "A": "admissible",
+        "B": "admissible-spe"
+    }
+    for line in data[1:]:
+        fil = AddVoie(line[3])
+        type_admin = adminTypeDico.get(line[4])
+        commune = AddCommune(line[8])
+        country = AddCountry(line[9])
+        con = sqlite3.connect(DB_PATH)
+        cur = con.cursor()
+        res = cur.execute("SELECT code FROM candidat WHERE code=?",(line[0],)).fetchall()
+        if res:
+            query = "UPDATE candidat SET nom=?, prenom=?, code_voie=?, resultat=?, email=?, ad_1=?, cod_pos=?, com=?, pay_adr=?, por=?, date_naissance=?, n_demi=? rang_classe=? WHERE code=?"
+            cur.execute(query, (line[1], line[2], fil, type_admin, line[5], line[6], line[7], commune, country, line[10], line[11], line[12], line[len(line)-1], line[0],))
+        else:
+            query = "INSERT INTO candidat(code, nom, prenom, code_voie, resultat, email, ad_1, cod_pos, com, pay_adr, por, date_naissance, n_demi, rang_classe) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+            cur.execute(query, (line[0], line[1], line[2], fil, type_admin, line[5], line[6], line[7], commune, country, line[10], line[11], line[12], line[len(line)-1],))
+        j = 0;
+        while j < len(ecrit_mat):
+            query = "INSERT INTO notes(can_code, matiere_id,type_id, value) VALUES(?,?,?,?)"
+            if line[13+j]:
+                #print(ecrit_mat[j]," : ",line[13+j])
+                cur.execute(query, (line[0], ecrit_mat[j], ecrit, line[13+j]))
+            j = j + 1
+
+        con.commit()
+        con.close()
+
+
 
 def UploadListReponse(liste):
     assert os.path.exists(DB_PATH), "database not found"
@@ -166,6 +220,7 @@ def UploadListReponse(liste):
     data = liste[2:]
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
+
     for line in data:
         query = "INSERT INTO reponse(Ata_cod, Ata_lib) VALUES(?,?)"
         cur.execute(query, (line[0], line[1],))
@@ -258,7 +313,7 @@ def UploadOralEcrit(liste, typeExam : str = "ecrit"):
         #       if we already have a candidate, we juste update it's value
         if res:
             # value de rang?
-            query = "UPDATE candidat SET civ_lib=?, nom=?, prenom=?, ad_1=?, ad_2=?, cod_pos=?, com=?, pay_adr=?, email=?, tel=?, por=?,code_voie=?WHERE code=?"
+            query = "UPDATE candidat SET civ_lib=?, nom=?, prenom=?, ad_1=?, ad_2=?, cod_pos=?, com=?, pay_adr=?, email=?, tel=?, por=?,code_voie=? WHERE code=?"
             cur.execute(query, (
                 line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9],
                 pars.telephone(line[10]), pars.telephone(line[11]), code_voie, line[0],))

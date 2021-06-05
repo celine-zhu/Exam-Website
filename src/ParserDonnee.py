@@ -39,7 +39,17 @@ def findVoie(filename: str):
         return "PT"
     if "_TSI" in filename:
         return "TSI"
+    if "_ATS" in filename:
+        return "ATS"
     return None
+
+def ParsMatName(matname: str):
+    matname = matname.replace(")","")
+    ret = matname.split("(")
+    ret[0] = ret[0].strip()
+    ret[1] = ret[1].strip().lower()
+    return ret
+
 """
 Test:
 tel_possible = ['+33 (0)8 06 39 06 32', '05 94 40 87 21', '0256932111', '+33 5 49 50 46 69']
