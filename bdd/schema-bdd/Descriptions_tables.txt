@@ -50,6 +50,7 @@ Table candidat {
   rang int
   rang_classe int
   n_demi int
+  bonus_interclassement double
   // resultat contient au choix "admis", "admis-spe", "admissible", "admissible-spe"
   // admis implique admis-spe (idem pour admissible)
 }
