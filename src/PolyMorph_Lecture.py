@@ -45,9 +45,9 @@ class CVS(FileReading):
         c = [NOM]
         # ouverture du fichier et recuperation du contenu
         with open(NOM) as f:
-            contenu = csv.reader(f, delimiter=' ', quotechar='|')
+            contenu = csv.reader(f, delimiter=';', quotechar='|')
             for row in contenu:
-                c.append(row[0].split(';'))  # separation du string
+                c.append(row)  # separation du string
         return c
 
 
