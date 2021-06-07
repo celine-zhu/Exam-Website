@@ -238,7 +238,31 @@ def UploadClasse(liste):
         con.commit()
         con.close()
 
+def UploadSPE(liste):
+    assert os.path.exists(DB_PATH), "database not found"
 
+
+    code_voie = AddVoie(pars.findVoie(liste[0]))
+
+    data = liste[2:]
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+    oral = AddTypeExam("oral")
+    total = AddMatiere("total")
+    for line in data:
+        print(line)
+        res = cur.execute("SELECT rang_classe FROM ranginfo WHERE rang_classe=? AND code_voie=?", (line[6], code_voie,)).fetchall()
+        if res:
+            query = "UPDATE ranginfo SET scei=?, etat=?, moyenne_generale=? WHERE rang_classe=? AND code_voie=?"
+            cur.execute(query,(line[0], line[2], line[5], line[6], code_voie, ))
+        else:
+            query = "INSERT INTO ranginfo(rang_classe, code_voie, scei, etat, moyenne_generale) VALUES(?, ?, ?, ?, ?)"
+            cur.execute(query, (line[6], code_voie, line[0], line[2], line[5],))
+        res = cur.execute("SELECT code FROM candidat WHERE rang_classe=? AND code_voie=?",(line[6],code_voie,)).fetchall()
+        if res:
+            cur.execute("INSERT INTO notes(can_code, matiere_id,type_id, value) VALUES(?,?,?,?) ON CONFLICT DO UPDATE SET value=?", (res[0][0],total, oral, line[3],line[3],))
+    con.commit()
+    con.close()
 
 def UploadListReponse(liste):
     assert os.path.exists(DB_PATH), "database not found"
