@@ -218,7 +218,7 @@ def UploadClasse(liste):
         cur = con.cursor()
         res = cur.execute("SELECT code FROM candidat WHERE code=?",(line[0],)).fetchall()
         if res:
-            query = "UPDATE candidat SET nom=?, prenom=?, code_voie=?, resultat=?, email=?, ad_1=?, cod_pos=?, com=?, pay_adr=?, por=?, date_naissance=?, n_demi=?, bonus_interclassement=?  rang_classe=? WHERE code=?"
+            query = "UPDATE candidat SET nom=?, prenom=?, code_voie=?, resultat=?, email=?, ad_1=?, cod_pos=?, com=?, pay_adr=?, por=?, date_naissance=?, n_demi=?, bonus_interclassement=?, rang_classe=? WHERE code=?"
             cur.execute(query, (line[1], line[2], fil, type_admin, line[5], line[6], line[7], commune, country, line[10], line[11], line[12], line[len(line)-6], line[len(line)-1], line[0],))
         else:
             query = "INSERT INTO candidat(code, nom, prenom, code_voie, resultat, email, ad_1, cod_pos, com, pay_adr, por, date_naissance, n_demi, bonus_interclassement, rang_classe) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
@@ -289,7 +289,7 @@ def UploadListeVoeux(liste):
         UpdateVoieCandidat(liste[0], line[0])
         query = "INSERT INTO voeux_ecole(can_code, voe_rang, voe_ord, eco_code, Ata_cod) VALUES(?,?,?,?,?)"
         cur.execute(query, (line[0], line[1], line[2], line[3],-11))
-    con.commit()
+        con.commit()
     con.close()
 
 
