@@ -238,7 +238,7 @@ def UploadClasse(liste):
         con.commit()
         con.close()
 
-def UploadSPE(liste):
+def UploadSCEI(liste):
     assert os.path.exists(DB_PATH), "database not found"
 
 
@@ -296,6 +296,8 @@ def UploadListeVoeux(liste):
 def UploadAdm(liste, resulttype: str = "admissible"):
 
     assert os.path.exists(DB_PATH), "database not found"
+
+    resulttype = resulttype + '-spe'*("-spe" in liste[0].lower())
 
     code_voie = AddVoie(pars.findVoie(liste[0]))
     data = liste[2:]
