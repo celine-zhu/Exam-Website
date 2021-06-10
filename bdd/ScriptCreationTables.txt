@@ -56,7 +56,7 @@ CREATE TABLE voeux_ecole  (
   voe_ord integer not null,
   Ata_cod int,
   
-  PRIMARY KEY(can_code, eco_code),
+  PRIMARY KEY(can_code, eco_code, voe_ord),
   foreign key(can_code) references candidat(cod),
   foreign key(eco_code) references ecole(code),
   foreign key(Ata_cod) references reponse(Ata_cod)

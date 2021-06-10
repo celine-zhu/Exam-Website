@@ -97,11 +97,11 @@ Table epreuve {
 
 Table etablissement {
   rne text [pk, not null]
+  ville int
+  pays int
   type text
   nom text [not null]
   code_postal int
-  ville text
-  pays int
 }
 
 Table matiere {
@@ -146,8 +146,8 @@ Table typeExam {
 Table voeux_ecole as voeux {
   can_cod int [pk]
   eco_cod int [pk]
+  voe_ord int [pk]
   voe_rang int [not null]
-  voe_ord int [not null]
   Ata_cod int
 }
 
@@ -226,6 +226,7 @@ Ref : voeux.can_cod > candidat.code
 Ref : voeux.eco_cod > ecole.code
 
 Ref : etablissement.pays > pays.pays_code
+Ref : etablissement.ville > commune.commune_index
 
 Ref : notes.can_code > candidat.code
 Ref : notes.matiere_id > matiere.matiere_id
