@@ -67,10 +67,19 @@ ECHO Installing python
 SETLOCAL ENABLEDELAYEDEXPANSION
 SET _count=1
 FOR /F "tokens=* USEBACKQ" %%F IN (`systeminfo`) DO (
-    SET _var!_count!=%%F
+    SET _var=%%F
+    IF !_count!==3 SET _Versiontmp=!_var!
+    IF !_count!==14 SET _Systypetmp=!_var!
     SET /a _count=!_count!+1
+    
 )
-ENDLOCAL & SET _Version=%_var3:~27,3%& SET _Systype=%_var14:~28,2% 
+
+
+:::~28,2
+
+ENDLOCAL & SET _Version=%_Versiontmp:~44,3%& SET _Systype=%_Systypetmp:~45,2%
+ECHO %_Version%
+ECHO %_Systype%
 
 
 ::check windows Vista
@@ -100,6 +109,7 @@ goto InstallPython
 
 
 :InstallPython
+
 ::download python -> the file download depends on the link
 ::_dnld is the application and the arguments used to download
 set "_dnld=bitsadmin /transfer PythonDownloading /download /priority normal"
