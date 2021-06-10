@@ -15,24 +15,20 @@ def ImportRepository(repository_path, database_path):
         if os.path.isfile(repository_path + i):
             filelist.append(i)
 
-    file2function_association = []
-
-    file2function_association.append([UploadEcole, findFileByname(filelist, 'listeecoles')])
-    file2function_association.append([UploadEtabli, findFileByname(filelist, 'listeetablissements')])
-    file2function_association.append([UploadListReponse, findFileByname(filelist, 'listeetatsreponsesappel')])
-
-    file2function_association.append([UploadInscription, findFileByname(filelist, 'inscription')])
-    file2function_association.append([UploadAdm, findFileByname(filelist, 'admissible_'), 'admissible'])
-    file2function_association.append([UploadClasse, findFileByname(filelist, 'classes_', 'scei')])
-    file2function_association.append([UploadSCEI, findFileByname(filelist, 'scei')])
-    file2function_association.append([UploadOralEcrit, findFileByname(filelist, 'ecrit_'), 'ecrit'])
-    file2function_association.append([UploadOralEcrit, findFileByname(filelist, 'oral_'), 'oral'])
-    file2function_association.append([UploadAdm, findFileByname(filelist, 'admis_'), 'admis'])
-
-    file2function_association.append([UploadListeVoeux, findFileByname(filelist, 'listevoeux_')])
-    file2function_association.append([UploadNote, findFileByname(filelist, 'cmt_oraux')])
-    file2function_association.append([UploadNote, findFileByname(filelist, 'resultatecrit_')])
-    file2function_association.append([UploadNote, findFileByname(filelist, 'resultatoral_')])
+    file2function_association = [[UploadEcole, findFileByname(filelist, 'listeecoles')],
+                                 [UploadEtabli, findFileByname(filelist, 'listeetablissements')],
+                                 [UploadListReponse, findFileByname(filelist, 'listeetatsreponsesappel')],
+                                 [UploadInscription, findFileByname(filelist, 'inscription')],
+                                 [UploadAdm, findFileByname(filelist, 'admissible_'), 'admissible'],
+                                 [UploadClasse, findFileByname(filelist, 'classes_', 'scei')],
+                                 [UploadSCEI, findFileByname(filelist, 'scei')],
+                                 [UploadOralEcrit, findFileByname(filelist, 'ecrit_'), 'ecrit'],
+                                 [UploadOralEcrit, findFileByname(filelist, 'oral_'), 'oral'],
+                                 [UploadAdm, findFileByname(filelist, 'admis_'), 'admis'],
+                                 [UploadListeVoeux, findFileByname(filelist, 'listevoeux_')],
+                                 [UploadNote, findFileByname(filelist, 'cmt_oraux')],
+                                 [UploadNote, findFileByname(filelist, 'resultatecrit_')],
+                                 [UploadNote, findFileByname(filelist, 'resultatoral_')]]
 
     total = len(filelist)
     index = 1
