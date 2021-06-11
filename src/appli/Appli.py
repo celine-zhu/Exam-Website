@@ -1,6 +1,6 @@
 from flask import Flask, Blueprint, render_template, abort, request, redirect, url_for
 from flask import g
-
+import pdfkit
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 # from reportlab.pdfgen.canvas import Canvas
@@ -150,7 +150,10 @@ def Admin():
         """return '''<div> Error, please check that your name and candidate serial are correct<div>
              <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
     return render_template('adminlogin.html', error=error)      
-
-
+@app.route('/Download')
+@app.route('/Download/<name>')
+def my_link():
+    pdfkit.from_url('http://127.0.0.1:5000/', 'out.pdf')
+    return 'Click.'
 if __name__ == '__main__':
     app.run(debug=True)
