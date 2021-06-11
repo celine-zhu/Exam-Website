@@ -1,0 +1,333 @@
+\chapter{Composants logiciels informatiques}
+ \minitoc
+\section{Script}
+\subsection{Script python}
+\subsubsection{BDDCreation}
+Ce script permet de créer une base de données depuis à l’aide d’un fichier texte qui liste les différentes tables, le tout noté au format SQL. \\
+La script prend deux arguments :
+\begin{itemize}
+    \item \textbf{file\_path} : le chemin vers le fichiers qui contient le code SQL
+    \item \textbf{database\_path} : le chemin où la base de données sera créé
+\end{itemize} 
+
+Le script prend aussi en compte les commentaires SQL placé dans le fichier texte. Ces dernier doivent être marqué par la chaîne de caractère suivante : ‘//’.\\
+Le script prend prend aussi en compte le cas ou le chemin du la futur base de données est déjà occupé par un autre fichier. Dans ce cas, le script laisse la main à l'utilisateur pour choisir s' il veut continuer le script et ainsi supprimer le fichier problématique.
+
+Le script requiert l'extension python click pour fonctionner.
+
+
+\subsubsection{ImportRepository}
+Ce script permet d'insérer les données de tous les fichiers présents dans un répertoire vers une base de données.
+Le script prend deux arguments : 
+\begin{itemize}
+    \item \textbf{repository\_path} : le chemin vers le répertoire où sont stocké les fichiers
+    \item \textbf{database\_path} : le chemin de la base de données qui va subir l’opération
+\end{itemize}
+Le script prend uniquement en compte les fichiers directement présents dans le répertoire, c'est-à-dire que les fichiers présents dans un répertoire situé dans le répertoire passé en paramètre seront ignorés.
+
+Dans un premier temps, le script récupère le chemin de tous les fichiers.\\
+Une fois les fichiers récupérés, le script va chercher une chaîne de caractères clés (\ref{tab:TableKeyChar} page \pageref{tab:TableKeyChar}) dans leur nom pour sélectionner la méthode de traitement approprié. Si un fichier ne contient aucune chaîne de caractères clé, il sera ignoré.\\
+Enfin, le script exécute la méthode de traitement associée à chaque fichier retenu.
+
+Comme le temps du script est proportionnel à la quantité de données à insérer dans la base de données, un indicateur est affiché pour permettre à l'utilisateur d'avoir une idée de la progression du script.
+
+Le script requiert l'extension python click pour fonctionner.
+
+
+\begin{table}[]
+    \centering
+    \begin{tabularx}{\linewidth}{ | X | X | X | }
+      \hline
+            description  &  mot clé associé / type & exemple de fichier du jeu de test\\
+      \hline
+            liste des écoles & listeecoles & listeEcoles.xlsx\\
+      \hline
+            liste des établissement & listeetablissement & listeEtablissements .xlsx\\
+      \hline
+            liste des états possible d'un voeux & listeetatsreponsesappel & listeEtatsReponses Appel.xlsx\\
+      \hline
+            liste des personnes inscrites & inscription & Inscription.xlsx\\
+      \hline
+            liste des informations de multiples candidats admissibles & admissible\_ & ADMISSIBLE \_ATS.xlsx\\
+      \hline
+          liste des informations d'un candidat lié à sa classe  & classes\_ & Classes\_MP\_CMT \_spe\_XXXX.xlsx \\
+      \hline
+          liste des informations d'un candidat lié à son code scei & scei & Classes\_MP\_CMT \_spe\_XXXX \_SCEI.csv\\
+      \hline
+          liste des information d'un candidat et de son rang écrit  & ecrit\_ & Ecrit\_MP.xlsx\\
+      \hline
+          liste des information d'un candidat et de son rang oral & oral\_ & Oral\_MP.xlsx\\
+      \hline
+          liste des informations de multiples candidats admis & admis\_ & ADMIS\_ATS.xlsx\\
+      \hline
+          liste des voeux de multiples candidats & listevoeux\_ & listeVoeux\_ATS.xlsx\\
+      \hline
+          liste des résultats des oraux CMT de multiples candidats & cmt\_oraux & CMT\_Oraux \_YYYY\_MP.xlsx\\
+      \hline
+          liste des résultats ecrit de multiples candidats & resultatecrit\_ & ResultatEcrit\_DD \_MM\_YYYY \_ATS.xlsx\\
+      \hline
+          liste des résultats oraux de multiples candidats & resultatoral\_ & ResultatOral\_DD \_MM\_YYYY \_ATS.xlsx\\
+      \hline
+    \end{tabularx}
+    \caption{\textit{Tableau des chaînes de caractères clées}} 
+    \label{tab:TableKeyChar}
+\end{table}
+
+\subsection{Autre Script}
+\subsubsection{installer}
+    Le script Installer, disponicle en .bat(Windows) et en .sh(linux) détecte si Python3 est installé sur l'ordinateur. Si Python3 n'est pas installé le script l'installe. Ensuite le script crée un environnement virtuel nommé ProjectEnvironnement où les dépenses du projet seront installées.\\
+    La version Linux fonctionne avec les distributions possédant les gestionnaires de package suivant : DPKG, DNF, et YUM.
+
+\section{Traitement des fichiers}
+
+\subsection{Lecture des fichiers}
+Le lecture des fichiers s'effectue à l'aide de la fonction ReadFile du fichier PolyMorph\_Lecture.
+Cette fonction renvoie une liste dont le première élément est le nom du fichier ouvert, et tous les éléments suivant étant les lignes du fichier. Les lignes sont modélisé par une liste où chaque case de la ligne correspond a une information trouvé sur la ligne.
+
+La lecture des fichiers a été implémenter avec le polymorphisme en tête. Ce concept de programmation orienté objet consiste a créer un classe interface qui définie les entêtes fonctions pour être sur que toutes les classes qui implémente cette interface utilisent la même syntaxe. Ainsi, nous avons 3 classes définie :
+\begin{itemize}
+    \item FileReading : la classe interface
+    \item XLRS : la classe qui gère les fichiers .xlrs
+    \item CSV : la classe qui gère les fichiers .csv
+\end{itemize}
+Cela permet au projet d'évoluer plus simplement au cours du temps si il faut ajouter une nouvelle extension a traité ou de devoir placer les données de la base de données dans un fichiers d'une extension géré.
+
+Dans un premier temps, la fonction vérifie si le fichier existe. Ensuite, elle va regarder l'extension du fichier pour connaître son type. Dans notre cas, seul deux types de fichier sont autorisés : .xlsx et .csv.
+La fonction va appeler la méthode read de la classe adéquate pour obtenir les données. Si cette méthode n'existe pas, alors la fonction s'arrête. Enfin, la fonction retourne la liste contenant le nom du fichiers et les données.
+
+\subsubsection{Lecture de fichier tableur}
+
+La lecture des fichiers se base sur 2 modules python:
+
+\begin{itemize}
+    \item \textbf{openpyxl} : Pour la lecture des fichiers .xslx
+    \item \textbf{csv} (standard) : Pour la lecture des fichiers .csv
+\end{itemize}
+
+Ceci permet l'ouverture et la lecture de fichier .xlsx et .csv, ce qui couvre tous les formats de fichier attendus pour les fichiers de données.
+
+\subsection{Fonction d'insertion des données}
+
+\subsubsection{Fonction Uploadnotes}
+
+
+Cette fonction prend deux arguments : les données d'un fichier obtenue préalablement à l'aide de la fonction ReadFile et d'une chaîne de caractères  correspondant au type d'examen passé. La fonctions est a utiliser avec les fichiers  de types "resultatoral\_", "resultatecrit\_" et "cmt\_oraux"(\ref{tab:TableKeyChar} page \pageref{tab:TableKeyChar}).
+La fonction a pour but d'ajouter des notes ainsi que d'autres informations relatifs aux notes tel que le nom du jury dans la table \textit{notes} ainsi que dans que dans deux autres tables lié : \textit{matiere} et \textit{typeExam}.
+
+La fonctions appel n-1 fois la fonction AddMatiere, avec n étant le nombre de données sur la première ligne, pour ajouter à la base de données les différentes matières et avoir leur code.
+La fonction AddTypeExam est aussi appelé pour ajouté un type d'examen et obtenir son code.
+Enfin, pour chaque donnée de chaque ligne, on associe dans la base de données, la note ou valeur à un candidats, une matière et un type d'examen en utilisant leur code.
+
+\subsubsection{Fonction UploadEcole}
+
+
+Cette fonction prend en unique argument les données d'un fichier obtenue préalablement à l'aide de la fonction ReadFile. Ce fichier doit être du type de "listeecoles" (\ref{tab:TableKeyChar} page \pageref{tab:TableKeyChar})
+La fonction a pour but d'ajouter de multiples écoles à la base de données dans la tables \textit{ecole}.
+Pour chaque ligne du fichier, on ajoute le nom de l'école ainsi que son code dans la base de données.
+
+\subsubsection{Fonction UploadOralEcrit}
+
+
+Cette fonction prend deux arguments : les données d'un fichier obtenue préalablement à l'aide de la fonction ReadFile et d'une chaîne de caractères  correspondant au type d'examen associé au rang, c'est à dire soit oral, soit écrit. La fonctions est a utiliser avec les fichiers  de types "oral\_", "ecrit\_" (\ref{tab:TableKeyChar} page \pageref{tab:TableKeyChar}).
+La fonction a pour but d'ajouter des candidats ainsi que d'autres informations relatifs a ces derniers dans la tables \textit{candidats} ainsi que dans que dans les table : \textit{pays}, \textit{commune}, \textit{civilite}, \textit{voie}, \textit{matiere}, \textit{typeExam} et \textit{notes}.
+
+
+Dans un premier temps, la fonction trouve la filière associé aux candidats à l'aide du nom du fichier de provenance.
+Pour chaque ligne nous appelons les fonctions AddCommune, AddCountry pour obtenir enregistrer différentes informations lié au candidats et en obtenir leur code pour y faire référence.
+Ensuite, nous ajoutons un nouveau candidat dans la tables \textit{candidat} ou nous le mettons a jour si il existe en utilisant les données de la ligne et des codes des communes, des pays et des civilités.
+Enfin, nous ajoutons son rang dans la tables \textit{notes} à  l'aide du code du candidats, du type d'examen, et de la matière rang créé spécialement.
+
+\subsubsection{Fonction UploadAdm}
+
+
+Cette fonction prend deux arguments : les données d'un fichier obtenue préalablement à l'aide de la fonction ReadFile et d'une chaîne de caractères  correspondant au type du candidat, c'est à dire soit admissible, soit admis. La fonctions est a utiliser avec les fichiers  de types "admis\_", "admissible\_" (\ref{tab:TableKeyChar} page \pageref{tab:TableKeyChar}).
+La fonction a pour but d'ajouter des candidats ainsi que d'autres informations relatifs a ces derniers dans la tables \textit{candidats} ainsi que dans que dans les table : \textit{pays}, \textit{commune}, \textit{civilite}, \textit{voie}, \textit{resultat}.
+
+Dans un premier temps, la fonction trouve la filière associé aux candidats à l'aide du nom du fichier de provenance.
+Ensuite, la fonction, à l'aide du nom du fichier dont provienne les données, regarde si les liste des candidats est de type spécifique ou non et utilise la fonction AddResultat pour obtenir le code du résultat correspondant.
+Pour chaque ligne nous appelons les fonctions AddCommune, Addcountry, pour obtenir enregistrer différentes informations lié au candidats et en obtenir leur code pour y faire référence.
+Ensuite, nous ajoutons un nouveau candidat dans la tables \textit{candidat} ou nous le mettons a jour si il existe en utilisant les données de la ligne et des codes des communes, des pays, des résultats et des civilités.
+
+\subsubsection{Fonction UploadListVoeux}
+
+
+Cette fonction prend en unique argument les données d'un fichier obtenue préalablement à l'aide de la fonction ReadFile. Ce fichier doit être du type de "listevoeux\_" (\ref{tab:TableKeyChar} page \pageref{tab:TableKeyChar})
+La fonction a pour but d'ajouter de multiples voeux provenant de multiples candidats à la base de données dans la tables \textit{voeux\_ecole}.
+Pour chaque ligne du fichier, on associe à un candidat, une école et un entier correspondant l'ordre du voeux un rang et le statuts du voeux .
+
+\subsubsection{Fonction UploadListReponse}
+
+
+Cette fonction prend en unique argument les données d'un fichier obtenue préalablement à l'aide de la fonction ReadFile. Ce fichier doit être du type de "listeetatsreponsesappel" (\ref{tab:TableKeyChar} page \pageref{tab:TableKeyChar})
+La fonction a pour but d'ajouter les possibles réponses à un voeux à la base de données dans la tables \textit{reponse}.
+Pour chaque ligne du fichier, on associe à un code à ce à quoi il correspond.
+
+
+\subsubsection{Fonction UploadSCEI}
+
+
+Cette fonction prend en unique argument les données d'un fichier obtenue préalablement à l'aide de la fonction ReadFile. Ce fichier doit être du type de "scei" (\ref{tab:TableKeyChar} page \pageref{tab:TableKeyChar})
+La fonction a pour but d'ajouter d'associer a un candidat des informations gràce a son rang dans sa filière en modifiant les tables \textit{ranginfo}, \textit{notes}, \textit{typeExam} et \textit{matiere}.
+Pour chaque ligne du fichier, on associe à un rang et à une filière de multiples information. Ensuite, si un candidat de cette filière et avec ce rang existe, on ajoute le total de point qu'il a reçu lors de épreuve oral à l'aide des méthodes Add et du code candidat trouvé.
+
+
+\subsubsection{Fonction UploadClasse}
+
+
+Cette fonction prend deux arguments : les données d'un fichier obtenue préalablement à l'aide de la fonction ReadFile et d'une chaîne de caractères  correspondant au type du candidat, c'est à dire soit admissible, soit admis. La fonctions est a utiliser avec les fichiers  de types "admis\_", "admissible\_" (\ref{tab:TableKeyChar} page \pageref{tab:TableKeyChar}).
+La fonction a pour but d'ajouter des candidats ainsi que d'autres informations relatifs a ces derniers dans la tables \textit{candidats} ainsi que dans que dans les table : \textit{pays}, \textit{commune}, \textit{civilite}, \textit{voie}, \textit{resultat}.
+
+Dans un premier temps, la fonction trouve la filière associé aux candidats à l'aide du nom du fichier de provenance.
+Ensuite, la fonctions appel n fois la fonction AddMatiere, avec n étant le nombre de matières présentes sur la première ligne, pour ajouter à la base de données les différentes matières et avoir leur code.
+La fonction AddResultat est aussi appelé pour obtenir les codes des résultats associable au candidats du ficher. De même on appel la fonction AddExamType pour obtenir le code pour l'examen oral et l'examen écrit.
+
+Dans un second temps, pour chaque ligne, nous appelons les fonctions AddCommune, AddCountry, AddVoie, pour obtenir enregistrer différentes informations lié au candidats et en obtenir leur code pour y faire référence.
+Ensuite, nous ajoutons un nouveau candidat dans la tables \textit{candidat} ou nous le mettons a jour si il existe en utilisant les données de la ligne et des codes des communes, des pays, des résultats et des civilités. Puis, nous ajoutons dans la table \textit{notes} les notes du candidat associé à la ligne
+
+
+\subsubsection{Fonction UploadEtabli}
+
+Cette fonction permet d'ajouter les données un fichier de la forme de "listeEtablissement"
+
+Elle prend pour unique paramètre le fichier sous forme de liste, obtenu avec la fonction ReadFile.
+
+
+Pour chaque ligne du fichier excel, elle crée un dictionnaire correspondant à l'entrée que l'on veut ajouter dans la base de donnée. Pour cela, on fait une première requête basé sur le RNE de l'établissement, pour tester si l'établissement à déjà été ajouté. Il a en effet pu avoir été ajouté précédemment depuis le fichier "Inscription". Dans ce cas certains champs seront non renseigné.
+
+Si l'établissement est déjà présent, on met à jour tous les champs avec la valeur venant de "listeEtablissement".
+
+Autrement, on ajoute une nouvelle entrée correspondant à l'établissement.
+
+
+\subsubsection{Fonction UploadInscription}
+
+
+Cette fonction prend \textbf{en unique argument} un fichier sous forme d'une liste, obtenu par une des fonctions de lecture de fichier.
+Ce fichier doit \textbf{être du type} de \textit{Inscription} ((\ref{tab:TableKeyChar} page \pageref{tab:TableKeyChar}).
+Elle a pour but de remplir la grande majorité de attributs de la table \textit{candidat}, ainsi que différentes tables auxiliaires, notamment celles liées directement à la table candidat.
+
+
+Cette fonction va parcourir chaque ligne pour à chaque fois faire les insertion nécessaire suivant la ligne lu.
+
+Pour une ligne, \textbf{elle appelle d'abord une dizaine de fonction \textit{Add[...]}}.
+Ces dernières permettent d'ajouter la donnée à une table auxiliaire, et renvoient l'identifiant associé pour la référencer.
+Si la donnée se trouvais déjà dans la table, elle donne l'identifiant sans avoir fait d'insertion.
+
+
+Ensuite, un dictionnaire correspondant à la table \textit{candidat} est rempli. La clé correspond au nom de l'attribut, et la valeur correspond à la valeur associé.
+Ce dictionnaire comprends ainsi la quasi totalité des attributs de \textit{candidat}.
+
+
+Pour chaque valeur, il y a \textbf{trois possibilités}:
+\begin{itemize}
+    \item la valeur du fichier est \textbf{inséré tel quel}. Cela correspond notamment aux valeurs entière ne nécessitant pas de traitement, où aux valeurs unique (ou presque) comme l'adresse
+    \item \textbf{La valeur est transformé}, au moyen d'une \textbf{fonction de traitement}, puis insérez. Cela correspond en particulier aux numéro de téléphone, qui sont formatés autant que possible sous un même format
+	\item La valeur rentrée est \textbf{l'identifiant référençant la vrai valeur} dans une autre table. C'est l'identifiant obtenu plus tôt avec les fonctions \textit{Add[...]}
+\end{itemize}
+
+
+Enfin, à partir du dictionnaire, les données sont inséré ou mise à jour, suivant qu'un entrée pour ce numéro de candidat existe déjà ou pas.
+Cette insertion/mise à jour est faite au moyen de la fonction d'ajout \textit{InsertOrUpdateData}
+
+%Les 2 paragraphes suivant (commentés) sont potentiellement invalide si on peut garder la connection en passant le "cur" en paramètre
+
+%SQLite ne permet pas d'ouvrir la connections avec la base de donnée dans une fonction, puis de la ré ouvrir dans une autre fonction auquel on fait appel. Les fonctions "Add[...]" font appel à la base de donnée, on ne peut donc pas l'appeler alors que la base de donnée à été ouverte. IL faut ainsi l'ouvrir, commit les changements puis la fermé pour chaque ligne.
+
+
+%En terme de performance temporel, la fonction a été mesuré à 5min30 pour un fichier Inscription.xslx complet de 15 000 candidats. Cela semble acceptable puisque c'est un coût unique, la problématique de temps se posant principalement lors de l'accès à la base de donnée, et non lors de l'insertion. De plus, il n'est pas attendu qu'un grand nombre de fichier "Inscription" soit ajouté à la base de donnée.
+
+\subsubsection{Fonction InsertData / InsertOrUpdateData}
+
+Ces 2 fonctions sont assez semblables, \textit{InsertOrUpdateData} n'étant qu'une version augmentée de \textit{InsertData}
+
+\textbf{InsertData}
+
+
+Cette fonction à pour but de généraliser l'ajout de données dans une table. Elle prend \textbf{4 paramètres} et \textbf{1 valeur de retour}:
+
+\begin{itemize}
+    \item \textbf{param1 = data :} C'est le paramètre principal de la fonction, un dictionnaire contenant toutes les données qui seront éventuellement ajoutées 
+    \item \textbf{param2 = name\_id:} C'est le nom de l'attribut qui sera renvoyé à la fin. Il s'agit de la valeur permettant de référencer l'entrée depuis une autre table 
+    \item \textbf{param3 = name\_table:} C'est le nom de la table dans laquelle faire l'insertion
+    \item \textbf{param4 = name\_select:} C'est le nom de l'attribut qui sera utilisé pour vérifier si l'entrée existe déjà ou pas
+    \item \textbf{retour:} La valeur associée à l'attribut name\_id
+\end{itemize}
+
+
+Le paramètre \textit{data} est un \textbf{dictionnaire} contenant l'entrée à ajouter.
+Chaque couple clé/valeur est un attribut à remplir dans la table.
+La \textit{clé} est le nom de l'attribut dans la base de donnée, et la \textit{valeur} est la valeur de l'attribut pour cette entrée.
+
+
+La fonction va ouvrir la connexion avec la base de donnée et faire une première requête. Celle-ce essaye de récupérer la valeur de l'attribut \textit{name\_id} pour l'entrée dont la valeur de l'attribut \textit{name\_select} coïncide avec la valeur passé en paramètre.
+Si on a un résultat, l'entrée existe déjà, et on ferme la connexion. On renvoie alors la valeur de \textit{name\_id} obtenu.
+
+Si la première requête ne donne rien, alors l'entrée n'existe pas encore. On va alors, avec le dictionnaire et le nom de la table, effectuer une requête qui va ajouter l'entrée.
+On effectue alors une 3ème requête, identique à la première, afin de récupérer la valeur de l'attribut \textit{name\_id}, qui sera alors la valeur renvoyée.
+
+\textbf{InsertOrUpdateData}
+
+Cette fonction a les même paramètres et valeur de retour, et est quasi identique. Cependant, si la première requête nous renvoie une résultat, alors au lieu de ne rien faire on va insérer les données en remplaçant éventuellement celle qui était déjà présentent. On ne fait cependant pas de 3ème requête et on renvoie la valeur obtenu dès le départ.
+
+
+L'intérêt de cette deuxième fonction est d'éviter des requêtes et des changement de valeurs inutiles, dans le cas où on sait que si l'entrée existe déjà, alors il n'y a rien à rajouter.
+
+
+\subsubsection{Fonction AddXXXX}
+
+Les fonctions de la formes \textit{Add[...]} sont toutes très courtes, puisqu'elles se basent principalement sur la fonction \textit{InsertData}.
+
+Elles sont chacune lié à une table, et permettent d'insérer un ou plusieurs attributs.
+
+\textbf{Paramètre(s) :} le ou les attributs à insérer. Certain paramètres peuvent être optionnels.
+
+\textbf{Retourne: } l'attribut qui permet de référencer l'entrée depuis une autre table.
+ 
+ 
+Ces fonctions peuvent être appelé dans 2 cas:
+ 
+\begin{enumerate}
+    \item On lit un fichier et on a obtenu une ou plusieurs donnée allant ensemble. On appelle alors la fonction pour les insérer si elles n'étaient pas déjà présentes. On peut éventuellement utiliser la valeur de retour pour référencer ces données depuis une autres table (en majorité depuis la table "candidat").
+    \item On veut uniquement la valeur permettant de référencer une donnée, qu'on sait être déjà présente.
+\end{enumerate}
+
+Le principal cas où on utilise 2 paramètres est celui où l'on connais un code et son libellé associé, par exemple pour le pays. Or, le code associé à un pays n'est présent que dans le fichier Inscription, mais il y a des pays dans d'autres fichiers.
+
+
+Le paramètre du numéro de code est alors optionnel, pour 2 raisons. Tout d'abord, pour pouvoir ajouter une nouveau pays si on ne connaît pas le code. Le code sera éventuellement ajouté lors d'un appel ultérieur de la fonction. En deuxième, pour pouvoir obtenir la clé primaire auto-incrémentée associée au pays en ayant uniquement à spécifier le libellé, et ce avec la même fonction.
+
+De manière général, cette série de fonction se contente de crée un dictionnaire et d'appeler \textit{InsertData} avec les bon paramètres, puis de renvoyer sa valeurs de retour.
+
+
+\subsection{Test de l'insertion}
+\subsubsection{Test unitaire}
+Pour tester l'exactitude de notre insertion de données, chaque fonction possède des tests unitaires. Les tests unitaires sont gérés avec la librairie pytest.
+Pour nos tests unitaires, nous avons essayé d'appliquer le concept RIGHT-BICEP:
+\begin{itemize}
+    \item Right : notre test est il bon?
+    \item B     : Les limites sont elles correctes?
+    \item i     : La relation inverse est-elle possible?
+    \item C     : Peut on croiser nos résultats avec des fonctions développées par des tiers?
+    \item E     : Peut on forcer une erreur?
+    \item P     : Les performances de la fonction sont elles acceptables? 
+\end{itemize}
+
+Bien que certaines parties du concept ne peuvent s'appliquer dans notre cas, les principes des limites et des performances ont pue être tester sur nos fonctions.
+
+Un test standard correspond à l'insertion dans la base de données de quelques lignes d'un fichier excel compatible à la fonction. Dans ce dernier, nous essayons d'aller aux limites de nos fonctions à l'aide de notre jeux de données.
+Pour vérifier que tout c'est passé comme prévue, nous effectuons un SELECT pour récupérer le jeux de données et le comparer à ce que nous aurions théoriquement du trouver.
+
+\subsubsection{Test de cohérence}
+Une première choses à noter est qu'en SQLite, bien que l'on spécifie des types pour les attributs, ces types ne sont pas nécessairement contraignants. \cite{sqlite}
+
+
+Il est donc pertinent de vérifier le type des valeurs réellement enregistrées.
+Par exemple que les attributs sensés contenir des entiers contiennent bien des entiers.
+Cela concerne notamment les attributs qui référence une autre table via un identifiant, mais aussi les valeurs supposé entière, comme certaines date, ou encore des départements.
+
+
+Il faut ensuite vérifier autant que possible que les données contenues sont celles attendues.
+Par exemple, pour toutes les entrées, le champ "email" doit avoir le format d'un email.
+Ce genre de vérification peut notamment être effectuée au moyen de Regex.
+Dans python, cela se fait par le module standard \textit{re}.
+Ce module offre des opérations sur les expressions régulières similaires aux regex Perl.\cite{module_re}

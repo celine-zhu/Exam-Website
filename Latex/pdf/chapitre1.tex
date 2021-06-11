@@ -1,0 +1,60 @@
+\chapter{État de l'art}
+
+
+\section{Technologies utilisable pour le projet }
+ \minitoc
+\subsection{Présentation des SGBD (système de gestion de base de données) considérés}
+
+\subsubsection{SQLite :} 
+
+SQLite est un SGBD utilisant le langage SQL.
+La base de données consiste en un fichier dans lequel toutes les informations sont stockées.
+En plus de son incorporation trivial dans un projet, le SGBD ne demande pas beaucoup de mémoire.
+Enfin, tous les membres du groupe ont utilisé SQLite au cours des TPs de WeBD.
+\cite{SQLite-wiki} \cite{sqlite}
+
+\subsubsection{MySQL :}
+
+MySQL est un SGBD utilisant le langage SQL.
+La base de données est située sur un serveur. Pour consulter des informations, il faut être connecté en réseau avec le serveur dans lequel la base est hébergée.
+Cela demande donc la configuration d’un serveur qui doit héberger la base de données tout au long du projet ainsi que de pallier aux problèmes de serveur introuvable et de connexion non sécurisée.
+Enfin, tous les membres du groupe n'ont pas d’expérience avec MySQL.
+\cite{MySQL-wiki}
+
+
+\subsection{Présentation des frameworks considérés}
+
+\subsubsection{Flask :} 
+
+Flask est un framework permettant de développer des sites internet grâce à sa génération de pages HTML.
+Le framework est basé sur Python, langage que nous avons vu ou revu au cours du premier semestre. De plus, ce framework est facile à prendre en main car il possède moins de fonctionnalité que les frameworks standards.
+D’autre part, Flask intègre directement la gestion de SQLite.
+Enfin, Flask est utilisé dans le cadre du module WEBD, dans lequel nous avons pu nous initier à son utilisation.
+\cite{Flask}
+
+
+\subsubsection{JavaFX :}
+
+JavaFX est un framework permettant de développer des interfaces graphiques pour des applications bureautiques.
+Le framework est basé sur Java, langage que nous avons vu ou revu au cours du deuxième semestre lors de nos cours de programmation orientée objet (OOP).
+JavaFX n’intègre pas de gestion de SGBD. Cette fonction est déléguée à d'autres APIs à installer en plus du framework.
+Enfin, tous les membres du groupe n'ont pas d’expérience avec ce framework.
+\cite{JavaFX-wiki}
+
+\subsubsection{Qt :}
+
+Qt est un framework permettant de développer des interfaces graphiques pour des applications bureautiques.
+Le framework est basé sur du C++, langage que nous n’avons pas vu en cours mais qui ressemble à du C orienté objet. Le langage C a cependant été vu en cours.
+Qt intègre la gestion d’un grand nombre de SGBD. Cependant, en fonction du SGBD choisi, il se peut qu'il soit nécessaire de compiler Qt.
+Enfin, aucun membre du groupe n'a d’expérience avec ce framework.
+\cite{Qt}
+
+\subsection{Conclusion}
+
+Nous avons décidé de choisir le MySQL comme SGBD car ce dernier fonctionne en local et qu’il ne demande pas la mise en place d’un serveur, que nous aurions dû hébergé à nos frais.
+
+Le framework Qt a été exclu d’emblée car nous n’avions pas assez d’expérience dans son utilisation, malgré sa grande variété d’outils pour se connecter à des SGBD.
+D’autre part, JavaFX a été aussi exclu en faveur de Flask car ce dernier n'intègre pas directement les outils pour se connecter au SGBD que nous avons choisi.
+
+Ainsi, nous avons choisi d’utiliser pour le projet SQLite et Flask de part leur aisance d’utilisation quand ces derniers sont utilisés en conjonction.
+

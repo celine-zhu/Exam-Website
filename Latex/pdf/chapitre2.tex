@@ -1,0 +1,30 @@
+\chapter{Conception et mise en œuvre d’une base de données relationnelle}
+\minitoc
+Le sujet nous demandait de créer une base de données sous forme normal 3 (3FN), puis de dé-normaliser si cela était voulu ou nécessaire. Dans un premier temps nous présenterons les 3 formes normales obligatoire du sujet. Ensuite nous expliqueront nos choix de conception.
+
+\section{Normalisation}
+Les formes normales des bases de données sont définies récursivement, c'est a dire qu'une forme plus évolué de normalisation dépend des formes plus basses. Ainsi la forme 3FN dépend de la forme 2FN qui dépend elle même de la forme 1FN, normalisation la plus basse des bases de données.
+\cite{Database_normalization-wiki}
+
+\subsection{1FN} :
+La forme 1FN correspond à l'atomicité des informations de la base de données. C'est à dire que chaque élément de la base contient au plus une donnée. Cela nous empêche donc d'avoir des listes d'éléments dans une entrée de la base de données
+
+\subsection{2FN}
+La forme 2FN correspond, en plus de la norme 1FN, au principe d'avoir chaque élément d'une table ne dépendant que de sa ou ses clés primaires. C'est-à-dire qu'un élément, pour être dans la même table que la clé primaire, doit uniquement dépendre de cette dernière ou d'éléments dépendant de cette dernière, et si elle dépend partiellement de cette dernière, alors une nouvelle table doit être créé avec une combinaison de plusieurs clés étrangères comme clé primaire. 
+
+\subsection{3FN}
+La forme 3FN correspond, en plus de la norme 2FN, au principe de retirer la transitivité des dépendances au seins d'une même table. C'est-à-dire que si un élément A dépend de B et que B dépend C alors A ne peut pas être dans la même table que C. Nous devons donc avoir deux tables, une où A dépend de B et une autre où B dépend de C.
+
+\subsection{Autre pratique}
+Un principe courant dans les bases de données est de donner des codes à des données qui n'en possèdent pas dans le jeu sur lequel notre modèle se base. Cela permet d'économiser de la mémoire en évitant de stocker des informations redondantes en entière à l'aide de chaînes de caractères mais de leur assigner une valeur bien moins gourmande, généralement un entier, pour les représenter. Cependant cela à pour conséquence, dans certains cas, d'augmenter le temps des requêtes. 
+
+\section{Choix de conception}
+Concrètement, nous avons centré notre schéma autour d'une table \textit{candidat}, pour laquelle chaque entrée représente un candidat. Cette table comporte donc de nombreux attributs, puisqu'elle contient les informations sur les candidats fourni par le fichier \textit{Inscription}.
+Nous y avons aussi ajouté des données liés au candidats, mais obtenu ou extrapolé depuis d'autre fichier.
+La grande majorité des attributs reprennent des colonnes du fichier inscription.
+Cependant, afin d'éviter la redondance et d'être normale, si le fichier "Inscription" contenant un code et le libellé associé, alors la table "candidat" ne contient que le code.
+De même, pour des données répétées, tel que la qualité du candidat (Boursier/Pupille) ou encore un nom de pays ou de ville, la table contient alors un entier qui référence cette donnée.
+
+Ces données répétées se trouvent dans des tables auxiliaires, contenant en clé primaire le code associé, et en autre attribut le libellé de la donnée.
+
+Enfin, il y a des tables auxiliaires qui contiennent plusieurs données, par exemple celles pour les établissements.
