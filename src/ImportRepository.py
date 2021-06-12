@@ -25,8 +25,8 @@ def ImportRepository(repository_path, database_path):
     file2function_association.append([UploadAdm, findFileByname(filelist, 'admissible_'), 'admissible'])
     file2function_association.append([UploadClasse, findFileByname(filelist, 'classes_', 'scei')])
     file2function_association.append([UploadSCEI, findFileByname(filelist, 'scei')])
-    file2function_association.append([UploadOralEcrit, findFileByname(filelist, 'ecrit_'), 'ecrit'])
-    file2function_association.append([UploadOralEcrit, findFileByname(filelist, 'oral_'), 'oral'])
+    file2function_association.append([UploadOralEcrit, findFileByname(filelist, 'ecrit_',anypose=False), 'ecrit'])
+    file2function_association.append([UploadOralEcrit, findFileByname(filelist, 'oral_',anypose=False), 'oral'])
     file2function_association.append([UploadAdm, findFileByname(filelist, 'admis_'), 'admis'])
 
     file2function_association.append([UploadListeVoeux, findFileByname(filelist, 'listevoeux_')])
@@ -39,7 +39,7 @@ def ImportRepository(repository_path, database_path):
     for i in file2function_association:
         args = (len(i) == 3)
         for j in i[1]:
-            print(str(index) + "/" + str(total))
+            print(str(index) + "/" + str(total) + "-- file : " + j)
             data = ReadFile(repository_path + j)
             if args:
                 i[0](data, i[2])
@@ -48,10 +48,11 @@ def ImportRepository(repository_path, database_path):
             index = index + 1
 
 
-def findFileByname(filelist, filetypename: str, exclude: str = '$£€'):
+def findFileByname(filelist, filetypename: str, exclude: str = '$£€', anypose: bool = True):
     filetype = []
     for i in filelist:
-        if i.lower().find(filetypename) == 0 and exclude not in i.lower():
+        pos = i.lower().find(filetypename)
+        if ((pos != -1 and anypose) or pos == 0) and exclude not in i.lower():
             filetype.append(i)
     return filetype
 
