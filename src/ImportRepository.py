@@ -22,18 +22,21 @@ def ImportRepository(repository_path, database_path):
     file2function_association.append([UploadListReponse, findFileByname(filelist, 'listeetatsreponsesappel')])
 
     file2function_association.append([UploadInscription, findFileByname(filelist, 'inscription')])
+
+
     file2function_association.append([UploadAdm, findFileByname(filelist, 'admissible_'), 'admissible'])
+
     file2function_association.append([UploadClasse, findFileByname(filelist, 'classes_', 'scei')])
     file2function_association.append([UploadSCEI, findFileByname(filelist, 'scei')])
     file2function_association.append([UploadOralEcrit, findFileByname(filelist, 'ecrit_',anypose=False), 'ecrit'])
     file2function_association.append([UploadOralEcrit, findFileByname(filelist, 'oral_',anypose=False), 'oral'])
+
     file2function_association.append([UploadAdm, findFileByname(filelist, 'admis_'), 'admis'])
 
     file2function_association.append([UploadListeVoeux, findFileByname(filelist, 'listevoeux_')])
     file2function_association.append([UploadNote, findFileByname(filelist, 'cmt_oraux')])
     file2function_association.append([UploadNote, findFileByname(filelist, 'resultatecrit_')])
     file2function_association.append([UploadNote, findFileByname(filelist, 'resultatoral_')])
-
     total = len(filelist)
     index = 1
     for i in file2function_association:

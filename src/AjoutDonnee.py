@@ -12,133 +12,134 @@ def AjoutHandicap(hand: str) -> int:
     return res
 
 
-def AddCSP(code: int, lib: str):
+def AddCSP(code: int, lib: str, connection):
     """Add the CSP to the DB if it doesn't exist, using his code as index. return its code"""
 
     data = {"code_csp": code, "csp": lib}
-    code_csp = InsertData(data, "code_csp", "csp", "code_csp")
+    code_csp = InsertData(data, "code_csp", "csp", "code_csp", connection)
 
     return code_csp
 
 
-def AddTypeExam(name: str):
+def AddTypeExam(name: str, connection):
 
     data = {"label": name.lower()}
-    type_id = InsertData(data, "type_id", "typeExam", "label")
+    type_id = InsertData(data, "type_id", "typeExam", "label", connection)
 
     return type_id
 
 
-def AddMatiere(name: str, code=None):
+def AddMatiere(name: str, connection, code=None):
 
     data = {"label": name.lower(), "code": code}
-    matiere_id = InsertData(data, "matiere_id", "matiere", "label")
+    matiere_id = InsertData(data, "matiere_id", "matiere", "label", connection)
 
     return matiere_id
 
 
-def AddCommune(name: str):
+def AddCommune(name: str, connection):
     """add the commune to the bdd if it doesn't exist and return it's code """
 
     data = {"commune": name}
-    commune_index = InsertData(data, "commune_index", "commune", "commune")
+    commune_index = InsertData(data, "commune_index", "commune", "commune", connection)
 
     return commune_index
 
 
-def AddCountry(name: str, code: int=None):
+def AddCountry(name: str,connection ,code: int=None):
     """ add the country to the bdd if it doesn't exist and return it's code """
     if code is not None:
         data = {"pays_code": code, "liste_pays": name}
     else:
         data = {"liste_pays": name}
-    pays_code = InsertData(data, "pays_id", "pays", "liste_pays")
+    pays_code = InsertData(data, "pays_id", "pays", "liste_pays", connection)
 
     return pays_code
 
 
-def AddResultat(name: str):
+def AddResultat(name: str, connection):
     """ add the result of the admission to the bdd if it doesn't exist and return it's code"""
 
     data = {"resultat": name}
-    resultat_index = InsertData(data, "resultat_index", "resultat", "resultat")
+    resultat_index = InsertData(data, "resultat_index", "resultat", "resultat", connection)
     return resultat_index
 
 
-def AddEtabl(code: str, name: str, ville: str):
+def AddEtabl(code: str, name: str, ville: str, connection):
 
     data = {"rne": code, "nom": name, "ville": ville}
-    etabl_id = InsertData(data, "etabl_id", "etablissement", "rne")
+    etabl_id = InsertData(data, "etabl_id", "etablissement", "rne", connection)
     return etabl_id
 
 
-def AddCivilite(name: str):
+def AddCivilite(name: str, connection):
     """ add the civilite to the bdd if it doesn't exist and return it's code """
 
     data = {"civilite": name}
-    civilite_index = InsertData(data, "civilite_index", "civilite", "civilite")
+    civilite_index = InsertData(data, "civilite_index", "civilite", "civilite", connection)
     return civilite_index
 
 
-def AddEtatDossier(code: str, name: str):
+def AddEtatDossier(code: str, name: str, connection):
 
     data = {"code_etat_dossier": code, "etat_dossier": name}
-    code_etat_dossier = InsertData(data, "code_etat_dossier", "etat_dossier", "code_etat_dossier")
+    code_etat_dossier = InsertData(data, "code_etat_dossier", "etat_dossier", "code_etat_dossier", connection)
     return code_etat_dossier
 
 
-def AddConcours(code: str, name: str):
+def AddConcours(code: str, name: str, connection):
 
     data = {"code_concours": code, "concours": name}
-    code_concours = InsertData(data, "code_concours", "concours", "code_concours")
+    code_concours = InsertData(data, "code_concours", "concours", "code_concours", connection)
     return code_concours
 
 
-def AddSerie(code: str, name: str):
+def AddSerie(code: str, name: str, connection):
 
     data = {"code_serie": code, "serie": name}
-    code_serie = InsertData(data, "code_serie", "seriebac", "code_serie")
+    code_serie = InsertData(data, "code_serie", "seriebac", "code_serie", connection)
     return code_serie
 
 
-def AddQualite(name: str):
+def AddQualite(name: str, connection):
 
     data = {"qualite": name}
-    code_qualite = InsertData(data, "code_qualite", "qualite", "qualite")
+    code_qualite = InsertData(data, "code_qualite", "qualite", "qualite", connection)
     return code_qualite
 
 
-def AddMention(name: str):
+def AddMention(name: str,connection):
 
     data = {"mention": name}
-    code_mention = InsertData(data, "code_mention", "mention", "mention")
+    code_mention = InsertData(data, "code_mention", "mention", "mention", connection)
     return code_mention
 
 
-def AddPuissance(name: str):
+def AddPuissance(name: str, connection):
 
     data = {"puissance": name}
-    code_puissance = InsertData(data, "code_puissance", "puissance", "puissance")
+    code_puissance = InsertData(data, "code_puissance", "puissance", "puissance", connection)
     return code_puissance
 
 
-def AddEpreuve(name: str):
+def AddEpreuve(name: str, connection):
     if name is not None:
         data = {"epreuve": name}
-        epreuve_code = InsertData(data, "epreuve_code", "epreuve", "epreuve")
+        epreuve_code = InsertData(data, "epreuve_code", "epreuve", "epreuve", connection)
         return epreuve_code
     return None
 
 
-def AddVoie(name: str):
+def AddVoie(name: str, connection):
     """ add the voie to the bdd if it doesn't exist and return it's code"""
-
+    if not name:
+        return None
     data = {"voie": name}
-    code_voie = InsertData(data, "code_voie", "voie", "voie")
+    code_voie = InsertData(data, "code_voie", "voie", "voie", connection)
     return code_voie
 
 
-def InsertData(data: dict, name_id: str, name_table: str, name_select: str):
+def InsertData(data: dict, name_id: str, name_table: str, name_select: str, connection):
     """
     Insert data in the DB. This function generalize the code for insertion and avoid repetition of similar code
 
@@ -148,8 +149,7 @@ def InsertData(data: dict, name_id: str, name_table: str, name_select: str):
     :param name_select: Attribute used to check if the entrie already exist
     :return: Value used to reference the entrie in an other table
     """
-    con = sqlite3.connect(DB_PATH)
-    cur = con.cursor()
+    cur = connection.cursor()
 
     cur.execute(f"SELECT {name_id} FROM {name_table} WHERE {name_select}=?", (data[name_select],))
     res = cur.fetchall()
@@ -164,13 +164,12 @@ def InsertData(data: dict, name_id: str, name_table: str, name_select: str):
         cur.execute(query, tuple(data.values()))
         cur.execute(f"SELECT {name_id} FROM {name_table} WHERE {name_select}=?", (data[name_select],))
         res = cur.fetchall()
-    con.commit()
+    connection.commit()
 
-    con.close()
     return res[0][0]
 
 
-def InsertOrUpdateData(data: dict, name_id: str, name_table: str, name_select: str):
+def InsertOrUpdateData(data: dict, name_id: str, name_table: str, name_select: str, connection):
     """
     Insert data in the DB. This function generalize the code for insertion and avoid repetition of similar code
     It update the DB if an entry with the same "name_id" already exist
@@ -181,8 +180,7 @@ def InsertOrUpdateData(data: dict, name_id: str, name_table: str, name_select: s
     :param name_select: Attribute used to check if the entrie already exist
     :return: Value used to reference the entrie in an other table
     """
-    con = sqlite3.connect(DB_PATH)
-    cur = con.cursor()
+    cur = connection.cursor()
 
     cur.execute(f"SELECT {name_id} FROM {name_table} WHERE {name_select}=?", (data[name_select],))
     res = cur.fetchall()
@@ -206,7 +204,6 @@ def InsertOrUpdateData(data: dict, name_id: str, name_table: str, name_select: s
         cur.execute(query, tuple(data.values()))
         cur.execute(f"SELECT {name_id} FROM {name_table} WHERE {name_select}=?", (data[name_select],))
         res = cur.fetchall()
-    con.commit()
+    connection.commit()
 
-    con.close()
     return res[0][0]
