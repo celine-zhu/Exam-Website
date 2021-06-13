@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="tile is-parent">
+      <article class="tile is-child notification is-white">
+        </div>
+      </article>
+  </div>
+<div class="tile is-parent">
+      <article class="tile is-child notification is-white">
+        <p class="title" align="right">INE Etablissement:{{user[0][0]}}</p>
+        </div>
+      </article>
+  </div>
+  <ul>
+    {% for r in ranginfo %}
+  <div class="tile is-parent">
+      <article class="tile is-child notification is-info">
+        <p class="content">
+          {{r[4]}},{{r[5]}}
+          {{r[0]}}
+          {{r[1]}}
+          {{r[2]}}
+          {{r[3]}}
+          </p>
+      </article>
+        </div>
+  </div>
+ {% endfor %}
+      </ul>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<body>
+<button class="button is-white" ></button>
+ <div class="box">
+     <div class="column is-4 is-offset-4">
+        <form method="POST" action="/login">
+            <div class="field">
+                <div class="control">
+                     <div> <a href="http://127.0.0.1:5000/Admin/SQL"  class="button is-block is-info is-large is-fullwidth"> SQL </a> <div>
+                </div>
+            </div>
+            </div>
+            <br>
+            <div class="field">
+                <div class="control">
+                     <div> <a href="http://127.0.0.1:5000/Admin/search" class="button is-block is-info is-large is-fullwidth"> Search</a><div>
+                </div>
+            </div>
+            <div>
+            &nbsp;
+            </div>
+             <div class="field">
+                <div class="control">
+                     <div> <a href="http://127.0.0.1:5000/Admin/files" class="button is-block is-info is-large is-fullwidth"> Files</a><div>
+                </div>
+              <div>
+            &nbsp;
+            </div>  
+            </div>
+       </div> 
+</body>
+{% endblock %}
