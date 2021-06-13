@@ -165,17 +165,46 @@ def Admin():
                  return error
              
         if error is None:
-                return redirect(url_for('Candidat',name = candidat))
+                return redirect(url_for('Admin/select',name = candidat))
 
         """return '''<div> Error, please check that your name and candidate serial are correct<div>
              <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
     return render_template('adminlogin.html', error=error)      
 @app.route('/Admin/select')
 def links():
-    return
+    return render_template('adminselect.html')
 @app.route('/Admin/SQL')
 def sql():
-    return render_template('adminsql.html')
+    selec = None
+    fro=None
+    a=None
+    b=None
+    resultat=None
+    if request.method == 'POST':
+        
+        if request.form['btn_identifier'] == 'chercher':
+            selec = request.form["select"]
+            fro = request.form["table"]
+            if selec is None or fro is None:
+                    return'''<div> Erreur, commande incomplète<div>
+             <div> <a href="http://127.0.0.1:5000/Admin/SQL"> retour<div>'''
+            a=request.form["A"]
+            b=request.form["B"]
+            db = getdb()
+            if a==None or b==None:
+                st=str("SELECT"+selec+"FROM"+fro)
+                resultat= db.execute(st).fetchall()
+            else:
+                st=str("SELECT"+selec+"FROM"+fro+"WHERE"+a+"="+b)
+                resultat = db.execute(st).fetchall()
+        else:
+            com=request.form["commande"]
+            db=getdb()
+            resultat=db.execute(com).fetchall()
+            if resultat is None:   
+                return'''<div> Erreur, commande incomplète<div>
+             <div> <a href="http://127.0.0.1:5000/Admin/SQL"> retour<div>'''
+    return render_template('adminsql.html', resultat=resultat)
 @app.route('/Admin/Files')
 def file():
     return

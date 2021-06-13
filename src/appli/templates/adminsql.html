@@ -2,64 +2,113 @@
 
 {% block content %}
 <body>
-<form action ="http://localhost:5000/Admin/SQL" method = "post">
+
+<button class="button is-white"></button>
 <div class="tile is-parent">
       <article class="tile is-child notification is-white">
+        <p class="title" align="middle">CHERCHER EN SQL</p>
         </div>
       </article>
   </div>
-<h1>SELECT:</h1>
+<div class="column is-4 is-offset-4">
+ <div class="box">
+<form action ="http://localhost:5000/Admin/SQL" method = "post">
+<div class="field">
+  <label class="label">SELECT</label>
+  <div class="control">
+    <input class="input" value="select" type="text" placeholder="Regarder le schéma">
+  </div>
+</div>
 <div class="control">
+<label class="label">FROM</label>
   <div class="select">
-    <select>
-      <option>Option</option>
-      <option>With options</option>
+    <select id="table">
+      <option >Sélectionner une table</option>
+     <option value="civilite"> civilite
+</option><option value="resultat "> resultat 
+
+</option><option value="commune"> commune
+
+</option><option value="voie"> voie
+
+</option><option value="puissance "> puissance 
+</option><option value="qualite"> qualite
+</option><option value="pays"> pays
+
+</option><option value="ecole"> ecole
+
+</option><option value="reponse "> reponse 
+
+</option><option value="voeux_ecole "> voeux_ecole 
+
+</option><option value="etablissement"> etablissement
+
+</option><option value="epreuve"> epreuve
+
+</option><option value="concours"> concours
+
+</option><option value="seriebac "> seriebac 
+</option><option value="mention "> mention 
+
+</option><option value="csp "> csp 
+
+</option><option value="notes "> notes 
+
+</option><option value="matiere"> matiere
+
+</option><option value="typeExam "> typeExam 
+
+</option><option value="candidat "> candidat 
+
+</option><option value=""> ranginfo 
     </select>
   </div>
 </div>
-<h1>FROM:</h1>
-<div class="control">
-  <div class="select">
-    <select>
-      <option>Select dropdown</option>
-      <option>With options</option>
-    </select>
+<div class="field">
+  <label class="label">WHERE A</label>
+  <div class="control">
+    <input class="input" value ="A"type="text" placeholder="Regarder le schéma">
   </div>
 </div>
-<h1>WHERE:</h1>
-<h1>A:</h1>
-<div class="control">
-  <div class="select">
-    <select>
-      <option>Select dropdown</option>
-      <option>With options</option>
-    </select>
+<div class="field">
+  <label class="label">= B</label>
+  <div class="control">
+    <input class="input" value="B" type="text" placeholder="Regarder le schéma">
   </div>
 </div>
-<h1>=</h1>
-<h1>B:</h1>
+  <input type="hidden" name="btn_identifier" value="chercher" />
 <div class="control">
-  <div class="select">
-    <select>
-      <option>Select dropdown</option>
-      <option>With options</option>
-    </select>
+  <button class="button is-primary" >Chercher</button>
+</div>
   </div>
 </div>
-<h1>;</h1>
-<div class="control">
-  <button class="button is-primary">Submit</button>
 </div>
+</form>
+<div class="column is-4 is-offset-4">
+ <div class="box">
+ <form action ="http://localhost:5000/Admin/SQL" method = "post">
 <h1>Recherche SQL</h1>
 <div class="field has-addons">
   <div class="control">
-    <input class="input" type="text" placeholder="Commande SQL">
+    <input class="input" value="search" type="text" placeholder="Commande SQL">
   </div>
+  <input type="hidden" name="btn_identifier" value="commande" />
   <div class="control">
-    <a class="button is-info">
-      Search
+    <a class="button is-info" type="submit" >
+      Chercher
     </a>
   </div>
 </div>
+  </div>
+</div>
+</form>
+<table>
+{% for item in resultat %}
+<TR>
+   <TD class="c1">{{item}}</TD>
+</TR>
+{% endfor %}
+</table>
+<img src="{{url_for('static', filename='Schema-2.png')}}"  alt="Schéma bdd">
 </body>
 {% endblock %}
