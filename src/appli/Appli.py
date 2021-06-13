@@ -219,5 +219,8 @@ def credit():
 def my_link():
     pdfkit.from_url('http://127.0.0.1:5000/', 'out.pdf')
     return 'Click.'
+@app.route('/Curieux')
+def images():
+    return
 if __name__ == '__main__':
     app.run(debug=True)

@@ -7,20 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/mystyle.css') }}">
     <link rel="icon" href="https://www.imt.fr/wp-content/uploads/2017/01/favicon.png" type="image/png">
-   <script type = "text/javascript"> 
-   var myURL = request.url;
-   function download() {
-fetch("http://127.0.0.1:5000/").then(function(t) {
-    return t.blob().then((b)=>{
-        var a = document.createElement("a");
-        a.href = URL.createObjectURL(b);
-        a.setAttribute("download", "cool.html");
-    }   a.click()
-    );
-});
-function act(){}
-download("http://127.0.0.1:5000/","rapport.html");};
-}</script>
 </head>
    <body>
    <nav class="navbar is-fixed-top has-shadow">
@@ -67,7 +53,11 @@ download("http://127.0.0.1:5000/","rapport.html");};
         </div>
       </div>
     </div>
-
+<script>
+    function getURL() {
+        return( window.location.href);
+    }
+    </script>
     <div class="navbar-end">
       <div class="navbar-item">
         <div class="field is-grouped">
@@ -76,7 +66,7 @@ download("http://127.0.0.1:5000/","rapport.html");};
               <span class="icon">
                 <i class="fas fa-download"></i>
               </span>
-              <span <a href="candidat.html" download> Download </a> </span>
+              <span <a href="http://127.0.0.1:5000/Download" > Download </a> </span>
             </a>
           </p>
         </div>
