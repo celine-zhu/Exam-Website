@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<body>
+<form action ="http://localhost:5000/Admin/SQL" method = "post">
+<div class="tile is-parent">
+      <article class="tile is-child notification is-white">
+        </div>
+      </article>
+  </div>
+<h1>SELECT:</h1>
+<div class="control">
+  <div class="select">
+    <select>
+      <option>Option</option>
+      <option>With options</option>
+    </select>
+  </div>
+</div>
+<h1>FROM:</h1>
+<div class="control">
+  <div class="select">
+    <select>
+      <option>Select dropdown</option>
+      <option>With options</option>
+    </select>
+  </div>
+</div>
+<h1>WHERE:</h1>
+<h1>A:</h1>
+<div class="control">
+  <div class="select">
+    <select>
+      <option>Select dropdown</option>
+      <option>With options</option>
+    </select>
+  </div>
+</div>
+<h1>=</h1>
+<h1>B:</h1>
+<div class="control">
+  <div class="select">
+    <select>
+      <option>Select dropdown</option>
+      <option>With options</option>
+    </select>
+  </div>
+</div>
+<h1>;</h1>
+<div class="control">
+  <button class="button is-primary">Submit</button>
+</div>
+<h1>Recherche SQL</h1>
+<div class="field has-addons">
+  <div class="control">
+    <input class="input" type="text" placeholder="Commande SQL">
+  </div>
+  <div class="control">
+    <a class="button is-info">
+      Search
+    </a>
+  </div>
+</div>
+</body>
+{% endblock %}

@@ -20,20 +20,32 @@ def getdb():
 @app.route('/')
 def Index():
     return render_template('index.html')
-
+@app.route('/test')
+def test():
+    list=[1,2,3]
+    return render_template('test.html',list=list)
 
 
 @app.route('/Candidat/<name>')
 
 def Candidat(name):
-    
     db = getdb()
-    error = None
-    user = db.execute(
-            "SELECT * FROM candidat WHERE code = ?", (name,)
-        ).fetchall()
-    
-    return render_template( 'candidat.html', **locals())
+    user = db.execute("SELECT * FROM candidat WHERE code = ?", (name,)).fetchall()
+    note=db.execute("SELECT * FROM notes WHERE can_code =?", (name,)).fetchall()
+    ranginfo=db.execute("SELECT * FROM notes WHERE can_code =?", (name,)).fetchall()
+    voeux=ranginfo=db.execute("SELECT * FROM voeux_ecole WHERE can_code =?", (name,)).fetchall()
+    vo=[]
+    for k in note:
+        m=db.execute("SELECT label FROM notes WHERE matiere_id =?", (k[1],)).fetchall()
+        t=db.execute("SELECT label FROM typeExam WHERE type_id =?", (k[2],)).fetchall()
+        k.append(m)
+        k.append(t)
+    for k in range(0,len(voeux)):
+        for j in range(0,len(voeux)):
+            if voeux[j][3]==(k+1):
+                vo.append(voeux[j],db.execute("SELECT nom FROM ecole WHERE code =?", (voeux[j][1],)).fetchall(),db.execute("SELECT label FROM reponse WHERE Ata_code =?", (voeux[j][4],)).fetchall())
+                voeux=list(voeux[:j]+voeux[j+1])
+    return render_template( 'candidat.html', user=user,note=note, ranginfo=ranginfo, vo=vo)
 
 
 @app.route('/Candidat',methods=['POST','GET'])
@@ -71,7 +83,6 @@ def changinfo():
 
 
 @app.route('/Prof')
-@app.route('/Prof/<name>')
 def prof():
     error = None
     if request.method == 'POST':
@@ -98,7 +109,16 @@ def prof():
              <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
     return render_template('proflogin.html', error=error)     
 
-
+@app.route('/Prof/<name>')
+def etabl(name):
+    db = getdb()
+    user = db.execute("SELECT code, nom, prenom FROM candidat WHERE ine = ?", (name,)).fetchall()
+    ranginfo=[]
+    for j in range(0, len(user)):
+        ranginfo.append(db.execute("SELECT * FROM notes WHERE can_code =?", (user[j][0],)).fetchall())
+        ranginfo.append(user[j][1])
+        ranginfo.append(user[j][2])
+    return render_template( 'professeur.html', user=user, ranginfo=ranginfo)
 
 @app.route('/Register')
 def nouveau():
@@ -150,6 +170,21 @@ def Admin():
         """return '''<div> Error, please check that your name and candidate serial are correct<div>
              <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
     return render_template('adminlogin.html', error=error)      
+@app.route('/Admin/select')
+def links():
+    return
+@app.route('/Admin/SQL')
+def sql():
+    return render_template('adminsql.html')
+@app.route('/Admin/Files')
+def file():
+    return
+@app.route('/Admin/search')
+def search():
+    return
+@app.route('/Credits')
+def credit():
+    return
 @app.route('/Download')
 @app.route('/Download/<name>')
 def my_link():

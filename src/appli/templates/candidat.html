@@ -1,47 +1,136 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="tile is-parent">
+      <article class="tile is-child notification is-white">
+        </div>
+      </article>
+  </div>
+<div class="tile is-parent">
+      <article class="tile is-child notification is-white">
+        <p class="title" align="right">CODE CANDIDAT:{{user[0]}}</p>
+        </div>
+      </article>
+  </div>
 <div class="tile is-ancestor">
-  <div class="tile is-vertical is-8">
+  <div class="tile is-vertical is-12">
     <div class="tile">
       <div class="tile is-parent is-vertical">
-        <article class="button is-child notification is-large is-fullwidth is-primary">
-          <p class="title">mes notes</p>
-          <p class="subtitle"></p>
+        <article class="tile is-child notification is-primary">
+          <p class="title"> Bienvenue {{user[2]}} {{user[3]}} ! </p>
+          <p class="content">
+          {{ranginfo[0]}}
+          {{ranginfo[1]}}
+          {{ranginfo[2]}}
+          {{ranginfo[3]}}
+          </p>
+
         </article>
-        <article class="button is-child notification is-warning">
-          <p class="title">mes voeux</p>
-          <p class="subtitle"></p>
+        <article class="tile is-child notification is-warning">
+          <p class="title">Mes voeux</p>
+          <p class="content">
+                    <ul>
+    {% for voeux in vo %}
+        <li>{{ voeux[3]}}. {{ voeux[5]}}: {{ voeux[2]}}, {{ voeux[6]}}</li>
+    {% endfor %}
+      </ul>
+          </p>
         </article>
       </div>
       <div class="tile is-parent">
-        <article class="button is-child notification is-info">
-          <p class="title">mes informations</p>
-          <p class="subtitle"></p>
+        <article class="tile is-child notification is-info">
+          <p class="title">Mes informations</p>
+          <p class="content"></p>
+         <p align="left">civ_lib:{{user[1]}}</p>
+         
+         <p  align="left">  nom :{{user[2]}}</p>
+         
+         <p align="left">  prénom:{{user[3]}}</p>
+         
+         <p align="left">  autre_prenoms:{{user[4]}}</p>
+         
+         <p align="left">  date_naissance:{{user[5]}}</p>
+         
+         <p align="left">  arr_naissance:{{user[6]}}</p>
+         
+         <p align="left">ville_naissance:{{user[7]}}</p>
+         
+         <p align="left">  code_pays_naissance:{{user[8]}}</p>
+                     
+         <p align="left">  francais:{{user[9]}}</p>
+                  
+         <p align="left">  ad_1 text:{{user[10]}}</p>
+                  
+         <p align="left">ad_2 text:{{user[11]}}</p>
+         
+         <p align="left">  cod_pos:{{user[12]}}</p>
+                  
+         <p align="left">  com:{{user[13]}}</p>
+                  
+         <p align="left">  pay_adr:{{user[14]}}</p>
+               
+         <p  align="left">  code_pay_natio:{{user[15]}}</p>
+                  
+         <p  align="left">  mel:{{user[16]}}</p>
+                  
+         <p align="left">  tel:{{user[17]}}</p>
+                  
+         <p  align="left">  por:{{user[18]}}</p>
+                  
+         <p align="left">email:{{user[19]}}</p>
+         
+         <p align="left">  etablissement:{{user[20]}}</p>
+         
+         <p align="left">  Epreuve_1:{{user[21]}}</p>
+         
+         <p align="left">  Option_1:{{user[22]}}</p>
+         
+         <p align="left"> Option_2:{{user[23]}}</p>
+         
+         <p align="left">Option_3:{{user[24]}}</p>
+         
+         <p align="left">  Option_4:{{user[25]}}</p>
+         
+         <p align="left">  code_ville_ecr:{{user[26]}}</p>
+         
+         <p  align="left"> code_concours:{{user[27]}}</p>
+         
+         <p  align="left"> voie:{{user[28]}}</p>
+         
+         <p align="left"> code_serie:{{user[29]}}</p>
+         
+         <p  align="left">  code_mention:{{user[30]}}</p>
+         
+         <p align="left">  bac_date:{{user[31]}}</p>
+         
+         <p align="left">sujet_tipe:{{user[32]}}</p>
+         
+         <p  align="left"> ine:{{user[33]}}</p>
+         
+         <p align="left">  cod_csp_pere:{{user[34]}}</p>
+         
+         <p align="left">  cod_csp_mere:{{user[35]}}</p>
+         
+         <p align="left">  code_etat_dossier:{{user[36]}}</p>
+         
+         <p align="left"> handicap:{{user[37]}}</p>
+         
+         <p align="left">can_dep_bac:{{user[38]}}</p> 
+    
         </article>
       </div>
     </div>
     <div class="tile is-parent">
       <article class="tile is-child notification is-danger">
-        <p class="title">Wide tile</p>
-        <p class="subtitle">Aligned with the right tile</p>
+        <p class="title">Notes</p>
         <div class="content">
-          <!-- Content -->
+          <ul>
+    {% for mat in note %}
+        <li>{{ mat[5]}}({{ mat[6]}}): {{ mat[3]}}</li>
+    {% endfor %}
+      </ul>
         </div>
       </article>
-    </div>
   </div>
-  <div class="tile is-parent">
-    <article class="tile is-child notification is-success">
-      <div class="content">
-        <p class="title">Tall tile</p>
-        <p class="subtitle">With even more content</p>
-        <div class="content">
-          <!-- Content -->
-        </div>
-      </div>
-    </article>
-  </div>
-</div>
 </div>
 {% endblock %}
