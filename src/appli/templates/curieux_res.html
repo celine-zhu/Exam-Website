@@ -7,8 +7,9 @@
     <article class="tile is-child notification is-white">
     </article>
 </div>
-<h1>Statistique de la matiere {{matiere}}</h1><br>
 <div class="tile is-parent">
+    <h1>Statistique {{type_stats}}</h1><br>
+    {% if error == None %}
         <table class="table is-bordered">
             <tr>
                 <td>moyenne</td>
@@ -26,7 +27,9 @@
             {% endfor %}
             </tr>
         </table>
+    {% else %}
+        <div class="tile is-child"> {{error}}</div>
+    {% endif %}
 </div>
-<img src='{{image}}' alt="graph">
-<a href="./statform"> Retour à la selection d'une matière</a>
+<a href="./Curieux"> Retour à la selection d'une matière</a>
 {% endblock %}

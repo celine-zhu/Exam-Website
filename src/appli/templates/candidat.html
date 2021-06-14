@@ -2,111 +2,194 @@
 
 {% block content %}
 <div class="tile is-parent">
-      <article class="tile is-child notification is-white">
-        </div>
-      </article>
-  </div>
-<div class="tile is-parent">
-      <article class="tile is-child notification is-white">
-        <p class="title" align="right">CODE CANDIDAT:{{user[0][0]}}
-       
-        </p>
-        </div>
-      </article>
-  </div>
-<div class="tile is-ancestor">
-  <div class="tile is-vertical is-12">
-    <div class="tile">
-      <div class="tile is-parent is-vertical">
-        <article class="tile is-child notification is-primary">
-          <p class="title"> Bienvenue {{user[0][1]}} {{user[0][3]}} ! </p>
-          <p class="content">
-          <big><h1>rang_classe  :{{ranginfo[0][0]}} </h1>
-            <h1>code_voie  :{{ranginfo[0][1]}} </h1>
-          <h1> scei int:{{ranginfo[0][2]}} </h1>
-            <h1> moyenne_generale double{{ranginfo[0][3]}} </h1></big>
-          </p>
-
-        </article>
-        <article class="tile is-child notification is-warning">
-          <p class="title">Mes voeux</p>
-          <p class="content">
-                    <ul>
-    {% for vol in vo %}
-        <li> {{ vol[0][3]}}.{{ vol[1][0][0]}}. {{ vol[2][0][0]}}</li>
-    {% endfor %}
-      </ul>
-          </p>
-        </article>
-      </div>
-      <div class="tile is-parent">
-        <article class="tile is-child notification is-info">
-          <p class="title">Mes informations</p>
-          <p class="content"></p>
-<p align="left">civ_lib  : {{user[0][1]}}</p>
-<p align="left">
-  nom  : {{user[0][2]}}</p>
-  <p align="left">
-  prenom  : {{user[0][3]}}</p><p align="left">
-  autre_prenoms  : {{user[0][4]}}</p><p align="left">
-  date_naissance  : {{user[0][5]}}</p><p align="left">
-  arr_naissance  : {{user[0][6]}}</p><p align="left">
-  code_ville_naissance  : {{user[0][7]}}</p><p align="left">
-  code_pays_naissance  : {{user[0][8]}}</p><p align="left">
-  francais integer  : {{user[0][9]}}</p><p align="left">
-  ad_1  : {{user[0][10]}}</p><p align="left">
-  ad_2  : {{user[0][11]}}</p><p align="left">
-  cod_pos  : {{user[0][12]}}</p><p align="left">
-  com  : {{user[0][13]}}</p><p align="left">
-  pay_adr  : {{user[0][14]}}</p><p align="left">
-  code_pay_natio  : {{user[0][15]}}</p><p align="left">
-  tel  : {{user[0][16]}}</p><p align="left">
-  por  : {{user[0][17]}}</p><p align="left">
-  email  : {{user[0][18]}}</p><p align="left">
-  code_puissance  : {{user[0][19]}}</p><p align="left">
-  code_etabl  : {{user[0][20]}}</p><p align="left">
-  epreuve_1  : {{user[0][21]}}</p><p align="left">
-  option_1  : {{user[0][22]}}</p><p align="left">
-  epreuve_2  : {{user[0][23]}}</p><p align="left">
-  option_2  : {{user[0][24]}}</p><p align="left">
-  epreuve_3  : {{user[0][25]}}</p><p align="left">
-  option_3  : {{user[0][26]}}</p><p align="left">
-  epreuve_4  : {{user[0][27]}}</p><p align="left">
-  option_4  : {{user[0][28]}}</p><p align="left">
-  code_ville_ecr  : {{user[0][29]}}</p><p align="left">
-  code_concours  : {{user[0][30]}}</p><p align="left">
-  code_voie  : {{user[0][31]}}</p><p align="left">
-  bac_date  : {{user[0][32]}}</p><p align="left">
-  code_serie  : {{user[0][33]}}</p><p align="left">
-  code_mention  : {{user[0][34]}}</p><p align="left">
-  sujet_tipe  : {{user[0][35]}}</p><p align="left">
-  ine  : {{user[0][36]}}</p><p align="left">
-  code_csp_pere  : {{user[0][37]}}</p><p align="left">
-  code_csp_mere  : {{user[0][38]}}</p><p align="left">
-  code_etat_dossier  : {{user[0][39]}}</p><p align="left">
-  handicap  : {{user[0][40]}}</p><p align="left">
-  code_qualite  : {{user[0][41]}}</p><p align="left">
-  can_dep_bac  : {{user[0][42]}}</p><p align="left">
-  resultat  : {{user[0][43]}}</p><p align="left">
-  rang  : {{user[0][44]}}</p><p align="left">
-  rang_classe  : {{user[0][45]}}</p><p align="left">
-  n_demi  : {{user[0][46]}}</p><p align="left">
-  bonus_interclassement : {{user[0][47]}}</p>
-    
-        </article>
-      </div>
-    </div>
-    <div class="tile is-parent">
-      <article class="tile is-child notification is-danger">
-        <p class="title">Notes</p>
-        <div class="content">
-          <ul>
-    {% for mat in n %}
-        <li>{{ mat[1][0]}}({{ mat[2][0]}}): {{ mat[0][-1]}}</li>
-    {% endfor %}
-      </ul>
-        </div>
-      </article>
-  </div>
+    <article class="tile is-child notification is-white">
 </div>
-{% endblock %}
+</article>
+</div>
+<div class="tile is-parent">
+    <article class="tile is-child notification is-white">
+        <p class="title" align="right">CODE CANDIDAT:{{user[0][0]}}</p>
+</div>
+</article>
+</div>
+<div class="tile is-ancestor">
+    <div class="tile is-vertical is-12">
+        <div class="tile">
+            <div class="tile is-parent is-vertical">
+                <article class="tile is-child notification is-primary">
+                    <p class="title"> Bienvenue {{user[0][3]}} {{user[0][2]}} ! </p>
+                    {% if ranginfo != [] %}
+                        <p class="content">
+                        <big>
+                        <h1>Rang classé :{{ranginfo[0][0]}} </h1>
+                        <h1>Voie : {{lib_user[17]}} </h1>
+                        <h1>Scei : {{ranginfo[0][2]}} </h1>
+                        <h1>Moyenne génerale : {{ranginfo[0][3]}} </h1>
+                        </big>
+                        </p>
+                    {% endif %}
+                </article>
+
+
+                <article class="tile is-child notification is-warning">
+                    <p class="title">Mes voeux</p>
+                    {% if vo != None %}
+                        <p class="content">
+                        <ul>
+                            {% for vol in vo %}
+                            <li> {{ vol[0][3]}}.{{ vol[1][0][0]}}. {{ vol[2][0][0]}}</li>
+                            {% endfor %}
+                        </ul>
+                        </p>
+                    {% endif %}
+
+                </article>
+            </div>
+            <div class="tile is-parent">
+                <article class="tile is-child notification is-info">
+                    <p class="title">Mes informations</p>
+                    <p class="content"></p>
+                    {% if lib_user[0] != [] %}
+                        <p align="left">Civilité : {{lib_user[0][0][0]}}</p>
+                    {% endif %}
+
+                    <p align="left">Nom : {{user[0][2]}}</p>
+                    <p align="left">Prénom : {{user[0][3]}}</p>
+                    {% if user[0][4] != None %}
+                        <p align="left">Autre prénoms : {{user[0][4]}}</p>
+                    {% endif %}
+                    {% if user[0][5] != None %}
+                        <p align="left">Date de naissance : {{user[0][5]}}</p>
+                    {% endif %}
+                    {% if user[0][6] != None %}
+                        <p align="left">Arrondissement de naissance : {{user[0][6]}}</p>
+                    {% endif %}
+                    {% if lib_user[7] != [] %}
+                        <p align="left">Epreuve 1 : {{lib_user[7][0][0]}}</p>
+                    {% endif %}
+                    {% if lib_user[1] != [] %}
+                         <p align="left">Ville de naissance : {{lib_user[1][0][0]}}</p>
+                    {% endif %}
+                    {% if lib_user[2] != [] %}
+                        <p align="left">Pays de naissance : {{lib_user[2][0][0]}}</p>
+                    {% endif %}
+                    {% if user[0][9] != None %}
+                        <p align="left">Francais : {{user[0][9]}}</p>
+                    {% endif %}
+                    <p align="left">Addresse : {{user[0][10]}}</p>
+                    {% if user[0][11] != None %}
+                        <p align="left">
+                        Complément d'adresse : {{user[0][11]}}</p>
+                    {% endif %}
+
+                    <p align="left">Code Postal : {{user[0][12]}}</p>
+                    {% if lib_user[3] != [] %}
+                        <p align="left">Commune : {{lib_user[3][0][0]}}</p>
+                    {% endif %}
+                    {% if lib_user[4] != [] %}
+                        <p align="left">Pays : {{lib_user[4][0][0]}}</p>
+                    {% endif %}
+                    <p align="left">Téléphone fixe : {{user[0][16]}}</p>
+                    <p align="left">Portable : {{user[0][17]}}</p>
+                    <p align="left">Email : {{user[0][18]}}</p>
+                    {% if lib_user[5] != [] %}
+                        <p align="left">Puissance : {{lib_user[5][0][0]}}</p>
+                    {% endif %}
+                    {% if lib_user[6] != [] %}
+                        <p align="left">Établissement : {{lib_user[6][0][0]}}</p>
+                    {% endif %}
+                    {% if lib_user[7] != [] %}
+                        <p align="left">Epreuve 1 : {{lib_user[7][0][0]}}</p>
+                    {% endif %}
+                    {% if lib_user[8] != [] %}
+                        <p align="left">Option 1 : {{lib_user[8][0][0]}}</p>
+                    {% endif %}
+                    {% if lib_user[9] != [] %}
+                        <p align="left">Epreuve 2 : {{lib_user[9][0][0]}}</p>
+                    {% endif %}
+                    {% if lib_user[10] != [] %}
+                        <p align="left">Option 2 : {{lib_user[10][0][0]}}</p>
+                    {% endif %}
+                    {% if lib_user[11] != [] %}
+                        <p align="left">Epreuve 3 : {{lib_user[11][0][0]}}</p>
+                    {% endif %}
+                    {% if lib_user[12] != [] %}
+                        <p align="left">Option 3 : {{lib_user[12][0][0]}}</p>
+                    {% endif %}
+                    {% if lib_user[13] != [] %}
+                        <p align="left">Epreuve 4 : {{lib_user[13][0][0]}}</p>
+                    {% endif %}
+                    {% if lib_user[14] != [] %}
+                        <p align="left">Option 4 : {{lib_user[14][0][0]}}</p>
+                    {% endif %}
+                    {% if lib_user[15] != [] %}
+                        <p align="left">Ville écris : {{lib_user[15][0][0]}}</p>
+                    {% endif %}
+                    {% if lib_user[16] != [] %}
+                        <p align="left">Concours : {{lib_user[16][0][0]}}</p>
+                    {% endif %}
+                    {% if lib_user[17] != [] %}
+                        <p align="left">Voie: {{lib_user[17][0][0]}}</p>
+                    {% endif %}
+                    {% if datebac != None %}
+                        <p align="left">Date bac : {{datebac}}</p>
+                    {% endif %}
+                    {% if lib_user[18] != [] %}
+                        <p align="left">Serie: {{lib_user[18][0][0]}}</p>
+                    {% endif %}
+                    {% if lib_user[19] != [] %}
+                        <p align="left">Mention : {{lib_user[19][0][0]}}</p>
+                    {% endif %}
+                    {% if user[0][35] != None %}
+                        <p align="left">Sujet tipe : {{user[0][35]}}</p>
+                    {% endif %}
+                    {% if user[0][36] != None %}
+                        <p align="left">INE : {{user[0][36]}}</p>
+                    {% endif %}
+                    {% if user[0][37] != None %}
+                         <p align="left">Code csp père (libellé): {{user[0][37]}} ({{lib_user[20]}})</p>
+                    {% endif %}
+                    {% if user[0][38] != None %}
+                         <p align="left">Code csp mère (libellé): {{user[0][38]}} ({{lib_user[21]}})</p>
+                    {% endif %}
+                    {% if lib_user[22] != [] %}
+                        <p align="left">Etat dossier : {{lib_user[22][0][0]}}</p>
+                    {% endif %}
+                    {% if lib_user[23] != [] %}
+                        <p align="left">Handicap : {{lib_user[23]}}</p>
+                    {% endif %}
+                    {% if lib_user[24] != [] %}
+                        <p align="left">Qualité: {{lib_user[24][0][0]}}</p>
+                    {% endif %}
+                    {% if user[0][42] != None %}
+                         <p align="left">Departement du bac : {{user[0][42]}}</p>
+                    {% endif %}
+                    <p align="left">Résultat : {{user[0][43]}}</p>
+                    <p align="left">Rang : {{user[0][44]}}</p>
+                    {% if user[0][45] != None %}
+                         <p align="left">Rang classé : {{user[0][45]}}</p>
+                    {% endif %}
+                    {% if user[0][47] != None %}
+                         <p align="left">Bonus interclassement : {{user[0][47]}}</p>
+                    {% endif %}
+
+                </article>
+            </div>
+        </div>
+        <div class="tile is-parent">
+            <article class="tile is-child notification is-danger">
+                <p class="title">Notes</p>
+                {% if n != None %}
+                    <div class="content">
+                        <ul>
+                            {% for mat in n %}
+                            <li>{{ mat[1][0]}} ({{ mat[2][0]}}) : {{ mat[0][-1]}}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
+            </article>
+        </div>
+    </div>
+    {% endblock %}

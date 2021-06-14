@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="tile is-parent">
+    <article class="tile is-child notification is-white">
+</div>
+</article>
+</div>
+<div class="tile is-parent">
+    <article class="tile is-child notification is-white">
+       
+</div>
+</article>
+</div>
+<div class="column is-2">
+<figure class="image is-128x128">
+  <img class="is-rounded"src="{{url_for('static', filename='flavien.png')}}" style="width:100%" alt='Logo IMT'>
+  </figure>
+  </div>
+  <div class="column is-2">
+  <figure class="image is-128x128">
+        <img class="is-rounded" src="{{url_for('static', filename='Photo_Guilhem_Roura_Carre.jpg')}}" style="width:100%" alt='Logo IMT'>
+      </figure>
+    </div>
+<div class="column is-2">
+<figure class="image is-128x128">
+        <img class="is-rounded" src="{{url_for('static', filename='Celine.jpg')}}" style="width:100%" alt='Logo IMT'>
+      </figure>
+    </div>
+
+{% endblock %}

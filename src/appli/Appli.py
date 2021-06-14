@@ -9,9 +9,12 @@ import sqlite3
 import numpy
 import statistics
 import matplotlib.pyplot as plt
+import Statistiques as St
+
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 DATABASE = "../../bdd/project.db"
+
 
 def statOfList(elements: list):
     elements.sort()
@@ -27,6 +30,7 @@ def statOfList(elements: list):
     ]
     return infos
 
+
 def getdb():
     db = getattr(g, '_database', None)
     if db is None:
@@ -36,6 +40,8 @@ def getdb():
 
 @app.route('/')
 def Index():
+    with open("./static/some_new_file.html", "w") as f:
+        f.write(render_template('index.html'))
     return render_template('index.html')
 
 
@@ -45,14 +51,19 @@ def test():
     return render_template('test.html', list=list_)
 
 
-@app.route('/Candidat/<name>')
-def Candidat(name):
+@app.route('/Candidat/<code>')
+def Candidat(code):
     db = getdb()
-    user = db.execute("SELECT * FROM candidat WHERE code = ?", (name,)).fetchall()
-    note = db.execute("SELECT * FROM notes WHERE can_code =? ORDER BY type_id ASC", (name,)).fetchall()
+    user = db.execute("SELECT * FROM candidat WHERE code = ?", (code,)).fetchall()
+
+    if user is None or user == []:
+        print(code, " n'existe pas")
+        return render_template('candidat_error.html', code=code)
+
+    note = db.execute("SELECT * FROM notes WHERE can_code =? ORDER BY type_id ASC", (code,)).fetchall()
     ranginfo = db.execute("SELECT * FROM ranginfo WHERE rang_classe =? AND code_voie=?",
                           (user[0][-3], user[0][31],)).fetchall()
-    voeux = db.execute("SELECT * FROM voeux_ecole WHERE can_code =? ORDER BY voe_ord ASC", (name,)).fetchall()
+    voeux = db.execute("SELECT * FROM voeux_ecole WHERE can_code =? ORDER BY voe_ord ASC", (code,)).fetchall()
     vo = []
     n = []
     for k in range(0, len(note)):
@@ -62,13 +73,52 @@ def Candidat(name):
     for j in voeux:
         vo.append([j, db.execute("SELECT nom FROM ecole WHERE code =?", (j[1],)).fetchall(),
                    db.execute("SELECT Ata_lib FROM reponse WHERE Ata_cod =?", (j[4],)).fetchall()])
-    if not ranginfo:  # Identique à '== []'
-        ranginfo = [['', '', ''], '', '', '', '', '']
-    if not n:
-        n = [['', '', '', ''], [''], ['']]
-    if not vo:
-        vo = [[['', '', ''], [[['']]], [[['']]]]]
-    return render_template('candidat.html', user=user, n=n, ranginfo=ranginfo, vo=vo)
+
+    handicap = "Non"
+    if user[0][40] == 1:
+        handicap = "Oui"
+
+    datebac = user[0][32]
+    if datebac is not None:
+        datebac = str(datebac)
+        datebac = datebac[:4] + "/" + datebac[4:]
+
+    lib_user = [db.execute("SELECT civilite FROM civilite WHERE civilite_index=?", (user[0][1],)).fetchall(),
+                db.execute("SELECT commune FROM commune WHERE commune_index=?", (user[0][7],)).fetchall(),
+                db.execute("SELECT liste_pays FROM pays WHERE pays_id=?", (user[0][8],)).fetchall(),
+                db.execute("SELECT commune FROM commune WHERE commune_index=?", (user[0][13],)).fetchall(),
+                db.execute("SELECT liste_pays FROM pays WHERE pays_id=?", (user[0][14],)).fetchall(),
+                db.execute("SELECT puissance FROM puissance WHERE code_puissance=?", (user[0][19],)).fetchall(),
+                db.execute("SELECT nom FROM etablissement WHERE etabl_id=?", (user[0][20],)).fetchall(),
+                db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][21],)).fetchall(),
+                db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][22],)).fetchall(),
+                db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][23],)).fetchall(),
+                db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][24],)).fetchall(),
+                db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][25],)).fetchall(),
+                db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][26],)).fetchall(),
+                db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][27],)).fetchall(),
+                db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][28],)).fetchall(),
+                db.execute("SELECT commune FROM commune WHERE commune_index=?", (user[0][29],)).fetchall(),
+                db.execute("SELECT concours FROM concours WHERE code_concours=?", (user[0][30],)).fetchall(),
+                db.execute("SELECT voie FROM voie WHERE code_voie=?", (user[0][31],)).fetchall(),
+                db.execute("SELECT serie FROM seriebac WHERE code_serie=?", (user[0][33],)).fetchall(),
+                db.execute("SELECT mention FROM mention WHERE code_mention=?", (user[0][34],)).fetchall(),
+                db.execute("SELECT csp FROM csp WHERE code_csp=?", (user[0][37],)).fetchall(),
+                db.execute("SELECT csp FROM csp WHERE code_csp=?", (user[0][38],)).fetchall(),
+                db.execute("SELECT etat_dossier FROM etat_dossier WHERE code_etat_dossier=?",
+                           (user[0][39],)).fetchall(),
+                handicap,
+                db.execute("SELECT qualite FROM qualite WHERE code_qualite=?", (user[0][41],)).fetchall()]
+
+    # Contient les infos indirectement contenu dans "user"
+
+    print(ranginfo)
+
+    with open("./static/some_new_file.html", "w") as f:
+        f.write(render_template('candidat.html', user=user, n=n, ranginfo=ranginfo, vo=vo, lib_user=lib_user,
+                                datebac=datebac))
+    return render_template('candidat.html', user=user, n=n, ranginfo=ranginfo, vo=vo, lib_user=lib_user,
+                           datebac=datebac)
 
 
 @app.route('/Candidat', methods=['POST', 'GET'])
@@ -77,34 +127,32 @@ def candlogin():
     if request.method == 'POST':
         candidat: str = request.form["candidat"]
         numero: str = request.form["numero"]
-        user = None
+
         db = getdb()
-        error = None
+        user = None
+        error = "Erreur : Numéro ou nom de candidat incorrect"
 
-        print(type(numero))
+        if numero is None or numero == "":
+            if candidat is not None:
+                user = db.execute(
+                    "SELECT code FROM candidat WHERE nom = ?", (candidat.upper(),)
+                ).fetchall()
+                if user is not None and user != []:
+                    print("user:", user)
+                    numero = user[0][0]
 
-        user: str = db.execute(
-            "SELECT nom FROM candidat WHERE code = ?", (numero,)
-        ).fetchone()
-
-        if user is None:
-            return render_template('error.html')
-        elif user[0].upper() != candidat.upper():
-            error = '''<div> Error, please check that your name and candidate serial are correct<div>
-             <div> <a href="http://127.0.0.1:5000"> retour<div>'''
-            return error
-
-        if error is None:
-            return redirect(url_for('Candidat', name=numero))
+        if numero is not None:
+            user = db.execute(
+                "SELECT code FROM candidat WHERE code = ?", (numero,)
+            ).fetchall()
+            if user is not None and user != []:
+                return redirect(url_for('Candidat', code=numero))
 
         """return '''<div> Error, please check that your name and candidate serial are correct<div>
              <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
+    with open("./static/some_new_file.html", "w") as f:
+        f.write(render_template('candlogin.html', error=error))
     return render_template('candlogin.html', error=error)
-
-
-@app.route('/Candidat/<name>/edit')
-def changinfo(name):
-    return '<div> <a href="http://127.0.0.1:5000"> retour<div>'
 
 
 @app.route('/Prof')
@@ -132,6 +180,8 @@ def prof():
 
         """return '''<div> Error, please check that your name and candidate serial are correct<div>
              <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
+    with open("./static/some_new_file.html", "w") as f:
+        f.write(render_template('proflogin.html', error=error))
     return render_template('proflogin.html', error=error)
 
 
@@ -146,6 +196,8 @@ def etablissement(name):
         note.append(db.execute("SELECT * FROM notes WHERE can_code =? ORDER BY type_id ASC", (user[j][0],)).fetchall())
     n = []
     if not user:  # idem à '== []'
+        with open("./static/some_new_file.html", "w") as f:
+            f.write(render_template("noneeleve.html", etabl=etabl, name=name))
         return render_template("noneeleve.html", etabl=etabl, name=name)
     for k in range(0, len(note)):
         l = [user[k]]
@@ -156,6 +208,8 @@ def etablissement(name):
             l.append(d)
         n.append(l)
     k = len(user)
+    with open("./static/some_new_file.html", "w") as f:
+        f.write(render_template('professeur.html', user=user, n=n, name=name, etabl=etabl, k=k))
     return render_template('professeur.html', user=user, n=n, name=name, etabl=etabl, k=k)
 
 
@@ -184,6 +238,8 @@ def nouveau():
 
         """return '''<div> Error, please check that your name and candidate serial are correct<div>
              <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
+    with open("./static/some_new_file.html", "w") as f:
+        f.write(render_template('newcand.html', error=error))
     return render_template('newcand.html', error=error)
 
 
@@ -209,11 +265,15 @@ def Admin():
 
         """return '''<div> Error, please check that your name and candidate serial are correct<div>
              <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
+    with open("./static/some_new_file.html", "w") as f:
+        f.write(render_template('adminlogin.html', error=error))
     return render_template('adminlogin.html', error=error)
 
 
 @app.route('/Admin/select')
 def links():
+    with open("./static/some_new_file.html", "w") as f:
+        f.write(render_template('adminselect.html'))
     return render_template('adminselect.html')
 
 
@@ -247,6 +307,10 @@ def sql():
                 resultat = db.execute(st).fetchall()
                 result = cursor.execute(str("PRAGMA table_info(" + fro + ");")).fetchall()
                 column_names = list(zip(*result))[1]
+            output_from_parsed_template = render_template('adminsql.html', resultat=resultat, column_names=column_names,
+                                                          result=result)
+            with open("./static/some_new_file.html", "w") as f:
+                f.write(output_from_parsed_template)
             return render_template('adminsql.html', resultat=resultat, column_names=column_names, result=result)
         elif request.form['btn_identifier'] == 'commande':
             st = request.form.get("search")
@@ -257,8 +321,9 @@ def sql():
             if resultat is None:
                 return '''<div> Erreur, commande incomplète<div>
              <div> <a href="http://127.0.0.1:5000/Admin/SQL"> retour<div>'''
+            with open("./static/some_new_file.html", "w") as f:
+                f.write(render_template('adminsql.html', resultat=resultat))
             return render_template('adminsql.html', resultat=resultat)
-
     return render_template('adminsql1.html')
 
 
@@ -276,8 +341,6 @@ def search():
             st = request.form.get("victor")
             db = getdb()
             cursor = db.cursor()
-            # st="%"+st+"%"
-            # ugh=str("SELECT nom,prenom,code FROM candidat WHERE prenom LIKE "+ st)
             resultat = cursor.execute("SELECT nom, prenom, code from candidat where prenom like ? ",
                                       ('%' + st + '%',)).fetchall()
             if len(resultat) > 100:
@@ -288,25 +351,123 @@ def search():
                 li.append([t, k])
             if resultat is None:
                 resultat = [["http://127.0.0.1:5000/Admin/search", ["0 résultats trouvés", " "]]]
+            with open("./static/some_new_file.html", "w") as f:
+                f.write(render_template('adminsearch.html', resultat=resultat, li=li))
             return render_template('adminsearch.html', resultat=resultat, li=li)
+    with open("./static/some_new_file.html", "w") as f:
+        f.write(render_template('adminsearch2.html', resultat=resultat))
     return render_template('adminsearch2.html', resultat=resultat)
 
 
 @app.route('/Credits')
 def credit():
-    return
+    with open("./static/some_new_file.html", "w") as f:
+        f.write(render_template('credits.html'))
+    return render_template('credits.html')
 
 
 @app.route('/Download')
 @app.route('/Download/<name>')
 def my_link():
     pdfkit.from_url('http://127.0.0.1:5000/', 'out.pdf')
-    return 'Click.'
+    return redirect(url_for('/'))
 
 
 @app.route('/Curieux')
-def images():
-    return render_template("curieux.html")
+def stats_crit():
+    cur = getdb()
+    matlist = cur.execute("SELECT * FROM matiere").fetchall()
+    excluded = ['rang', 'total', 'bonification', 'centre', 'jury', 'rang ccp']
+    epreuves = []
+    for i in matlist:
+        if i[1] not in excluded:
+            epreuves.append(i)
+
+    ville = []
+    res = cur.execute("SELECT commune FROM commune").fetchall()
+    for entrie in res:
+        ville.append(entrie[0])
+
+    pays = []
+    res = cur.execute("SELECT liste_pays FROM pays").fetchall()
+    for entrie in res:
+        pays.append(entrie[0])
+
+    serie = []
+    res = cur.execute("SELECT serie FROM seriebac").fetchall()
+    for entrie in res:
+        serie.append(entrie[0])
+
+    mention = []
+    res = cur.execute("SELECT mention FROM mention").fetchall()
+    for entrie in res:
+        mention.append(entrie[0])
+
+    csp = []
+    res = cur.execute("SELECT csp FROM csp").fetchall()
+    for entrie in res:
+        csp.append(entrie[0])
+
+    return render_template("curieux.html", epreuves=epreuves, ville=ville, pays=pays, serie=serie, mention=mention,
+                           csp=csp)
+
+
+@app.route('/curieux_stats', methods=["GET"])
+def curieux_stats():
+    choix = request.args.get('choix_c')
+
+    list_critere = ["ville_nai", "ville_res", "ville_ecrit",
+                    "pays_nai", "pays_res", "serie_bac",
+                    "mention_bac", "csp_pere", "csp_mere"]
+    args = {}
+
+    for crit in list_critere:
+        args[crit] = None
+
+    for crit in list_critere:
+        res = request.args.get(crit)
+        if res:
+            if res != "Ne pas prendre en compte":
+                args[crit] = res
+    error = None
+    list_note = -1
+    titre_stats = ""
+    stats = []
+
+    if choix == "epreuve_":
+        epreuve = request.args.get('epreuve')
+        if not epreuve:
+            return "Erreur du nom de la matière"
+
+        try:
+            list_note = St.stats_epreuve(epreuve, *args.values())
+        except sqlite3.OperationalError:
+            error = "Impossible d'accéder à la base de donnée"
+        titre_stats = "de la matière " + epreuve
+
+    else:
+        titre_stats = "du rang"
+        type_rang = choix == "rang_c"
+        if type_rang:
+            titre_stats += " classé"
+        try:
+            list_note = St.stats_rang(type_rang, *args.values())
+        except sqlite3.OperationalError:
+            error = "Impossible d'accéder à la base de donnée"
+
+    if list_note != -1:
+        stats = St.statOfList(list_note)
+        stats[0] = round(stats[0], 2)
+        if type(stats[4]) is float:
+            stats[4] = round(stats[4], 2)
+    else:
+        if choix == "epreuve_":
+            error = "Aucune note disponible"
+        else:
+            error = "Aucun rang disponible"
+
+    return render_template('curieux_res.html', list=stats, type_stats=titre_stats, error=error)
+
 
 @app.route('/statform')
 def statform():
@@ -317,8 +478,10 @@ def statform():
     for i in matlist:
         if i[1] not in excluded:
             cleaned.append(i)
-
+    with open("./static/some_new_file.html", "w") as f:
+        f.write(render_template('StatsForm.html', list=cleaned))
     return render_template('StatsForm.html', list=cleaned)
+
 
 @app.route('/statmat', methods=["GET"])
 def statmat():
@@ -326,8 +489,8 @@ def statmat():
     if not var:
         return "erreur du code de la matière <a href='./statform'>retour</a>"
     cur = getdb()
-    values = cur.execute("SELECT value FROM notes WHERE matiere_id=?",(var,)).fetchall()
-    mat = cur.execute("SELECT label FROM matiere WHERE matiere_id=?",(var,)).fetchall()
+    values = cur.execute("SELECT value FROM notes WHERE matiere_id=?", (var,)).fetchall()
+    mat = cur.execute("SELECT label FROM matiere WHERE matiere_id=?", (var,)).fetchall()
     cleaned = []
     cl = []
     for i in range(0,21):
@@ -336,7 +499,6 @@ def statmat():
         cleaned.append(i[0])
         cl[round(i[0])] = cl[round(i[0])] + 1
     stats = statOfList(cleaned)
-    print(cl)
     plt.bar(range(0,21),cl)
     plt.title("Répartition des notes de "+mat[0][0])
     plt.xlabel("notes")
@@ -344,7 +506,13 @@ def statmat():
     plt.savefig("./static/graph/graph_"+mat[0][0])
     plt.clf()
     
+
+    with open("./static/some_new_file.html", "w") as f:
+        f.write(render_template('Statmat.html', list=stats, matiere=mat[0][0]))
+    stats[0] = round(stats[0], 2)
+    stats[4] = round(stats[4], 2)
     return render_template('Statmat.html', list=stats, matiere=mat[0][0], image=url_for('static',filename="./graph/graph_"+mat[0][0]+".png"))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
