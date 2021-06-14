@@ -5,7 +5,6 @@ from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 # from reportlab.pdfgen.canvas import Canvas
 import sqlite3
-
 app = Flask(__name__, static_folder='static', template_folder='templates')
 DATABASE = "../../bdd/project.db"
 
@@ -15,7 +14,6 @@ def getdb():
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
     return db
-
 
 @app.route('/')
 def Index():
@@ -195,6 +193,7 @@ def sql():
     a=None
     b=None
     resultat=None
+    st=''
     if request.method == 'POST':
         
         if request.form['btn_identifier'] == 'chercher':
@@ -218,24 +217,41 @@ def sql():
                 result = cursor.execute(str("PRAGMA table_info("+fro+");")).fetchall()
                 column_names = list(zip(*result))[1]
             return render_template('adminsql.html', resultat=resultat,column_names=column_names, result=result)
-        else:
-            com=request.form.get("search")
+        elif request.form['btn_identifier'] == 'commande':
+            st=request.form.get("search")
             db=getdb()
             cursor=db.cursor()
-            if com!=None:
-                resultat=db.execute(str(com)).fetchall()
+            if st!=None:
+                resultat=db.execute(str(st)).fetchall()
             if resultat is None:   
                 return'''<div> Erreur, commande incomplète<div>
              <div> <a href="http://127.0.0.1:5000/Admin/SQL"> retour<div>'''
             return render_template('adminsql.html', resultat=resultat)
-    
+            
     return render_template('adminsql1.html')
 @app.route('/Admin/Files')
 def file():
     return
-@app.route('/Admin/search')
+@app.route('/Admin/search',methods=['GET','POST'])
 def search():
-    return
+    resultat=[]
+    if request.method == 'POST':
+            st=request.form.get("search")
+            db=getdb()
+            ugh=str("SELECT nom, prenom,code FROM candidat WHERE prenom LIKE %"+st)
+            resultat=db.execute(str(ugh)).fetchall()
+            if len(resultat)>20:
+                resultat=resultat[:20]
+            li=[]
+            for k in resultat:
+                    t=str("http://127.0.0.1:5000/Candidat/"+k[2])
+                    li.append([t,k])
+            if resultat==[]:   
+                     resultat.append("0 résultats trouvés")
+            return render_template('adminsearch.html', resultat=resultat,li=li)  
+    return render_template('adminsearch2.html', resultat=resultat)  
+    
+    
 @app.route('/Credits')
 def credit():
     return

@@ -110,11 +110,11 @@
 <thead>
 <tr>
   {%for c in column_names%}
-   <td>{{c}}</td>
+   <td><b>{{c}}</b></td>
   {%endfor%}
+    </tr>
   </thead>
   <tbody>
-  </tr>
    {%for r in resultat%}
    <tr>
    {%for k in r%}
@@ -125,8 +125,22 @@
 </tbody>
 </table>
 </div>
-</div>
 
+<form action ="http://localhost:5000/Admin/SQL" method = "post">
+
+<div class="field has-addons">
+  <div class="control">
+    <input class="input" type="text" name="nomfichier" placeholder="Nom du fichier">
+  </div>
+  <input type="hidden" name="btn_identifier"  value="download" />
+  <div class="control">
+    <a class="button is-primary" type="submit">
+      Download
+    </a>
+  </div>
+</div>
+  </form>
+  </div>
 <img src="{{url_for('static', filename='Schema-2.png')}}"  alt="Schéma bdd">
 </body>
 {% endblock %}
