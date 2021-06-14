@@ -3,7 +3,7 @@ import os.path
 import sqlite3
 import sys
 import ParserDonnee as pars
-from src.PolyMorph_Lecture import *
+from PolyMorph_Lecture import *
 from AjoutDonnee import *
 
 # ------------------- Fonctions parsant les différents fichiers -------------------

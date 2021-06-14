@@ -2,6 +2,10 @@
 
 {% block content %}
    <body>
+   <body>
+      <div class="column is-4 is-offset-4">
+      <h3 class="title">Candidat</h3>
+       <div class="box">
       <form action = "http://localhost:5000/Prof" method = "post">
          <p>Enter School Name:</p>
          <p><input type = "text" name = "candidat" /></p>
@@ -9,6 +13,8 @@
          <p><input type = "text" name = "numero" /></p>
          <p><input type = "submit" value = "submit" /></p>
       </form> 
-      <div> <a href="http://127.0.0.1:5000"> retour<div>  
+             </div>
+      <div> <a href="http://127.0.0.1:5000"> retour<div> 
+      </div>
    </body>
 {% endblock %}

@@ -8,7 +8,14 @@
   </div>
 <div class="tile is-parent">
       <article class="tile is-child notification is-white">
-        <p class="title" align="right">CODE CANDIDAT:{{user[0]}}</p>
+        <p class="title" align="right">CODE CANDIDAT:{{user[0][0]}}
+        {{user}}
+        ESPACE
+        {{ranginfo}}
+        WHAT
+         {{n}}
+       
+        </p>
         </div>
       </article>
   </div>
@@ -17,12 +24,12 @@
     <div class="tile">
       <div class="tile is-parent is-vertical">
         <article class="tile is-child notification is-primary">
-          <p class="title"> Bienvenue {{user[2]}} {{user[3]}} ! </p>
+          <p class="title"> Bienvenue {{user[0][1]}} {{user[0][3]}} ! </p>
           <p class="content">
-          {{ranginfo[0]}}
-          {{ranginfo[1]}}
-          {{ranginfo[2]}}
-          {{ranginfo[3]}}
+          <big><h1>rang_classe  :{{ranginfo[0][0]}} </h1>
+            <h1>code_voie  :{{ranginfo[0][1]}} </h1>
+          <h1> scei int:{{ranginfo[0][2]}} </h1>
+            <h1> moyenne_generale double{{ranginfo[0][3]}} </h1></big>
           </p>
 
         </article>
@@ -30,8 +37,8 @@
           <p class="title">Mes voeux</p>
           <p class="content">
                     <ul>
-    {% for voeux in vo %}
-        <li>{{ voeux[3]}}. {{ voeux[5]}}: {{ voeux[2]}}, {{ voeux[6]}}</li>
+    {% for vol in vo %}
+        <li> {{ vol[0][3]}}.{{ vol[1][0][0]}}. {{ vol[2][0][0]}}</li>
     {% endfor %}
       </ul>
           </p>
@@ -41,81 +48,55 @@
         <article class="tile is-child notification is-info">
           <p class="title">Mes informations</p>
           <p class="content"></p>
-         <p align="left">civ_lib:{{user[1]}}</p>
-         
-         <p  align="left">  nom :{{user[2]}}</p>
-         
-         <p align="left">  prénom:{{user[3]}}</p>
-         
-         <p align="left">  autre_prenoms:{{user[4]}}</p>
-         
-         <p align="left">  date_naissance:{{user[5]}}</p>
-         
-         <p align="left">  arr_naissance:{{user[6]}}</p>
-         
-         <p align="left">ville_naissance:{{user[7]}}</p>
-         
-         <p align="left">  code_pays_naissance:{{user[8]}}</p>
-                     
-         <p align="left">  francais:{{user[9]}}</p>
-                  
-         <p align="left">  ad_1 text:{{user[10]}}</p>
-                  
-         <p align="left">ad_2 text:{{user[11]}}</p>
-         
-         <p align="left">  cod_pos:{{user[12]}}</p>
-                  
-         <p align="left">  com:{{user[13]}}</p>
-                  
-         <p align="left">  pay_adr:{{user[14]}}</p>
-               
-         <p  align="left">  code_pay_natio:{{user[15]}}</p>
-                  
-         <p  align="left">  mel:{{user[16]}}</p>
-                  
-         <p align="left">  tel:{{user[17]}}</p>
-                  
-         <p  align="left">  por:{{user[18]}}</p>
-                  
-         <p align="left">email:{{user[19]}}</p>
-         
-         <p align="left">  etablissement:{{user[20]}}</p>
-         
-         <p align="left">  Epreuve_1:{{user[21]}}</p>
-         
-         <p align="left">  Option_1:{{user[22]}}</p>
-         
-         <p align="left"> Option_2:{{user[23]}}</p>
-         
-         <p align="left">Option_3:{{user[24]}}</p>
-         
-         <p align="left">  Option_4:{{user[25]}}</p>
-         
-         <p align="left">  code_ville_ecr:{{user[26]}}</p>
-         
-         <p  align="left"> code_concours:{{user[27]}}</p>
-         
-         <p  align="left"> voie:{{user[28]}}</p>
-         
-         <p align="left"> code_serie:{{user[29]}}</p>
-         
-         <p  align="left">  code_mention:{{user[30]}}</p>
-         
-         <p align="left">  bac_date:{{user[31]}}</p>
-         
-         <p align="left">sujet_tipe:{{user[32]}}</p>
-         
-         <p  align="left"> ine:{{user[33]}}</p>
-         
-         <p align="left">  cod_csp_pere:{{user[34]}}</p>
-         
-         <p align="left">  cod_csp_mere:{{user[35]}}</p>
-         
-         <p align="left">  code_etat_dossier:{{user[36]}}</p>
-         
-         <p align="left"> handicap:{{user[37]}}</p>
-         
-         <p align="left">can_dep_bac:{{user[38]}}</p> 
+<p align="left">civ_lib  : {{user[0][1]}}</p>
+<p align="left">
+  nom  : {{user[0][2]}}</p>
+  <p align="left">
+  prenom  : {{user[0][3]}}</p><p align="left">
+  autre_prenoms  : {{user[0][4]}}</p><p align="left">
+  date_naissance  : {{user[0][5]}}</p><p align="left">
+  arr_naissance  : {{user[0][6]}}</p><p align="left">
+  code_ville_naissance  : {{user[0][7]}}</p><p align="left">
+  code_pays_naissance  : {{user[0][8]}}</p><p align="left">
+  francais integer  : {{user[0][9]}}</p><p align="left">
+  ad_1  : {{user[0][10]}}</p><p align="left">
+  ad_2  : {{user[0][11]}}</p><p align="left">
+  cod_pos  : {{user[0][12]}}</p><p align="left">
+  com  : {{user[0][13]}}</p><p align="left">
+  pay_adr  : {{user[0][14]}}</p><p align="left">
+  code_pay_natio  : {{user[0][15]}}</p><p align="left">
+  tel  : {{user[0][16]}}</p><p align="left">
+  por  : {{user[0][17]}}</p><p align="left">
+  email  : {{user[0][18]}}</p><p align="left">
+  code_puissance  : {{user[0][19]}}</p><p align="left">
+  code_etabl  : {{user[0][20]}}</p><p align="left">
+  epreuve_1  : {{user[0][21]}}</p><p align="left">
+  option_1  : {{user[0][22]}}</p><p align="left">
+  epreuve_2  : {{user[0][23]}}</p><p align="left">
+  option_2  : {{user[0][24]}}</p><p align="left">
+  epreuve_3  : {{user[0][25]}}</p><p align="left">
+  option_3  : {{user[0][26]}}</p><p align="left">
+  epreuve_4  : {{user[0][27]}}</p><p align="left">
+  option_4  : {{user[0][28]}}</p><p align="left">
+  code_ville_ecr  : {{user[0][29]}}</p><p align="left">
+  code_concours  : {{user[0][30]}}</p><p align="left">
+  code_voie  : {{user[0][31]}}</p><p align="left">
+  bac_date  : {{user[0][32]}}</p><p align="left">
+  code_serie  : {{user[0][33]}}</p><p align="left">
+  code_mention  : {{user[0][34]}}</p><p align="left">
+  sujet_tipe  : {{user[0][35]}}</p><p align="left">
+  ine  : {{user[0][36]}}</p><p align="left">
+  code_csp_pere  : {{user[0][37]}}</p><p align="left">
+  code_csp_mere  : {{user[0][38]}}</p><p align="left">
+  code_etat_dossier  : {{user[0][39]}}</p><p align="left">
+  handicap  : {{user[0][40]}}</p><p align="left">
+  code_qualite  : {{user[0][41]}}</p><p align="left">
+  can_dep_bac  : {{user[0][42]}}</p><p align="left">
+  resultat  : {{user[0][43]}}</p><p align="left">
+  rang  : {{user[0][44]}}</p><p align="left">
+  rang_classe  : {{user[0][45]}}</p><p align="left">
+  n_demi  : {{user[0][46]}}</p><p align="left">
+  bonus_interclassement : {{user[0][47]}}</p>
     
         </article>
       </div>
@@ -125,8 +106,8 @@
         <p class="title">Notes</p>
         <div class="content">
           <ul>
-    {% for mat in note %}
-        <li>{{ mat[5]}}({{ mat[6]}}): {{ mat[3]}}</li>
+    {% for mat in n %}
+        <li>{{ mat[1][0]}}({{ mat[2][0]}}): {{ mat[0][-1]}}</li>
     {% endfor %}
       </ul>
         </div>
