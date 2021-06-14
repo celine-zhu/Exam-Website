@@ -98,6 +98,7 @@ elif [[ $unameOut == Linux ]]; then
     pip3 install pdfkit
     pip3 install click
     pip3 install openpyxl
+    pip3 install matplotlib
     deactivate
 
 else

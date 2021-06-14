@@ -8,16 +8,18 @@ from werkzeug.security import generate_password_hash
 import sqlite3
 import numpy
 import statistics
+import matplotlib.pyplot as plt
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 DATABASE = "../../bdd/project.db"
 
 def statOfList(elements: list):
+    elements.sort()
     infos = [
         statistics.mean(elements),
         numpy.quantile(elements, 0.25),
-        numpy.quantile(elements, 0.75),
         statistics.median(elements),
+        numpy.quantile(elements, 0.75),
         statistics.variance(elements),
         min(elements),
         max(elements),
@@ -322,15 +324,27 @@ def statform():
 def statmat():
     var = request.args.get('matiere')
     if not var:
-        return "erreur du code de la matière"
+        return "erreur du code de la matière <a href='./statform'>retour</a>"
     cur = getdb()
     values = cur.execute("SELECT value FROM notes WHERE matiere_id=?",(var,)).fetchall()
     mat = cur.execute("SELECT label FROM matiere WHERE matiere_id=?",(var,)).fetchall()
     cleaned = []
+    cl = []
+    for i in range(0,21):
+        cl.append(0)
     for i in values:
         cleaned.append(i[0])
+        cl[round(i[0])] = cl[round(i[0])] + 1
     stats = statOfList(cleaned)
-    return render_template('Statmat.html', list=stats, matiere=mat[0][0])
+    print(cl)
+    plt.bar(range(0,21),cl)
+    plt.title("Répartition des notes de "+mat[0][0])
+    plt.xlabel("notes")
+    plt.ylabel("nombre de notes")
+    plt.savefig("./static/graph/graph_"+mat[0][0])
+    plt.clf()
+    
+    return render_template('Statmat.html', list=stats, matiere=mat[0][0], image=url_for('static',filename="./graph/graph_"+mat[0][0]+".png"))
 
 if __name__ == '__main__':
     app.run(debug=True)
