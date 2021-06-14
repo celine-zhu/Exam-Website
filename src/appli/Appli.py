@@ -107,25 +107,26 @@ def candlogin():
     if request.method == 'POST':
         candidat: str = request.form["candidat"]
         numero: str = request.form["numero"]
-        user = None
+
         db = getdb()
-        error = None
+        user = None
+        error = "Erreur : Numéro ou nom de candidat incorrect"
 
-        print(type(numero))
+        if numero is None or numero == "":
+            if candidat is not None:
+                user = db.execute(
+                    "SELECT code FROM candidat WHERE nom = ?", (candidat.upper(),)
+                ).fetchall()
+                if user is not None and user != []:
+                    print("user:", user)
+                    numero = user[0][0]
 
-        user: str = db.execute(
-            "SELECT nom FROM candidat WHERE code = ?", (numero,)
-        ).fetchone()
-
-        if user is None:
-            return render_template('error.html')
-        elif user[0].upper() != candidat.upper():
-            error = '''<div> Error, please check that your name and candidate serial are correct<div>
-             <div> <a href="http://127.0.0.1:5000"> retour<div>'''
-            return error
-
-        if error is None:
-            return redirect(url_for('Candidat', name=numero))
+        if numero is not None:
+            user = db.execute(
+                "SELECT code FROM candidat WHERE code = ?", (numero,)
+            ).fetchall()
+            if user is not None and user != []:
+                return redirect(url_for('Candidat', name=numero))
 
         """return '''<div> Error, please check that your name and candidate serial are correct<div>
              <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
