@@ -8,6 +8,7 @@ from werkzeug.security import generate_password_hash
 import sqlite3
 import numpy
 import statistics
+import Statistiques as St
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 DATABASE = "../../bdd/project.db"
@@ -340,8 +341,81 @@ def my_link():
 
 
 @app.route('/Curieux')
-def images():
-    return render_template("curieux.html")
+def stats_crit():
+    cur = getdb()
+    matlist = cur.execute("SELECT * FROM matiere").fetchall()
+    excluded = ['rang', 'total', 'bonification', 'centre', 'jury', 'rang ccp']
+    epreuves = []
+    for i in matlist:
+        if i[1] not in excluded:
+            epreuves.append(i)
+
+    ville = []
+    res = cur.execute("SELECT commune FROM commune").fetchall()
+    for entrie in res:
+        ville.append(entrie[0])
+
+    pays = []
+    res = cur.execute("SELECT liste_pays FROM pays").fetchall()
+    for entrie in res:
+        pays.append(entrie[0])
+
+    serie = []
+    res = cur.execute("SELECT serie FROM seriebac").fetchall()
+    for entrie in res:
+        serie.append(entrie[0])
+
+    mention = []
+    res = cur.execute("SELECT mention FROM mention").fetchall()
+    for entrie in res:
+        mention.append(entrie[0])
+
+    csp = []
+    res = cur.execute("SELECT csp FROM csp").fetchall()
+    for entrie in res:
+        csp.append(entrie[0])
+
+    return render_template("curieux.html", epreuves=epreuves, ville=ville, pays=pays, serie=serie, mention=mention, csp=csp)
+
+
+@app.route('/curieux_stats', methods=["GET"])
+def curieux_stats():
+    epreuve = request.args.get('epreuve')
+    if not epreuve:
+        return "Erreur du nom de la matière"
+
+    list_critere = ["ville_nai", "ville_res", "ville_ecrit",
+                    "pays_nai", "pays_res", "serie_bac",
+                    "mention_bac", "csp_pere", "csp_mere"]
+    args = {}
+
+    for crit in list_critere:
+        args[crit] = None
+
+    for crit in list_critere:
+        res = request.args.get(crit)
+        if res:
+            if res != "Ne pas prendre en compte":
+                args[crit] = res
+
+    error = None
+    list_note = -1
+    try:
+        list_note = St.stats_epreuve(epreuve, *args.values())
+    except sqlite3.OperationalError:
+        error = "Impossible d'accéder à la base de donnée"
+        print("erreur db")
+    stats = []
+
+    if list_note != -1:
+        stats = St.statOfList(list_note)
+        stats[0] = round(stats[0], 2)
+        if type(stats[4]) is float:
+            stats[4] = round(stats[4], 2)
+    else:
+        error = "Aucune note disponible"
+    print(stats)
+    return render_template('curieux_res.html', list=stats, matiere=epreuve, error=error)
 
 
 @app.route('/statform')

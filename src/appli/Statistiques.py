@@ -4,7 +4,7 @@ import numpy
 
 # Fichier contenant des fonctions de statistiques
 
-DB_PATH = "../bdd/project.db"
+DB_PATH = "../../bdd/project.db"
 
 
 def stats_epreuve(epreuve, ville_nai_=None, ville_res_=None, ville_ecrit_=None,
@@ -266,25 +266,38 @@ def select_candidat(ville_nai=None, ville_res=None, ville_ecrit=None,
     return list_can
 
 
-"""
-for mention in ["TB", "B", "AB", "S"]:  # Exemple:
-    print(moyenne(stats_epreuve(600, ville_ecrit_="Paris", pays_nai_="Maroc", mention_bac_=mention)))
-"""
-
-
 def statOfList(elements: list):
-    infos = [
-        statistics.mean(elements),
-        numpy.quantile(elements, 0.25),
-        numpy.quantile(elements, 0.75),
-        statistics.median(elements),
-        statistics.variance(elements)
-    ]
+    infos = []
+    if len(elements) > 1:
+        infos = [
+            statistics.mean(elements),
+            numpy.quantile(elements, 0.25),
+            numpy.quantile(elements, 0.75),
+            statistics.median(elements),
+            statistics.variance(elements),
+            min(elements),
+            max(elements),
+            len(elements)
+        ]
+    else:
+        infos = [
+            statistics.mean(elements),
+            numpy.quantile(elements, 0.25),
+            numpy.quantile(elements, 0.75),
+            statistics.median(elements),
+            "Non défini",
+            min(elements),
+            max(elements),
+            len(elements)
+        ]
     return infos
 
 
-"""Test (résultat de ligne 2 et 3 identique)
-print(statOfList(stats_rang()))
-print(statOfList(stats_rang(csp_pere_=81, csp_mere_=85)))
-print(statOfList(stats_rang(csp_pere_="Chômeurs n'ayant jamais travaillé", csp_mere_="Personnes diverses sans activité  professionnelle de moins de 60 ans (sauf retraités)")))
-"""
+if __name__ == "__main__":
+    # Test (résultat de ligne 2 et 3 identique)
+    print(statOfList(stats_rang()))
+    print(statOfList(stats_rang(csp_pere_=81, csp_mere_=85)))
+    print(statOfList(stats_rang(csp_pere_="Chômeurs n'ayant jamais travaillé", csp_mere_="Personnes diverses sans activité  professionnelle de moins de 60 ans (sauf retraités)")))
+
+    for mention in ["TB", "B", "AB", "S"]:  # Exemple:
+        print(statOfList(stats_epreuve(600, ville_ecrit_="Paris", pays_nai_="Maroc", mention_bac_=mention)))
