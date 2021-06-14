@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="tile is-parent">
+      <article class="tile is-child notification is-white">
+        </div>
+      </article>
+  </div>
+  <div class="tile is-parent">
+      <article class="tile is-child notification is-white">
+        </div>
+      </article>
+  </div>
+<div class="tile is-parent">
+      <article class="tile is-child notification is-white">
+        <p class="title" align="right">{{etabl[0][1]}}</p>
+        <p class="title" align="right">INE Etablissement:{{name}}</p>
+        </div>
+      </article>
+  </div>
+  <ul>
+
+  <div class="tile is-parent">
+      <article class="tile is-child notification is-info">
+        <p class="content">
+        Aucun élève de l'établissement {{etabl[0][1]}} ne s'est inscrit à ce concours.
+          </p>
+      </article>
+        </div>
+  </div>
+
+      </ul>
+{% endblock %}

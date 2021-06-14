@@ -24,7 +24,7 @@
   <div class="select">
     <select name="table">
       <option >Sélectionner une table</option>
-     <option  value=" civilite "> civilite
+     <option  value="civilite"> civilite
 </option><option  value="resultat "> resultat 
 
 </option><option  value="commune"> commune
@@ -102,31 +102,7 @@
   </div>
 </div>
   </div>
-
 </form>
-<div class="column is-offset-4">
- <div class="column table-container">
-<table class="table is-bordered">
-<thead>
-<tr>
-  {%for c in column_names%}
-   <td>{{c}}</td>
-  {%endfor%}
-  </thead>
-  <tbody>
-  </tr>
-   {%for r in resultat%}
-   <tr>
-   {%for k in r%}
-   <td>{{k}}</td>
-   {%endfor%}
-   </tr>
-{%endfor%}
-</tbody>
-</table>
-</div>
-</div>
-
 <img src="{{url_for('static', filename='Schema-2.png')}}"  alt="Schéma bdd">
 </body>
 {% endblock %}
