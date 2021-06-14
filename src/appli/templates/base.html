@@ -47,7 +47,7 @@
             Base de données
           </a>
           <hr class="navbar-divider">
-          <a class="navbar-item" href= "http://localhost:5000/">
+          <a class="navbar-item" href= "http://localhost:5000/Credits">
             Credits
           </a>
         </div>
@@ -58,21 +58,10 @@
         return( window.location.href);
     }
     </script>
-    <div class="navbar-end">
-      <div class="navbar-item">
-        <div class="field is-grouped">
-          <p class="control">
-            <a class="button is-info has-text-centered" href="http://127.0.0.1:5000/">
-              <span class="icon">
-                <i class="fas fa-download"></i>
-              </span>
-              <span <a href="http://127.0.0.1:5000/Download" > Download </a> </span>
+  
+ <a href="{{url_for('static', filename='some_new_file.html')}}" download> <img src="{{url_for('static', filename='picture1.png')}}" > </a> </span>
             </a>
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
+          
 </nav>
                         
                {% block content %}
