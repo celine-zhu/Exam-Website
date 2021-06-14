@@ -126,21 +126,11 @@
 </table>
 </div>
 
-<form action ="http://localhost:5000/Admin/SQL" method = "post">
 
-<div class="field has-addons">
-  <div class="control">
-    <input class="input" type="text" name="nomfichier" placeholder="Nom du fichier">
-  </div>
-  <input type="hidden" name="btn_identifier"  value="download" />
-  <div class="control">
-    <a class="button is-primary" type="submit">
-      Download
+      <a href="{{url_for('static', filename='some_new_file.html')}}"  download>
+      DOWNLOAD
     </a>
-  </div>
-</div>
-  </form>
-  </div>
+  
 <img src="{{url_for('static', filename='Schema-2.png')}}"  alt="Schéma bdd">
 </body>
 {% endblock %}
