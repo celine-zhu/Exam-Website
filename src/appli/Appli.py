@@ -12,6 +12,7 @@ import statistics
 app = Flask(__name__, static_folder='static', template_folder='templates')
 DATABASE = "../../bdd/project.db"
 
+
 def statOfList(elements: list):
     infos = [
         statistics.mean(elements),
@@ -24,6 +25,7 @@ def statOfList(elements: list):
         len(elements)
     ]
     return infos
+
 
 def getdb():
     db = getattr(g, '_database', None)
@@ -65,7 +67,7 @@ def Candidat(name):
     if user[0][40] == 1:
         handicap = "Oui"
 
-    datebac= user[0][32]
+    datebac = user[0][32]
     if datebac is not None:
         datebac = str(datebac)
         datebac = datebac[:4] + "/" + datebac[4:]
@@ -76,7 +78,7 @@ def Candidat(name):
                 db.execute("SELECT commune FROM commune WHERE commune_index=?", (user[0][13],)).fetchall()[0][0],
                 db.execute("SELECT liste_pays FROM pays WHERE pays_id=?", (user[0][14],)).fetchall()[0][0],
                 db.execute("SELECT puissance FROM puissance WHERE code_puissance=?", (user[0][19],)).fetchall()[0][0],
-                db.execute("SELECT nom FROM etablissement WHERE etabl_id=?", (user[0][20], )).fetchall()[0][0],
+                db.execute("SELECT nom FROM etablissement WHERE etabl_id=?", (user[0][20],)).fetchall()[0][0],
                 db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][21],)).fetchall(),
                 db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][22],)).fetchall(),
                 db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][23],)).fetchall(),
@@ -92,13 +94,15 @@ def Candidat(name):
                 db.execute("SELECT mention FROM mention WHERE code_mention=?", (user[0][34],)).fetchall()[0][0],
                 db.execute("SELECT csp FROM csp WHERE code_csp=?", (user[0][37],)).fetchall()[0][0],
                 db.execute("SELECT csp FROM csp WHERE code_csp=?", (user[0][38],)).fetchall()[0][0],
-                db.execute("SELECT etat_dossier FROM etat_dossier WHERE code_etat_dossier=?", (user[0][39],)).fetchall()[0][0],
+                db.execute("SELECT etat_dossier FROM etat_dossier WHERE code_etat_dossier=?",
+                           (user[0][39],)).fetchall()[0][0],
                 handicap,
                 db.execute("SELECT qualite FROM qualite WHERE code_qualite=?", (user[0][41],)).fetchall()[0][0]]
 
     # Contient les infos indirectement contenu dans "user"
 
-    return render_template('candidat.html', user=user, n=n, ranginfo=ranginfo, vo=vo, lib_user=lib_user, datebac=datebac)
+    return render_template('candidat.html', user=user, n=n, ranginfo=ranginfo, vo=vo, lib_user=lib_user,
+                           datebac=datebac)
 
 
 @app.route('/Candidat', methods=['POST', 'GET'])
@@ -339,6 +343,7 @@ def my_link():
 def images():
     return render_template("curieux.html")
 
+
 @app.route('/statform')
 def statform():
     cur = getdb()
@@ -351,19 +356,23 @@ def statform():
 
     return render_template('StatsForm.html', list=cleaned)
 
+
 @app.route('/statmat', methods=["GET"])
 def statmat():
     var = request.args.get('matiere')
     if not var:
         return "erreur du code de la matière"
     cur = getdb()
-    values = cur.execute("SELECT value FROM notes WHERE matiere_id=?",(var,)).fetchall()
-    mat = cur.execute("SELECT label FROM matiere WHERE matiere_id=?",(var,)).fetchall()
+    values = cur.execute("SELECT value FROM notes WHERE matiere_id=?", (var,)).fetchall()
+    mat = cur.execute("SELECT label FROM matiere WHERE matiere_id=?", (var,)).fetchall()
     cleaned = []
     for i in values:
         cleaned.append(i[0])
     stats = statOfList(cleaned)
+    stats[0] = round(stats[0], 2)
+    stats[4] = round(stats[4], 2)
     return render_template('Statmat.html', list=stats, matiere=mat[0][0])
+
 
 if __name__ == '__main__':
     app.run(debug=True)
