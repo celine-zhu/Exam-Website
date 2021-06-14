@@ -63,7 +63,11 @@ def moyenne_epreuve(epreuve, ville_nai_=None, ville_res_=None, ville_ecrit_=None
             liste_note.append(entrie[0])
 
     con.close()
-    return round(sum(liste_note) / len(liste_note), 2)
+
+    if len(liste_note) == 0:
+        return -1
+    else:
+        return round(sum(liste_note) / len(liste_note), 2)
 
 
 """test: (donne tous 14.36)
