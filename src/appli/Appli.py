@@ -38,7 +38,7 @@ def getdb():
 @app.route('/')
 def Index():
     with open("./static/some_new_file.html", "w") as f:
-                    f.write(render_template('index.html'))
+        f.write(render_template('index.html'))
     return render_template('index.html')
 
 
@@ -48,14 +48,19 @@ def test():
     return render_template('test.html', list=list_)
 
 
-@app.route('/Candidat/<name>')
-def Candidat(name):
+@app.route('/Candidat/<code>')
+def Candidat(code):
     db = getdb()
-    user = db.execute("SELECT * FROM candidat WHERE code = ?", (name,)).fetchall()
-    note = db.execute("SELECT * FROM notes WHERE can_code =? ORDER BY type_id ASC", (name,)).fetchall()
+    user = db.execute("SELECT * FROM candidat WHERE code = ?", (code,)).fetchall()
+
+    if user is None or user == []:
+        print(code, " n'existe pas")
+        return render_template('candidat_error.html', code=code)
+
+    note = db.execute("SELECT * FROM notes WHERE can_code =? ORDER BY type_id ASC", (code,)).fetchall()
     ranginfo = db.execute("SELECT * FROM ranginfo WHERE rang_classe =? AND code_voie=?",
                           (user[0][-3], user[0][31],)).fetchall()
-    voeux = db.execute("SELECT * FROM voeux_ecole WHERE can_code =? ORDER BY voe_ord ASC", (name,)).fetchall()
+    voeux = db.execute("SELECT * FROM voeux_ecole WHERE can_code =? ORDER BY voe_ord ASC", (code,)).fetchall()
     vo = []
     n = []
     for k in range(0, len(note)):
@@ -75,13 +80,13 @@ def Candidat(name):
         datebac = str(datebac)
         datebac = datebac[:4] + "/" + datebac[4:]
 
-    lib_user = [db.execute("SELECT civilite FROM civilite WHERE civilite_index=?", (user[0][1],)).fetchall()[0][0],
-                db.execute("SELECT commune FROM commune WHERE commune_index=?", (user[0][7],)).fetchall()[0][0],
-                db.execute("SELECT liste_pays FROM pays WHERE pays_id=?", (user[0][8],)).fetchall()[0][0],
-                db.execute("SELECT commune FROM commune WHERE commune_index=?", (user[0][13],)).fetchall()[0][0],
-                db.execute("SELECT liste_pays FROM pays WHERE pays_id=?", (user[0][14],)).fetchall()[0][0],
-                db.execute("SELECT puissance FROM puissance WHERE code_puissance=?", (user[0][19],)).fetchall()[0][0],
-                db.execute("SELECT nom FROM etablissement WHERE etabl_id=?", (user[0][20],)).fetchall()[0][0],
+    lib_user = [db.execute("SELECT civilite FROM civilite WHERE civilite_index=?", (user[0][1],)).fetchall(),
+                db.execute("SELECT commune FROM commune WHERE commune_index=?", (user[0][7],)).fetchall(),
+                db.execute("SELECT liste_pays FROM pays WHERE pays_id=?", (user[0][8],)).fetchall(),
+                db.execute("SELECT commune FROM commune WHERE commune_index=?", (user[0][13],)).fetchall(),
+                db.execute("SELECT liste_pays FROM pays WHERE pays_id=?", (user[0][14],)).fetchall(),
+                db.execute("SELECT puissance FROM puissance WHERE code_puissance=?", (user[0][19],)).fetchall(),
+                db.execute("SELECT nom FROM etablissement WHERE etabl_id=?", (user[0][20],)).fetchall(),
                 db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][21],)).fetchall(),
                 db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][22],)).fetchall(),
                 db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][23],)).fetchall(),
@@ -90,23 +95,27 @@ def Candidat(name):
                 db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][26],)).fetchall(),
                 db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][27],)).fetchall(),
                 db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][28],)).fetchall(),
-                db.execute("SELECT commune FROM commune WHERE commune_index=?", (user[0][29],)).fetchall()[0][0],
-                db.execute("SELECT concours FROM concours WHERE code_concours=?", (user[0][30],)).fetchall()[0][0],
-                db.execute("SELECT voie FROM voie WHERE code_voie=?", (user[0][31],)).fetchall()[0][0],
-                db.execute("SELECT serie FROM seriebac WHERE code_serie=?", (user[0][33],)).fetchall()[0][0],
-                db.execute("SELECT mention FROM mention WHERE code_mention=?", (user[0][34],)).fetchall()[0][0],
-                db.execute("SELECT csp FROM csp WHERE code_csp=?", (user[0][37],)).fetchall()[0][0],
-                db.execute("SELECT csp FROM csp WHERE code_csp=?", (user[0][38],)).fetchall()[0][0],
+                db.execute("SELECT commune FROM commune WHERE commune_index=?", (user[0][29],)).fetchall(),
+                db.execute("SELECT concours FROM concours WHERE code_concours=?", (user[0][30],)).fetchall(),
+                db.execute("SELECT voie FROM voie WHERE code_voie=?", (user[0][31],)).fetchall(),
+                db.execute("SELECT serie FROM seriebac WHERE code_serie=?", (user[0][33],)).fetchall(),
+                db.execute("SELECT mention FROM mention WHERE code_mention=?", (user[0][34],)).fetchall(),
+                db.execute("SELECT csp FROM csp WHERE code_csp=?", (user[0][37],)).fetchall(),
+                db.execute("SELECT csp FROM csp WHERE code_csp=?", (user[0][38],)).fetchall(),
                 db.execute("SELECT etat_dossier FROM etat_dossier WHERE code_etat_dossier=?",
-                           (user[0][39],)).fetchall()[0][0],
+                           (user[0][39],)).fetchall(),
                 handicap,
-                db.execute("SELECT qualite FROM qualite WHERE code_qualite=?", (user[0][41],)).fetchall()[0][0]]
+                db.execute("SELECT qualite FROM qualite WHERE code_qualite=?", (user[0][41],)).fetchall()]
 
     # Contient les infos indirectement contenu dans "user"
+
+    print(ranginfo)
+
     with open("./static/some_new_file.html", "w") as f:
-                    f.write(render_template('candidat.html', user=user, n=n, ranginfo=ranginfo, vo=vo, lib_user=lib_user, datebac=datebac))
-    return render_template('candidat.html', user=user, n=n, ranginfo=ranginfo, vo=vo, lib_user=lib_user, datebac=datebac)
- 
+        f.write(render_template('candidat.html', user=user, n=n, ranginfo=ranginfo, vo=vo, lib_user=lib_user,
+                                datebac=datebac))
+    return render_template('candidat.html', user=user, n=n, ranginfo=ranginfo, vo=vo, lib_user=lib_user,
+                           datebac=datebac)
 
 
 @app.route('/Candidat', methods=['POST', 'GET'])
@@ -134,14 +143,13 @@ def candlogin():
                 "SELECT code FROM candidat WHERE code = ?", (numero,)
             ).fetchall()
             if user is not None and user != []:
-                return redirect(url_for('Candidat', name=numero))
+                return redirect(url_for('Candidat', code=numero))
 
         """return '''<div> Error, please check that your name and candidate serial are correct<div>
              <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
     with open("./static/some_new_file.html", "w") as f:
-                    f.write(render_template('candlogin.html', error=error))
+        f.write(render_template('candlogin.html', error=error))
     return render_template('candlogin.html', error=error)
-
 
 
 @app.route('/Prof')
@@ -170,7 +178,7 @@ def prof():
         """return '''<div> Error, please check that your name and candidate serial are correct<div>
              <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
     with open("./static/some_new_file.html", "w") as f:
-                    f.write(render_template('proflogin.html', error=error))
+        f.write(render_template('proflogin.html', error=error))
     return render_template('proflogin.html', error=error)
 
 
@@ -186,7 +194,7 @@ def etablissement(name):
     n = []
     if not user:  # idem à '== []'
         with open("./static/some_new_file.html", "w") as f:
-                    f.write(render_template("noneeleve.html", etabl=etabl, name=name))
+            f.write(render_template("noneeleve.html", etabl=etabl, name=name))
         return render_template("noneeleve.html", etabl=etabl, name=name)
     for k in range(0, len(note)):
         l = [user[k]]
@@ -198,7 +206,7 @@ def etablissement(name):
         n.append(l)
     k = len(user)
     with open("./static/some_new_file.html", "w") as f:
-                    f.write(render_template('professeur.html', user=user, n=n, name=name, etabl=etabl, k=k))
+        f.write(render_template('professeur.html', user=user, n=n, name=name, etabl=etabl, k=k))
     return render_template('professeur.html', user=user, n=n, name=name, etabl=etabl, k=k)
 
 
@@ -228,7 +236,7 @@ def nouveau():
         """return '''<div> Error, please check that your name and candidate serial are correct<div>
              <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
     with open("./static/some_new_file.html", "w") as f:
-                    f.write(render_template('newcand.html', error=error))
+        f.write(render_template('newcand.html', error=error))
     return render_template('newcand.html', error=error)
 
 
@@ -255,14 +263,14 @@ def Admin():
         """return '''<div> Error, please check that your name and candidate serial are correct<div>
              <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
     with open("./static/some_new_file.html", "w") as f:
-                    f.write(render_template('adminlogin.html', error=error))
+        f.write(render_template('adminlogin.html', error=error))
     return render_template('adminlogin.html', error=error)
 
 
 @app.route('/Admin/select')
 def links():
     with open("./static/some_new_file.html", "w") as f:
-                    f.write(render_template('adminselect.html'))
+        f.write(render_template('adminselect.html'))
     return render_template('adminselect.html')
 
 
@@ -296,9 +304,10 @@ def sql():
                 resultat = db.execute(st).fetchall()
                 result = cursor.execute(str("PRAGMA table_info(" + fro + ");")).fetchall()
                 column_names = list(zip(*result))[1]
-            output_from_parsed_template = render_template('adminsql.html', resultat=resultat,column_names=column_names, result=result)
+            output_from_parsed_template = render_template('adminsql.html', resultat=resultat, column_names=column_names,
+                                                          result=result)
             with open("./static/some_new_file.html", "w") as f:
-                    f.write(output_from_parsed_template)
+                f.write(output_from_parsed_template)
             return render_template('adminsql.html', resultat=resultat, column_names=column_names, result=result)
         elif request.form['btn_identifier'] == 'commande':
             st = request.form.get("search")
@@ -310,7 +319,7 @@ def sql():
                 return '''<div> Erreur, commande incomplète<div>
              <div> <a href="http://127.0.0.1:5000/Admin/SQL"> retour<div>'''
             with open("./static/some_new_file.html", "w") as f:
-                    f.write(render_template('adminsql.html', resultat=resultat))
+                f.write(render_template('adminsql.html', resultat=resultat))
             return render_template('adminsql.html', resultat=resultat)
     return render_template('adminsql1.html')
 
@@ -340,17 +349,17 @@ def search():
             if resultat is None:
                 resultat = [["http://127.0.0.1:5000/Admin/search", ["0 résultats trouvés", " "]]]
             with open("./static/some_new_file.html", "w") as f:
-                    f.write(render_template('adminsearch.html', resultat=resultat, li=li))
+                f.write(render_template('adminsearch.html', resultat=resultat, li=li))
             return render_template('adminsearch.html', resultat=resultat, li=li)
     with open("./static/some_new_file.html", "w") as f:
-                    f.write(render_template('adminsearch2.html', resultat=resultat))
+        f.write(render_template('adminsearch2.html', resultat=resultat))
     return render_template('adminsearch2.html', resultat=resultat)
 
 
 @app.route('/Credits')
 def credit():
     with open("./static/some_new_file.html", "w") as f:
-                    f.write(render_template('credits.html'))
+        f.write(render_template('credits.html'))
     return render_template('credits.html')
 
 
@@ -396,7 +405,8 @@ def stats_crit():
     for entrie in res:
         csp.append(entrie[0])
 
-    return render_template("curieux.html", epreuves=epreuves, ville=ville, pays=pays, serie=serie, mention=mention, csp=csp)
+    return render_template("curieux.html", epreuves=epreuves, ville=ville, pays=pays, serie=serie, mention=mention,
+                           csp=csp)
 
 
 @app.route('/curieux_stats', methods=["GET"])
@@ -466,7 +476,7 @@ def statform():
         if i[1] not in excluded:
             cleaned.append(i)
     with open("./static/some_new_file.html", "w") as f:
-                    f.write(render_template('StatsForm.html', list=cleaned))
+        f.write(render_template('StatsForm.html', list=cleaned))
     return render_template('StatsForm.html', list=cleaned)
 
 
@@ -483,7 +493,7 @@ def statmat():
         cleaned.append(i[0])
     stats = statOfList(cleaned)
     with open("./static/some_new_file.html", "w") as f:
-                    f.write(render_template('Statmat.html', list=stats, matiere=mat[0][0]))
+        f.write(render_template('Statmat.html', list=stats, matiere=mat[0][0]))
     stats[0] = round(stats[0], 2)
     stats[4] = round(stats[4], 2)
     return render_template('Statmat.html', list=stats, matiere=mat[0][0])
