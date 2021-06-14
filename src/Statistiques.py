@@ -15,11 +15,7 @@ def moyenne_epreuve(epreuve, ville_nai=None, ville_res=None, ville_ecrit=None):
     :return: Moyenne de l'épreuve ou -1 si il n'y a pas de notes pour ces paramètres
     """
 
-    liste_can = []
-    selec_can = False
-    if not (ville_nai is None and ville_res is None and ville_ecrit is None):
-        selec_can = True
-        liste_can = select_candidat(ville_nai, ville_res, ville_ecrit)
+    liste_can = select_candidat(ville_nai, ville_res, ville_ecrit)
 
     code = False
     if type(epreuve) is str:
@@ -41,7 +37,7 @@ def moyenne_epreuve(epreuve, ville_nai=None, ville_res=None, ville_ecrit=None):
 
     liste_note = []
 
-    if selec_can is False or len(liste_can) == 0:
+    if len(liste_can) == 0:
         cur.execute(f"SELECT {'value'} FROM notes WHERE matiere_id=?", code_epreuve)
         res = cur.fetchall()
 
@@ -56,7 +52,6 @@ def moyenne_epreuve(epreuve, ville_nai=None, ville_res=None, ville_ecrit=None):
             liste_note.append(entrie[0])
 
     con.close()
-    print(liste_note)
     return round(sum(liste_note)/len(liste_note), 2)
 
 
@@ -101,4 +96,4 @@ def select_candidat(ville_nai=None, ville_res=None, ville_ecrit=None):
     return list_can
 
 
-print(moyenne_epreuve(600, ville_res="Meunier"))
+print(moyenne_epreuve(600, ville_ecrit="Paris"))
