@@ -1,7 +1,7 @@
 #! /usr/local/bin/python3
 import click
-from src.ParserFichiers import *
-from src.PolyMorph_Lecture import ReadFile
+from ParserFichiers import *
+from PolyMorph_Lecture import ReadFile
 import os
 
 

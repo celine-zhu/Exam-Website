@@ -31,21 +31,19 @@ def test():
 def Candidat(name):
     db = getdb()
     user = db.execute("SELECT * FROM candidat WHERE code = ?", (name,)).fetchall()
-    note=db.execute("SELECT * FROM notes WHERE can_code =?", (name,)).fetchall()
-    ranginfo=db.execute("SELECT * FROM notes WHERE can_code =?", (name,)).fetchall()
-    voeux=ranginfo=db.execute("SELECT * FROM voeux_ecole WHERE can_code =?", (name,)).fetchall()
+    note=db.execute("SELECT * FROM notes WHERE can_code =? ORDER BY type_id ASC", (name,)).fetchall()
+    ranginfo=db.execute("SELECT * FROM ranginfo WHERE rang_classe =? AND code_voie=?", (user[0][-3],user[0][31],)).fetchall()
+    voeux=db.execute("SELECT * FROM voeux_ecole WHERE can_code =? ORDER BY voe_ord ASC", (name,)).fetchall()
     vo=[]
-    for k in note:
-        m=db.execute("SELECT label FROM notes WHERE matiere_id =?", (k[1],)).fetchall()
-        t=db.execute("SELECT label FROM typeExam WHERE type_id =?", (k[2],)).fetchall()
-        k.append(m)
-        k.append(t)
-    for k in range(0,len(voeux)):
-        for j in range(0,len(voeux)):
-            if voeux[j][3]==(k+1):
-                vo.append(voeux[j],db.execute("SELECT nom FROM ecole WHERE code =?", (voeux[j][1],)).fetchall(),db.execute("SELECT label FROM reponse WHERE Ata_code =?", (voeux[j][4],)).fetchall())
-                voeux=list(voeux[:j]+voeux[j+1])
-    return render_template( 'candidat.html', user=user,note=note, ranginfo=ranginfo, vo=vo)
+    n=[]
+    for k in range(0, len(note)):
+        m=db.execute("SELECT label FROM matiere WHERE matiere_id =?", (note[k][1],)).fetchone()
+        t=db.execute("SELECT label FROM typeExam WHERE type_id =?", (note[k][2],)).fetchone()
+        n.append([note[k],m,t])
+    for j in voeux:
+              vo.append([j,db.execute("SELECT nom FROM ecole WHERE code =?",(j[1],)).fetchall(),db.execute("SELECT Ata_lib FROM reponse WHERE Ata_cod =?", (j[4],)).fetchall()])
+                #voeux=list(voeux[:j]+voeux[j+1]
+    return render_template( 'candidat.html', user=user,n=n, ranginfo=ranginfo,voeux=voeux,vo=vo )
 
 
 @app.route('/Candidat',methods=['POST','GET'])
@@ -112,13 +110,15 @@ def prof():
 @app.route('/Prof/<name>')
 def etabl(name):
     db = getdb()
-    user = db.execute("SELECT code, nom, prenom FROM candidat WHERE ine = ?", (name,)).fetchall()
+    rne= int(name)
+    etabl=db.execute("SELECT etabl_id FROM etablissement WHERE rne = ?", (rne,)).fetchone()
+    user = db.execute("SELECT code, nom, prenom FROM candidat WHERE code_etabl = ?", (etabl[0],)).fetchall()
     ranginfo=[]
     for j in range(0, len(user)):
-        ranginfo.append(db.execute("SELECT * FROM notes WHERE can_code =?", (user[j][0],)).fetchall())
+        ranginfo.append(db.execute("SELECT * FROM notes WHERE can_code =?", (user.code[j],)).fetchall())
         ranginfo.append(user[j][1])
         ranginfo.append(user[j][2])
-    return render_template( 'professeur.html', user=user, ranginfo=ranginfo)
+    return render_template( 'professeur.html', user=user, ranginfo=ranginfo, name=name)
 
 @app.route('/Register')
 def nouveau():
