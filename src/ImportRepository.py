@@ -14,7 +14,6 @@ def ImportRepository(repository_path, database_path):
     for i in directoryInfo:
         if os.path.isfile(repository_path + i):
             filelist.append(i)
-
     file2function_association = [[UploadEcole, findFileByname(filelist, 'listeecoles')],
                                 [UploadEtabli, findFileByname(filelist, 'listeetablissements')],
                                 [UploadListReponse, findFileByname(filelist, 'listeetatsreponsesappel')],
@@ -34,8 +33,6 @@ def ImportRepository(repository_path, database_path):
                                 [UploadNote, findFileByname(filelist, 'cmt_oraux')],
                                 [UploadNote, findFileByname(filelist, 'resultatecrit_')],
                                 [UploadNote, findFileByname(filelist, 'resultatoral_')]]
-
-
 
     total = len(filelist)
     index = 1

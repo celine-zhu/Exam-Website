@@ -172,6 +172,10 @@ def UploadClasse(liste):
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
 
+    extrem = len(data[0])
+    while not data[extrem-1]:
+        extrem = extrem - 1
+
     ecrit_mat = []
     i = 13
     while "(" in data[0][i]:
@@ -183,20 +187,29 @@ def UploadClasse(liste):
     ecrit_mat.append(AddMatiere("rang", con))
     ecrit = AddTypeExam("ecrit", con)
 
+    info = {
+        "MP": [13,12,9,8,4],
+        "PT": [13,12,9,8,4],
+        "PSI": [13,12,9,8,4],
+        "PC": [13,12,9,8,4],
+        "TSI": [10,9,8,7,7]
+    }
+
 
 
     oral = AddTypeExam("oral", con)
+    infotab = info.get(pars.findVoie(liste[0]))
     other_mat = []
-    other_mat.append( [AddMatiere("Mathématique harmonisé", con, 400), len(data[0])-13] )
-    other_mat.append( [AddMatiere("Mathématiques affiché", con, 401), len(data[0])-12] )
-    other_mat.append( [AddMatiere("bonification", con), len(data[0])-9] )
-    other_mat.append( [AddMatiere("total", con), len(data[0])-8] )
-    #i = i + 2
-    #pos = 1
-    #oral_mat = []
-    #while pos == int(data[0][i + pos].split()[0]):
-    #    oral_mat.append(pars.ParsMatName(data[0][i + pos]))
-    #    pos = pos + 1
+    other_mat.append( [AddMatiere("Mathématique harmonisé", con, 400), extrem-infotab[0]])
+    other_mat.append( [AddMatiere("Mathématiques affiché", con, 401), extrem-infotab[1]])
+    other_mat.append( [AddMatiere("bonification", con), extrem-infotab[2]])
+    other_mat.append( [AddMatiere("total", con), extrem-infotab[3]])
+    i = i + 3
+    other_mat = []
+    while i <extrem-infotab[0] and not "harmoni" in data[0][i]:
+        tmp = pars.ParsMatName(data[0][i])
+        other_mat.append([AddMatiere(tmp[1],con,tmp[0]), i])
+        i = i + 1
     adminTypeDico = {
         "A": "admissible",
         "B": "admissible-spe"
@@ -314,13 +327,13 @@ def UploadAdm(liste, resulttype: str = "admissible"):
             # value de rang?
             query = "UPDATE candidat SET civ_lib=?, nom=?, prenom=?, ad_1=?, ad_2=?, cod_pos=?, com=?, pay_adr=?, email=?, tel=?, por=?, resultat=?, code_voie=?, rang=? WHERE code=?"
             cur.execute(query, (
-                line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9],
+                cividico.get(line[1]), line[2], line[3], line[4], line[5], line[6], id_commune, id_contry, line[9],
                 pars.telephone(line[10]), pars.telephone(line[11]), code_resultat,code_voie, line[12], line[0],))
             # else we create a new one
         else:
             query = "INSERT INTO candidat(code, civ_lib, nom, prenom, ad_1, ad_2, cod_pos, com, pay_adr, email, tel, por, resultat, code_voie, rang) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
             cur.execute(query, (
-                line[0], line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry,
+                line[0], cividico.get(line[1]), line[2], line[3], line[4], line[5], line[6], id_commune, id_contry,
                 line[9], pars.telephone(line[10]), pars.telephone(line[11]), code_resultat, code_voie, line[12],))
         con.commit()
     con.close()
@@ -354,13 +367,13 @@ def UploadOralEcrit(liste, typeExam : str = "ecrit"):
             # value de rang?
             query = "UPDATE candidat SET civ_lib=?, nom=?, prenom=?, ad_1=?, ad_2=?, cod_pos=?, com=?, pay_adr=?, email=?, tel=?, por=?,code_voie=? WHERE code=?"
             cur.execute(query, (
-                line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry, line[9],
+                cividico.get(line[1]), line[2], line[3], line[4], line[5], line[6], id_commune, id_contry, line[9],
                 pars.telephone(line[10]), pars.telephone(line[11]), code_voie, line[0],))
             # else we create a new one
         else:
             query = "INSERT INTO candidat(code, civ_lib, nom, prenom, ad_1, ad_2, cod_pos, com, pay_adr, email, tel, por, code_voie) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)"
             cur.execute(query, (
-                line[0], line[1], cividico.get(line[2]), line[3], line[4], line[5], line[6], id_commune, id_contry,
+                line[0], cividico.get(line[1]), line[2], line[3], line[4], line[5], line[6], id_commune, id_contry,
                 line[9], pars.telephone(line[10]), pars.telephone(line[11]), code_voie,))
         # update du rang de la catégorie
         ty = AddTypeExam(typeExam, con)
@@ -411,6 +424,9 @@ def UploadNote(liste, typeExam: str = "ecrit"):
             UpdateVoieCandidat(liste[0],line[0])
         for i in range(1, len(line)):
             if line[i]:
+                if line[i] == 99.99 and "total" not in liste[0][i].lower():
+                    line[i] = 0
+
                 cur.execute(query, (line[0], id_matiere[i - 1], typeE, line[i],))
         con.commit()
     con.close()
