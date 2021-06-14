@@ -60,13 +60,45 @@ def Candidat(name):
     for j in voeux:
         vo.append([j, db.execute("SELECT nom FROM ecole WHERE code =?", (j[1],)).fetchall(),
                    db.execute("SELECT Ata_lib FROM reponse WHERE Ata_cod =?", (j[4],)).fetchall()])
-    if not ranginfo:  # Identique à '== []'
-        ranginfo = [['', '', ''], '', '', '', '', '']
-    if not n:
-        n = [['', '', '', ''], [''], ['']]
-    if not vo:
-        vo = [[['', '', ''], [[['']]], [[['']]]]]
-    return render_template('candidat.html', user=user, n=n, ranginfo=ranginfo, vo=vo)
+
+    handicap = "Non"
+    if user[0][40] == 1:
+        handicap = "Oui"
+
+    datebac= user[0][32]
+    if datebac is not None:
+        datebac = str(datebac)
+        datebac = datebac[:4] + "/" + datebac[4:]
+
+    lib_user = [db.execute("SELECT civilite FROM civilite WHERE civilite_index=?", (user[0][1],)).fetchall()[0][0],
+                db.execute("SELECT commune FROM commune WHERE commune_index=?", (user[0][7],)).fetchall()[0][0],
+                db.execute("SELECT liste_pays FROM pays WHERE pays_id=?", (user[0][8],)).fetchall()[0][0],
+                db.execute("SELECT commune FROM commune WHERE commune_index=?", (user[0][13],)).fetchall()[0][0],
+                db.execute("SELECT liste_pays FROM pays WHERE pays_id=?", (user[0][14],)).fetchall()[0][0],
+                db.execute("SELECT puissance FROM puissance WHERE code_puissance=?", (user[0][19],)).fetchall()[0][0],
+                db.execute("SELECT nom FROM etablissement WHERE etabl_id=?", (user[0][20], )).fetchall()[0][0],
+                db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][21],)).fetchall(),
+                db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][22],)).fetchall(),
+                db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][23],)).fetchall(),
+                db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][24],)).fetchall(),
+                db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][25],)).fetchall(),
+                db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][26],)).fetchall(),
+                db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][27],)).fetchall(),
+                db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][28],)).fetchall(),
+                db.execute("SELECT commune FROM commune WHERE commune_index=?", (user[0][29],)).fetchall()[0][0],
+                db.execute("SELECT concours FROM concours WHERE code_concours=?", (user[0][30],)).fetchall()[0][0],
+                db.execute("SELECT voie FROM voie WHERE code_voie=?", (user[0][31],)).fetchall()[0][0],
+                db.execute("SELECT serie FROM seriebac WHERE code_serie=?", (user[0][33],)).fetchall()[0][0],
+                db.execute("SELECT mention FROM mention WHERE code_mention=?", (user[0][34],)).fetchall()[0][0],
+                db.execute("SELECT csp FROM csp WHERE code_csp=?", (user[0][37],)).fetchall()[0][0],
+                db.execute("SELECT csp FROM csp WHERE code_csp=?", (user[0][38],)).fetchall()[0][0],
+                db.execute("SELECT etat_dossier FROM etat_dossier WHERE code_etat_dossier=?", (user[0][39],)).fetchall()[0][0],
+                handicap,
+                db.execute("SELECT qualite FROM qualite WHERE code_qualite=?", (user[0][41],)).fetchall()[0][0]]
+
+    # Contient les infos indirectement contenu dans "user"
+
+    return render_template('candidat.html', user=user, n=n, ranginfo=ranginfo, vo=vo, lib_user=lib_user, datebac=datebac)
 
 
 @app.route('/Candidat', methods=['POST', 'GET'])
