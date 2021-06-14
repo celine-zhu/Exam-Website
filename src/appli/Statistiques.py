@@ -1,4 +1,6 @@
 import sqlite3
+import statistics
+import numpy
 
 # Fichier contenant des fonctions de statistiques
 
@@ -6,10 +8,13 @@ DB_PATH = "../bdd/project.db"
 
 
 def stats_epreuve(epreuve, ville_nai_=None, ville_res_=None, ville_ecrit_=None,
-                    pays_nai_=None, pays_res_=None,
-                    serie_bac_=None,
-                    mention_bac_=None):
+                  pays_nai_=None, pays_res_=None,
+                  serie_bac_=None,
+                  mention_bac_=None,
+                  csp_pere_=None,
+                  csp_mere_=None):
     """Fonction qui renvoie la moyenne pour une épreuve donné
+
 
     :param epreuve: Nom de l'épreuve ou code de l'épreuve
     :param ville_nai_: Ville de naissance du candidat
@@ -19,13 +24,17 @@ def stats_epreuve(epreuve, ville_nai_=None, ville_res_=None, ville_ecrit_=None,
     :param pays_res_: Pays de résidence
     :param serie_bac_: Série du bac
     :param mention_bac_: Mention obtenu au bac
-    :return: LIste de note ou -1 si il n'y a pas de notes pour ces paramètres
+    :param csp_pere_: Numéro ou libellé exact du CSP du père
+    :param csp_mere_: Numéro ou libellé exact du CSP de la mère
+    :return: Liste de note ou -1 si il n'y a pas de notes pour ces paramètres
     """
 
     liste_can = select_candidat(ville_nai=ville_nai_, ville_res=ville_res_, ville_ecrit=ville_ecrit_,
                                 pays_nai=pays_nai_, pays_res=pays_res_,
                                 serie_bac=serie_bac_,
-                                mention_bac=mention_bac_)
+                                mention_bac=mention_bac_,
+                                csp_pere=csp_pere_,
+                                csp_mere=csp_mere_)
 
     code = False
     if type(epreuve) is str:
@@ -79,7 +88,9 @@ print(moyenne_epreuve(961))"""
 def stats_rang(classe=False, ville_nai_=None, ville_res_=None, ville_ecrit_=None,
                pays_nai_=None, pays_res_=None,
                serie_bac_=None,
-               mention_bac_=None):
+               mention_bac_=None,
+               csp_pere_=None,
+               csp_mere_=None):
     """Fonction qui renvoie des stats sur le rang
 
     :param classe: True si c'est "rang_classe", False si c'est "rang"
@@ -90,13 +101,17 @@ def stats_rang(classe=False, ville_nai_=None, ville_res_=None, ville_ecrit_=None
     :param pays_res_: Pays de résidence
     :param serie_bac_: Série du bac
     :param mention_bac_: Mention obtenu au bac
+    :param csp_pere_: Numéro ou libellé exact du CSP du père
+    :param csp_mere_: Numéro ou libellé exact du CSP de la mère
     :return: Liste de rang ou -1 si il n'y a pas de notes pour ces paramètres
     """
 
     liste_can = select_candidat(ville_nai=ville_nai_, ville_res=ville_res_, ville_ecrit=ville_ecrit_,
                                 pays_nai=pays_nai_, pays_res=pays_res_,
                                 serie_bac=serie_bac_,
-                                mention_bac=mention_bac_)
+                                mention_bac=mention_bac_,
+                                csp_pere=csp_pere_,
+                                csp_mere=csp_mere_)
 
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
@@ -131,7 +146,9 @@ def stats_rang(classe=False, ville_nai_=None, ville_res_=None, ville_ecrit_=None
 def select_candidat(ville_nai=None, ville_res=None, ville_ecrit=None,
                     pays_nai=None, pays_res=None,
                     serie_bac=None,
-                    mention_bac=None):
+                    mention_bac=None,
+                    csp_pere=None,
+                    csp_mere=None):
     list_can = []
 
     con = sqlite3.connect(DB_PATH)
@@ -201,12 +218,52 @@ def select_candidat(ville_nai=None, ville_res=None, ville_ecrit=None,
             if entrie[0] not in list_can:
                 list_can.append(entrie[0])
 
+    if csp_pere is not None:
+        code = False
+        if type(csp_pere) is str:
+            if csp_pere.isdecimal():
+                code = True
+                csp_pere = int(csp_pere)
+        elif type(csp_pere) is int:
+            code = True
+
+        code_csp = csp_pere
+        if not code:  # Si csp_pere est le libellé, on récupère son code
+            cur.execute(f"SELECT code_csp FROM csp WHERE csp=?", (csp_pere,))
+            res = cur.fetchall()
+            code_csp = res[0][0]
+
+        cur.execute(f"SELECT code FROM candidat WHERE code_csp_pere=?", (code_csp,))
+        res = cur.fetchall()
+
+        for entrie in res:
+            if entrie[0] not in list_can:
+                list_can.append(entrie[0])
+
+    if csp_mere is not None:
+        code = False
+        if type(csp_mere) is str:
+            if csp_mere.isdecimal():
+                code = True
+                csp_mere = int(csp_mere)
+        elif type(csp_mere) is int:
+            code = True
+
+        code_csp = csp_mere
+        if not code:  # Si csp_pere est le libellé, on récupère son code
+            cur.execute(f"SELECT code_csp FROM csp WHERE csp=?", (csp_mere,))
+            res = cur.fetchall()
+            code_csp = res[0][0]
+
+        cur.execute(f"SELECT code FROM candidat WHERE code_csp_mere=?", (code_csp,))
+        res = cur.fetchall()
+
+        for entrie in res:
+            if entrie[0] not in list_can:
+                list_can.append(entrie[0])
+
     con.close()
     return list_can
-
-
-def moyenne(liste: list, arrondi: int = 2):
-    return round(sum(liste)/len(liste), arrondi)
 
 
 """
@@ -214,3 +271,20 @@ for mention in ["TB", "B", "AB", "S"]:  # Exemple:
     print(moyenne(stats_epreuve(600, ville_ecrit_="Paris", pays_nai_="Maroc", mention_bac_=mention)))
 """
 
+
+def statOfList(elements: list):
+    infos = [
+        statistics.mean(elements),
+        numpy.quantile(elements, 0.25),
+        numpy.quantile(elements, 0.75),
+        statistics.median(elements),
+        statistics.variance(elements)
+    ]
+    return infos
+
+
+"""Test (résultat de ligne 2 et 3 identique)
+print(statOfList(stats_rang()))
+print(statOfList(stats_rang(csp_pere_=81, csp_mere_=85)))
+print(statOfList(stats_rang(csp_pere_="Chômeurs n'ayant jamais travaillé", csp_mere_="Personnes diverses sans activité  professionnelle de moins de 60 ans (sauf retraités)")))
+"""
