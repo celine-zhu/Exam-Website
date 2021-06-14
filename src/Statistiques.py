@@ -1,5 +1,6 @@
 import sqlite3
-
+import statistics
+import numpy
 # Fichier contenant des fonctions de statistiques
 
 DB_PATH = "../bdd/project.db"
@@ -210,3 +211,12 @@ print(stats_epreuve(600, ville_ecrit_="Paris", pays_nai_="Maroc", mention_bac_="
 print(stats_epreuve(600, ville_ecrit_="Paris", pays_nai_="Maroc", mention_bac_="AB"))
 print(stats_epreuve(600, ville_ecrit_="Paris", pays_nai_="Maroc", mention_bac_="S"))"""
 
+def statOfList(elements: list):
+    infos = [
+            statistics.mean(elements),
+            numpy.quantile(elements, 25),
+            numpy.quantile(elements, 75),
+            statistics.median(elements),
+            statistics.variance(elements)
+    ]
+    return infos
