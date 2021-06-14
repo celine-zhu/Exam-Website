@@ -149,6 +149,10 @@ mkdir ProjectEnvironnement
 %~dp0\ProjectEnvironnement\Scripts\python.exe -m pip install --upgrade pip
 %~dp0\ProjectEnvironnement\Scripts\pip.exe install click
 %~dp0\ProjectEnvironnement\Scripts\pip.exe install flask
+%~dp0\ProjectEnvironnement\Scripts\pip.exe install Flask-Images
+%~dp0\ProjectEnvironnement\Scripts\pip.exe install geopandas
+%~dp0\ProjectEnvironnement\Scripts\pip.exe install pdfkit
+%~dp0\ProjectEnvironnement\Scripts\pip.exe install openpyxl
 
 goto EOF
 

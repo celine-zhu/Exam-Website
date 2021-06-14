@@ -54,6 +54,7 @@ function LinuxInstallation() {
     
     echo "installing python package"
     $_Package -y install python3-venv
+    $_Package -y install wkhtmltopdf
 }
 
 
@@ -75,7 +76,7 @@ elif [[ $unameOut == Linux ]]; then
         LinuxInstallation
     else
       echo "resquesting sudo privilege to install/check essential package"
-      sudo $0 TEMP
+      sudo bash $0 TEMP
     fi
     
     if [[ $1 == TEMP ]] ; then
@@ -90,7 +91,14 @@ elif [[ $unameOut == Linux ]]; then
     
     echo "installing dependancy"
 	#manque un module pour les fichier exel dans le requirements.txt
-    ./ProjectEnvironnement/bin/pip install -r src/appli/requirements.txt
+    source ./ProjectEnvironnement/bin/activate 
+    pip3 install Flask 
+    pip3 install Flask-Images
+    pip3 install geopandas
+    pip3 install pdfkit
+    pip3 install click
+    pip3 install openpyxl
+    deactivate
 
 else
     echo "OS not recognised or handled by the script script : manual installation required" 1>&2
