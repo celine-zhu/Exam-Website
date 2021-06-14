@@ -6,22 +6,40 @@
         </div>
       </article>
   </div>
+  <div class="tile is-parent">
+      <article class="tile is-child notification is-white">
+        </div>
+      </article>
+  </div>
 <div class="tile is-parent">
       <article class="tile is-child notification is-white">
-        <p class="title" align="right">INE Etablissement:{{name}}</p>
+        <p class="title" align="right"><b>{{etabl[0][1]}}</b></p>
+        <p class="title" align="right"><b>INE Etablissement:</b>{{name}}</p>
+        <p class="title" align="right"><b>Elèves inscrits:</b>{{k}}</p>
         </div>
       </article>
   </div>
   <ul>
-    {% for r in ranginfo %}
+    {% for r in n %}
   <div class="tile is-parent">
       <article class="tile is-child notification is-info">
         <p class="content">
-          {{r[4]}},{{r[5]}}
-          {{r[0]}}
-          {{r[1]}}
-          {{r[2]}}
-          {{r[3]}}
+        {%if r[0][1]==None%}
+         <p > <b>Code Candidat:</b> {{r[0][0]}}</p>
+       <p > <b>Prénom:</b> {{r[0][2]}}</p>
+        {%else%}
+     <p ><b>Code Candidat: </b>{{r[0][0]}}</p>
+      <p > <b> Nom: </b>{{r[0][1]}}</p>
+      <p > <b>Prénom:</b>{{r[0][2]}}</p>
+      {%endif%}
+     {% for mat in r %}
+     {%if mat==r[0]%}
+     <li> </li>
+     {%else%}
+        <li><b>{{ mat[0][0]}}</b>({{ mat[1][0]}}): {{ mat[-1]}}</li>
+      {%endif%}
+    {% endfor %}
+   
           </p>
       </article>
         </div>
