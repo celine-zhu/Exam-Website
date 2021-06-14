@@ -19,13 +19,18 @@
             &thinsp;
             <div class="field">
                 <div class="control">
-                    <p><input type="submit" value="submit" class="button is-block is-info is-large is-fullwidth"></p>
+                    <p><input type="submit" value="Rechercher" class="button is-block is-info is-large is-fullwidth">
+                    </p>
                 </div>
             </div>
         </form>
+        <p>Si vous entrez un nom et un code, le code sera utilisé en premier</p>
     </div>
-    <div><a href="http://127.0.0.1:5000"> retour
-        <div>
-        </div>
+    <div><a href="http://127.0.0.1:5000"> retour </a>
+        {% if error != None %}
+            <p>{{error}}</p>
+        {% endif %}
+    </div>
+</div>
 </body>
 {% endblock %}

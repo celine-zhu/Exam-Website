@@ -8,9 +8,11 @@ from werkzeug.security import generate_password_hash
 import sqlite3
 import numpy
 import statistics
+import Statistiques as St
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 DATABASE = "../../bdd/project.db"
+
 
 def statOfList(elements: list):
     infos = [
@@ -24,6 +26,7 @@ def statOfList(elements: list):
         len(elements)
     ]
     return infos
+
 
 def getdb():
     db = getattr(g, '_database', None)
@@ -67,7 +70,7 @@ def Candidat(name):
     if user[0][40] == 1:
         handicap = "Oui"
 
-    datebac= user[0][32]
+    datebac = user[0][32]
     if datebac is not None:
         datebac = str(datebac)
         datebac = datebac[:4] + "/" + datebac[4:]
@@ -78,7 +81,7 @@ def Candidat(name):
                 db.execute("SELECT commune FROM commune WHERE commune_index=?", (user[0][13],)).fetchall()[0][0],
                 db.execute("SELECT liste_pays FROM pays WHERE pays_id=?", (user[0][14],)).fetchall()[0][0],
                 db.execute("SELECT puissance FROM puissance WHERE code_puissance=?", (user[0][19],)).fetchall()[0][0],
-                db.execute("SELECT nom FROM etablissement WHERE etabl_id=?", (user[0][20], )).fetchall()[0][0],
+                db.execute("SELECT nom FROM etablissement WHERE etabl_id=?", (user[0][20],)).fetchall()[0][0],
                 db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][21],)).fetchall(),
                 db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][22],)).fetchall(),
                 db.execute("SELECT epreuve FROM epreuve WHERE epreuve_code=?", (user[0][23],)).fetchall(),
@@ -94,7 +97,8 @@ def Candidat(name):
                 db.execute("SELECT mention FROM mention WHERE code_mention=?", (user[0][34],)).fetchall()[0][0],
                 db.execute("SELECT csp FROM csp WHERE code_csp=?", (user[0][37],)).fetchall()[0][0],
                 db.execute("SELECT csp FROM csp WHERE code_csp=?", (user[0][38],)).fetchall()[0][0],
-                db.execute("SELECT etat_dossier FROM etat_dossier WHERE code_etat_dossier=?", (user[0][39],)).fetchall()[0][0],
+                db.execute("SELECT etat_dossier FROM etat_dossier WHERE code_etat_dossier=?",
+                           (user[0][39],)).fetchall()[0][0],
                 handicap,
                 db.execute("SELECT qualite FROM qualite WHERE code_qualite=?", (user[0][41],)).fetchall()[0][0]]
 
@@ -102,6 +106,7 @@ def Candidat(name):
     with open("./static/some_new_file.html", "w") as f:
                     f.write(render_template('candidat.html', user=user, n=n, ranginfo=ranginfo, vo=vo, lib_user=lib_user, datebac=datebac))
     return render_template('candidat.html', user=user, n=n, ranginfo=ranginfo, vo=vo, lib_user=lib_user, datebac=datebac)
+ 
 
 
 @app.route('/Candidat', methods=['POST', 'GET'])
@@ -110,25 +115,26 @@ def candlogin():
     if request.method == 'POST':
         candidat: str = request.form["candidat"]
         numero: str = request.form["numero"]
-        user = None
+
         db = getdb()
-        error = None
+        user = None
+        error = "Erreur : Numéro ou nom de candidat incorrect"
 
-        print(type(numero))
+        if numero is None or numero == "":
+            if candidat is not None:
+                user = db.execute(
+                    "SELECT code FROM candidat WHERE nom = ?", (candidat.upper(),)
+                ).fetchall()
+                if user is not None and user != []:
+                    print("user:", user)
+                    numero = user[0][0]
 
-        user: str = db.execute(
-            "SELECT nom FROM candidat WHERE code = ?", (numero,)
-        ).fetchone()
-
-        if user is None:
-            return render_template('error.html')
-        elif user[0].upper() != candidat.upper():
-            error = '''<div> Error, please check that your name and candidate serial are correct<div>
-             <div> <a href="http://127.0.0.1:5000"> retour<div>'''
-            return error
-
-        if error is None:
-            return redirect(url_for('Candidat', name=numero))
+        if numero is not None:
+            user = db.execute(
+                "SELECT code FROM candidat WHERE code = ?", (numero,)
+            ).fetchall()
+            if user is not None and user != []:
+                return redirect(url_for('Candidat', name=numero))
 
         """return '''<div> Error, please check that your name and candidate serial are correct<div>
              <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
@@ -356,8 +362,82 @@ def my_link():
 
 
 @app.route('/Curieux')
-def images():
-    return render_template("curieux.html")
+def stats_crit():
+    cur = getdb()
+    matlist = cur.execute("SELECT * FROM matiere").fetchall()
+    excluded = ['rang', 'total', 'bonification', 'centre', 'jury', 'rang ccp']
+    epreuves = []
+    for i in matlist:
+        if i[1] not in excluded:
+            epreuves.append(i)
+
+    ville = []
+    res = cur.execute("SELECT commune FROM commune").fetchall()
+    for entrie in res:
+        ville.append(entrie[0])
+
+    pays = []
+    res = cur.execute("SELECT liste_pays FROM pays").fetchall()
+    for entrie in res:
+        pays.append(entrie[0])
+
+    serie = []
+    res = cur.execute("SELECT serie FROM seriebac").fetchall()
+    for entrie in res:
+        serie.append(entrie[0])
+
+    mention = []
+    res = cur.execute("SELECT mention FROM mention").fetchall()
+    for entrie in res:
+        mention.append(entrie[0])
+
+    csp = []
+    res = cur.execute("SELECT csp FROM csp").fetchall()
+    for entrie in res:
+        csp.append(entrie[0])
+
+    return render_template("curieux.html", epreuves=epreuves, ville=ville, pays=pays, serie=serie, mention=mention, csp=csp)
+
+
+@app.route('/curieux_stats', methods=["GET"])
+def curieux_stats():
+    epreuve = request.args.get('epreuve')
+    if not epreuve:
+        return "Erreur du nom de la matière"
+
+    list_critere = ["ville_nai", "ville_res", "ville_ecrit",
+                    "pays_nai", "pays_res", "serie_bac",
+                    "mention_bac", "csp_pere", "csp_mere"]
+    args = {}
+
+    for crit in list_critere:
+        args[crit] = None
+
+    for crit in list_critere:
+        res = request.args.get(crit)
+        if res:
+            if res != "Ne pas prendre en compte":
+                args[crit] = res
+
+    error = None
+    list_note = -1
+    try:
+        list_note = St.stats_epreuve(epreuve, *args.values())
+    except sqlite3.OperationalError:
+        error = "Impossible d'accéder à la base de donnée"
+        print("erreur db")
+    stats = []
+
+    if list_note != -1:
+        stats = St.statOfList(list_note)
+        stats[0] = round(stats[0], 2)
+        if type(stats[4]) is float:
+            stats[4] = round(stats[4], 2)
+    else:
+        error = "Aucune note disponible"
+    print(stats)
+    return render_template('curieux_res.html', list=stats, matiere=epreuve, error=error)
+
 
 @app.route('/statform')
 def statform():
@@ -372,21 +452,25 @@ def statform():
                     f.write(render_template('StatsForm.html', list=cleaned))
     return render_template('StatsForm.html', list=cleaned)
 
+
 @app.route('/statmat', methods=["GET"])
 def statmat():
     var = request.args.get('matiere')
     if not var:
         return "erreur du code de la matière"
     cur = getdb()
-    values = cur.execute("SELECT value FROM notes WHERE matiere_id=?",(var,)).fetchall()
-    mat = cur.execute("SELECT label FROM matiere WHERE matiere_id=?",(var,)).fetchall()
+    values = cur.execute("SELECT value FROM notes WHERE matiere_id=?", (var,)).fetchall()
+    mat = cur.execute("SELECT label FROM matiere WHERE matiere_id=?", (var,)).fetchall()
     cleaned = []
     for i in values:
         cleaned.append(i[0])
     stats = statOfList(cleaned)
     with open("./static/some_new_file.html", "w") as f:
                     f.write(render_template('Statmat.html', list=stats, matiere=mat[0][0]))
+    stats[0] = round(stats[0], 2)
+    stats[4] = round(stats[4], 2)
     return render_template('Statmat.html', list=stats, matiere=mat[0][0])
+
 
 if __name__ == '__main__':
     app.run(debug=True)

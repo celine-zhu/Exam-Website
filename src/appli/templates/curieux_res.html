@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<button class="button is-white"></button>
+<div class="tile is-parent">
+    <article class="tile is-child notification is-white">
+    </article>
+</div>
+<div class="tile is-parent">
+    <h1>Statistique de la matiere {{matiere}}</h1><br>
+    {% if error == None %}
+        <table class="table is-bordered">
+            <tr>
+                <td>moyenne</td>
+                <td>1er quartile</td>
+                <td>médiane</td>
+                <td>3ème quartile</td>
+                <td>Variance</td>
+                <td>Minimum</td>
+                <td>Maximum</td>
+                <td>échantillons</td>
+            </tr>
+            <tr>
+            {% for elem in list: %}
+                <td>{{elem}}</td>
+            {% endfor %}
+            </tr>
+        </table>
+    {% else %}
+        <div class="tile is-child"> {{error}}</div>
+    {% endif %}
+</div>
+<a href="./Curieux"> Retour à la selection d'une matière</a>
+{% endblock %}
