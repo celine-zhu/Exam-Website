@@ -205,8 +205,12 @@ def select_candidat(ville_nai=None, ville_res=None, ville_ecrit=None,
     return list_can
 
 
-"""print(stats_epreuve(600, ville_ecrit_="Paris", pays_nai_="Maroc", mention_bac_="TB"))
-print(stats_epreuve(600, ville_ecrit_="Paris", pays_nai_="Maroc", mention_bac_="B"))
-print(stats_epreuve(600, ville_ecrit_="Paris", pays_nai_="Maroc", mention_bac_="AB"))
-print(stats_epreuve(600, ville_ecrit_="Paris", pays_nai_="Maroc", mention_bac_="S"))"""
+def moyenne(liste: list, arrondi: int = 2):
+    return round(sum(liste)/len(liste), arrondi)
+
+
+"""
+for mention in ["TB", "B", "AB", "S"]:  # Exemple:
+    print(moyenne(stats_epreuve(600, ville_ecrit_="Paris", pays_nai_="Maroc", mention_bac_=mention)))
+"""
 
