@@ -34,6 +34,8 @@ def getdb():
 
 @app.route('/')
 def Index():
+    with open("./static/some_new_file.html", "w") as f:
+                    f.write(render_template('index.html'))
     return render_template('index.html')
 
 
@@ -97,7 +99,8 @@ def Candidat(name):
                 db.execute("SELECT qualite FROM qualite WHERE code_qualite=?", (user[0][41],)).fetchall()[0][0]]
 
     # Contient les infos indirectement contenu dans "user"
-
+    with open("./static/some_new_file.html", "w") as f:
+                    f.write(render_template('candidat.html', user=user, n=n, ranginfo=ranginfo, vo=vo, lib_user=lib_user, datebac=datebac))
     return render_template('candidat.html', user=user, n=n, ranginfo=ranginfo, vo=vo, lib_user=lib_user, datebac=datebac)
 
 
@@ -129,12 +132,10 @@ def candlogin():
 
         """return '''<div> Error, please check that your name and candidate serial are correct<div>
              <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
+    with open("./static/some_new_file.html", "w") as f:
+                    f.write(render_template('candlogin.html', error=error))
     return render_template('candlogin.html', error=error)
 
-
-@app.route('/Candidat/<name>/edit')
-def changinfo(name):
-    return '<div> <a href="http://127.0.0.1:5000"> retour<div>'
 
 
 @app.route('/Prof')
@@ -162,6 +163,8 @@ def prof():
 
         """return '''<div> Error, please check that your name and candidate serial are correct<div>
              <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
+    with open("./static/some_new_file.html", "w") as f:
+                    f.write(render_template('proflogin.html', error=error))
     return render_template('proflogin.html', error=error)
 
 
@@ -176,6 +179,8 @@ def etablissement(name):
         note.append(db.execute("SELECT * FROM notes WHERE can_code =? ORDER BY type_id ASC", (user[j][0],)).fetchall())
     n = []
     if not user:  # idem à '== []'
+        with open("./static/some_new_file.html", "w") as f:
+                    f.write(render_template("noneeleve.html", etabl=etabl, name=name))
         return render_template("noneeleve.html", etabl=etabl, name=name)
     for k in range(0, len(note)):
         l = [user[k]]
@@ -186,6 +191,8 @@ def etablissement(name):
             l.append(d)
         n.append(l)
     k = len(user)
+    with open("./static/some_new_file.html", "w") as f:
+                    f.write(render_template('professeur.html', user=user, n=n, name=name, etabl=etabl, k=k))
     return render_template('professeur.html', user=user, n=n, name=name, etabl=etabl, k=k)
 
 
@@ -214,6 +221,8 @@ def nouveau():
 
         """return '''<div> Error, please check that your name and candidate serial are correct<div>
              <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
+    with open("./static/some_new_file.html", "w") as f:
+                    f.write(render_template('newcand.html', error=error))
     return render_template('newcand.html', error=error)
 
 
@@ -239,11 +248,15 @@ def Admin():
 
         """return '''<div> Error, please check that your name and candidate serial are correct<div>
              <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
+    with open("./static/some_new_file.html", "w") as f:
+                    f.write(render_template('adminlogin.html', error=error))
     return render_template('adminlogin.html', error=error)
 
 
 @app.route('/Admin/select')
 def links():
+    with open("./static/some_new_file.html", "w") as f:
+                    f.write(render_template('adminselect.html'))
     return render_template('adminselect.html')
 
 
@@ -277,6 +290,9 @@ def sql():
                 resultat = db.execute(st).fetchall()
                 result = cursor.execute(str("PRAGMA table_info(" + fro + ");")).fetchall()
                 column_names = list(zip(*result))[1]
+            output_from_parsed_template = render_template('adminsql.html', resultat=resultat,column_names=column_names, result=result)
+            with open("./static/some_new_file.html", "w") as f:
+                    f.write(output_from_parsed_template)
             return render_template('adminsql.html', resultat=resultat, column_names=column_names, result=result)
         elif request.form['btn_identifier'] == 'commande':
             st = request.form.get("search")
@@ -287,8 +303,9 @@ def sql():
             if resultat is None:
                 return '''<div> Erreur, commande incomplète<div>
              <div> <a href="http://127.0.0.1:5000/Admin/SQL"> retour<div>'''
+            with open("./static/some_new_file.html", "w") as f:
+                    f.write(render_template('adminsql.html', resultat=resultat))
             return render_template('adminsql.html', resultat=resultat)
-
     return render_template('adminsql1.html')
 
 
@@ -306,8 +323,6 @@ def search():
             st = request.form.get("victor")
             db = getdb()
             cursor = db.cursor()
-            # st="%"+st+"%"
-            # ugh=str("SELECT nom,prenom,code FROM candidat WHERE prenom LIKE "+ st)
             resultat = cursor.execute("SELECT nom, prenom, code from candidat where prenom like ? ",
                                       ('%' + st + '%',)).fetchall()
             if len(resultat) > 100:
@@ -318,20 +333,26 @@ def search():
                 li.append([t, k])
             if resultat is None:
                 resultat = [["http://127.0.0.1:5000/Admin/search", ["0 résultats trouvés", " "]]]
+            with open("./static/some_new_file.html", "w") as f:
+                    f.write(render_template('adminsearch.html', resultat=resultat, li=li))
             return render_template('adminsearch.html', resultat=resultat, li=li)
+    with open("./static/some_new_file.html", "w") as f:
+                    f.write(render_template('adminsearch2.html', resultat=resultat))
     return render_template('adminsearch2.html', resultat=resultat)
 
 
 @app.route('/Credits')
 def credit():
-    return
+    with open("./static/some_new_file.html", "w") as f:
+                    f.write(render_template('credits.html'))
+    return render_template('credits.html')
 
 
 @app.route('/Download')
 @app.route('/Download/<name>')
 def my_link():
     pdfkit.from_url('http://127.0.0.1:5000/', 'out.pdf')
-    return 'Click.'
+    return redirect(url_for('/'))
 
 
 @app.route('/Curieux')
@@ -347,7 +368,8 @@ def statform():
     for i in matlist:
         if i[1] not in excluded:
             cleaned.append(i)
-
+    with open("./static/some_new_file.html", "w") as f:
+                    f.write(render_template('StatsForm.html', list=cleaned))
     return render_template('StatsForm.html', list=cleaned)
 
 @app.route('/statmat', methods=["GET"])
@@ -362,6 +384,8 @@ def statmat():
     for i in values:
         cleaned.append(i[0])
     stats = statOfList(cleaned)
+    with open("./static/some_new_file.html", "w") as f:
+                    f.write(render_template('Statmat.html', list=stats, matiere=mat[0][0]))
     return render_template('Statmat.html', list=stats, matiere=mat[0][0])
 
 if __name__ == '__main__':
