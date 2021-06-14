@@ -380,9 +380,7 @@ def stats_crit():
 
 @app.route('/curieux_stats', methods=["GET"])
 def curieux_stats():
-    epreuve = request.args.get('epreuve')
-    if not epreuve:
-        return "Erreur du nom de la matière"
+    choix = request.args.get('choix_c')
 
     list_critere = ["ville_nai", "ville_res", "ville_ecrit",
                     "pays_nai", "pays_res", "serie_bac",
@@ -397,15 +395,31 @@ def curieux_stats():
         if res:
             if res != "Ne pas prendre en compte":
                 args[crit] = res
-
     error = None
     list_note = -1
-    try:
-        list_note = St.stats_epreuve(epreuve, *args.values())
-    except sqlite3.OperationalError:
-        error = "Impossible d'accéder à la base de donnée"
-        print("erreur db")
+    titre_stats = ""
     stats = []
+
+    if choix == "epreuve_":
+        epreuve = request.args.get('epreuve')
+        if not epreuve:
+            return "Erreur du nom de la matière"
+
+        try:
+            list_note = St.stats_epreuve(epreuve, *args.values())
+        except sqlite3.OperationalError:
+            error = "Impossible d'accéder à la base de donnée"
+        titre_stats = "de la matière " + epreuve
+
+    else:
+        titre_stats = "du rang"
+        type_rang = choix == "rang_c"
+        if type_rang:
+            titre_stats += " classé"
+        try:
+            list_note = St.stats_rang(type_rang, *args.values())
+        except sqlite3.OperationalError:
+            error = "Impossible d'accéder à la base de donnée"
 
     if list_note != -1:
         stats = St.statOfList(list_note)
@@ -413,9 +427,12 @@ def curieux_stats():
         if type(stats[4]) is float:
             stats[4] = round(stats[4], 2)
     else:
-        error = "Aucune note disponible"
-    print(stats)
-    return render_template('curieux_res.html', list=stats, matiere=epreuve, error=error)
+        if choix == "epreuve_":
+            error = "Aucune note disponible"
+        else:
+            error = "Aucun rang disponible"
+
+    return render_template('curieux_res.html', list=stats, type_stats=titre_stats, error=error)
 
 
 @app.route('/statform')

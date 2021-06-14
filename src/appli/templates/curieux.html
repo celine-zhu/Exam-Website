@@ -9,7 +9,7 @@
 </div>
 <div class="tile is-parent">
     <div class="tile is-child">
-        <p class="title">Obtenez des statistiques sur les matières selon les critères de votre choix</p>
+        <p class="title">Obtenez des statistiques sur les matières ou le rang selon les critères de votre choix</p>
         <p>Laisser un paramètre vide ou sur "Ne pas prendre en compte" pour ne pas filtrer selon celui-ci</p>
         <p>Double-cliquez sur un champ pour voir les valeurs possibles</p>
     </div>
@@ -17,7 +17,22 @@
 <div class="tile is-parent">
     <form action="/curieux_stats" method="GET">
         <div class="tile is-child">
-            <label for="epreuve">Epreuve: (Champ obligatoire)</label>
+            <p>Sur quoi doit se faire la recherche?</p>
+            <div>
+              <input type="radio" id="epreuve_" name="choix_c" value="epreuve_" checked>
+              <label for="epreuve_">Epreuve</label>
+            </div>
+            <div>
+              <input type="radio" id="rang" name="choix_c" value="rang">
+              <label for="rang">Rang</label>
+            </div>
+            <div>
+              <input type="radio" id="rang_c" name="choix_c" value="rang_c">
+              <label for="rang_c">Rang classé</label>
+            </div>
+        </div>
+        <div class="tile is-child">
+            <label for="epreuve">Epreuve (si statistiques selon épreuve):</label>
             <input list="list_epreuve" type="text" id="epreuve" name="epreuve" style="width: 250px;">
             <datalist id="list_epreuve">
                 {% for elem in epreuves: %}
