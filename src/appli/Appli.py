@@ -6,9 +6,24 @@ from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 # from reportlab.pdfgen.canvas import Canvas
 import sqlite3
+import numpy
+import statistics
+
 app = Flask(__name__, static_folder='static', template_folder='templates')
 DATABASE = "../../bdd/project.db"
 
+def statOfList(elements: list):
+    infos = [
+        statistics.mean(elements),
+        numpy.quantile(elements, 0.25),
+        numpy.quantile(elements, 0.75),
+        statistics.median(elements),
+        statistics.variance(elements),
+        min(elements),
+        max(elements),
+        len(elements)
+    ]
+    return infos
 
 def getdb():
     db = getattr(g, '_database', None)
@@ -268,5 +283,31 @@ def my_link():
 @app.route('/Curieux')
 def images():
     return render_template("curieux.html")
+
+@app.route('/statform')
+def statform():
+    cur = getdb()
+    matlist = cur.execute("SELECT * FROM matiere").fetchall()
+    excluded = ['rang', 'total', 'bonification', 'centre', 'jury', 'rang ccp']
+    cleaned = []
+    for i in matlist:
+        if i[1] not in excluded:
+            cleaned.append(i)
+
+    return render_template('StatsForm.html', list=cleaned)
+
+@app.route('/statmat', methods=["GET"])
+def statmat():
+    var = request.args.get('matiere')
+    if not var:
+        return "erreur du code de la matière"
+    cur = getdb()
+    values = cur.execute("SELECT value FROM notes WHERE matiere_id=?",(var,)).fetchall()
+    mat = cur.execute("SELECT label FROM matiere WHERE matiere_id=?",(var,)).fetchall()
+    cleaned = []
+    for i in values:
+        cleaned.append(i[0])
+    stats = statOfList(cleaned)
+    return render_template('Statmat.html', list=stats, matiere=mat[0][0])
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<button class="button is-white"></button>
+<div class="tile is-parent">
+    <article class="tiel is-child notification is-white">
+    </article>
+</div>
+<div class="tile is-parent">
+    <form action="/statmat" method="GET">
+        {% for elem in list: %}
+            <input type="radio" id="{{elem[0]}}" name="matiere" value="{{elem[0]}}">
+            <label for="{{elem[0]}}">{{elem[1]}}</label><br>
+        {% endfor %}
+        <input type="submit" value="calcule statistique">
+    </form>
+</div>
+{% endblock %}
