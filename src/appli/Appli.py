@@ -1,6 +1,7 @@
 from flask import Flask, Blueprint, render_template, abort, request, redirect, url_for
 from flask import g
 import pdfkit
+import Statistiques
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 # from reportlab.pdfgen.canvas import Canvas
@@ -234,20 +235,24 @@ def file():
     return
 @app.route('/Admin/search',methods=['GET','POST'])
 def search():
-    resultat=[]
+    resultat=None
+    st=''
     if request.method == 'POST':
-            st=request.form.get("search")
+       if request.form['btn_identifier'] == 'commande':
+            st=request.form.get("victor")
             db=getdb()
-            ugh=str("SELECT nom, prenom,code FROM candidat WHERE prenom LIKE %"+st)
-            resultat=db.execute(str(ugh)).fetchall()
-            if len(resultat)>20:
-                resultat=resultat[:20]
+            cursor=db.cursor()
+            #st="%"+st+"%"
+            #ugh=str("SELECT nom,prenom,code FROM candidat WHERE prenom LIKE "+ st)
+            resultat=cursor.execute("SELECT nom, prenom, code from candidat where prenom like ? ",('%'+st+'%',)).fetchall()
+            if len(resultat)>100:
+                resultat=resultat[:100]
             li=[]
             for k in resultat:
-                    t=str("http://127.0.0.1:5000/Candidat/"+k[2])
+                    t=str("http://127.0.0.1:5000/Candidat/"+str(k[2]))
                     li.append([t,k])
-            if resultat==[]:   
-                     resultat.append("0 résultats trouvés")
+            if resultat is None:   
+                    resultat=[["http://127.0.0.1:5000/Admin/search",["0 résultats trouvés"," "]]]
             return render_template('adminsearch.html', resultat=resultat,li=li)  
     return render_template('adminsearch2.html', resultat=resultat)  
     
@@ -262,6 +267,6 @@ def my_link():
     return 'Click.'
 @app.route('/Curieux')
 def images():
-    return
+    return render_template("curieux.html")
 if __name__ == '__main__':
     app.run(debug=True)

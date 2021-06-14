@@ -9,20 +9,24 @@
         <p class="title" align="middle">CHERCHER UN CANDIDAT</p>
         </div>
       </article>
-  </div>
-<form action ="http://localhost:5000/Admin/search" method = "post">
-<div class="column is-4 is-offset-4">
- <div class="field has-addons">
+  </form>
+<div class="column is-5 is-offset-4">
+ <form action ="http://localhost:5000/Admin/search" method = "post">
+
   <div class="control">
-    <input class="input" type="text" name="search" placeholder="Trouver un candidat">
+    <input class="input"  name="victor" type="text" placeholder="Prenom d'un candidat">
   </div>
+  <input type="hidden" name="btn_identifier"  value="commande" />
+  <div> </div>
+  &nbsp;
   <div class="control">
-    <a class="button is-info" type="submit">
-      Search
-    </a>
+    <button class="button is-primary" type="submit" >
+      Chercher
+    </button>
+
+</div>
   </div>
-</div>
-</div>
+
 </form>
 <div class="column is-offset-4">
  <div class="column table-container">
@@ -31,7 +35,7 @@
   <tbody>
    {%for k in li%}
    <tr>
-   <td href={{k[0]}}>{{k}}</td>
+   <td ><a href={{k[0]}}>{{k[1][0]}}   {{k[1][1]}} </a> </td>
    </tr>
 {%endfor%}
 </tbody>
