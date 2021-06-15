@@ -189,7 +189,7 @@ def etablissement(name):
     db = getdb()
     rne = name
     etabl = db.execute("SELECT etabl_id,nom FROM etablissement WHERE rne = ?", (rne,)).fetchall()
-    user = db.execute("SELECT code, nom, prenom FROM candidat WHERE code_etabl = ?", (etabl[0][0],)).fetchall()
+    user = db.execute("SELECT code, nom, prenom ,code_voie FROM candidat WHERE code_etabl = ? ORDER BY code_voie ASC", (etabl[0][0],)).fetchall()
     note = []
     for j in range(0, len(user)):
         note.append(db.execute("SELECT * FROM notes WHERE can_code =? ORDER BY type_id ASC", (user[j][0],)).fetchall())
@@ -200,10 +200,11 @@ def etablissement(name):
         return render_template("noneeleve.html", etabl=etabl, name=name)
     for k in range(0, len(note)):
         l = [user[k]]
+        e=db.execute("SELECT voie FROM voie WHERE code_voie=?", (user[k][3],)).fetchall()
         for d in range(0, len(note[k])):
             m = db.execute("SELECT label FROM matiere WHERE matiere_id =?", (note[k][d][1],)).fetchone()
             t = db.execute("SELECT label FROM typeExam WHERE type_id =?", (note[k][d][2],)).fetchone()
-            d = [m, t, note[k][d][-1]]
+            d = [m, t, e,note[k][d][-1]]
             l.append(d)
         n.append(l)
     k = len(user)

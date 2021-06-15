@@ -24,6 +24,13 @@
   <div class="tile is-parent">
       <article class="tile is-child notification is-info">
         <p class="content">
+        {% for mat in r %}
+        {%if mat==r[1]%}
+     <li><b>FILIERE:</b>{{ mat[2][0][0]}} </li>
+     {%else%}
+        <li></li>
+      {%endif%}
+    {% endfor %}
         {%if r[0][1]==None%}
          <p > <b>Code Candidat:</b> {{r[0][0]}}</p>
        <p > <b>Prénom:</b> {{r[0][2]}}</p>
