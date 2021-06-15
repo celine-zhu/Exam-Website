@@ -499,6 +499,9 @@ def statmat():
         cleaned.append(i[0])
         cl[round(i[0])] = cl[round(i[0])] + 1
     stats = statOfList(cleaned)
+    stats[0] = round(stats[0], 2)
+    stats[4] = round(stats[4], 2)
+    
     plt.bar(range(0,21),cl)
     plt.title("Répartition des notes de "+mat[0][0])
     plt.xlabel("notes")
@@ -508,9 +511,8 @@ def statmat():
     
 
     with open("./static/some_new_file.html", "w") as f:
-        f.write(render_template('Statmat.html', list=stats, matiere=mat[0][0]))
-    stats[0] = round(stats[0], 2)
-    stats[4] = round(stats[4], 2)
+        f.write(render_template('Statmat.html', list=stats, matiere=mat[0][0],image=url_for('static',filename="./graph/graph_"+mat[0][0]+".png")))
+
     return render_template('Statmat.html', list=stats, matiere=mat[0][0], image=url_for('static',filename="./graph/graph_"+mat[0][0]+".png"))
 
 
