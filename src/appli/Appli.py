@@ -1,7 +1,7 @@
 from flask import Flask, Blueprint, render_template, abort, request, redirect, url_for
 from flask import g
+from flask.templating import render_template_string
 import pdfkit
-import Statistiques
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 # from reportlab.pdfgen.canvas import Canvas
@@ -14,7 +14,7 @@ import Statistiques as St
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 DATABASE = "../../bdd/project.db"
-
+app.config['UPLOAD_FOLDER']='../../data/public'
 
 def statOfList(elements: list):
     elements.sort()
@@ -147,39 +147,38 @@ def candlogin():
             ).fetchall()
             if user is not None and user != []:
                 return redirect(url_for('Candidat', code=numero))
-
-        """return '''<div> Error, please check that your name and candidate serial are correct<div>
-             <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
     with open("./static/some_new_file.html", "w") as f:
         f.write(render_template('candlogin.html', error=error))
     return render_template('candlogin.html', error=error)
 
 
-@app.route('/Prof')
+@app.route('/Prof', methods=['POST', 'GET'])
 def prof():
     error = None
     if request.method == 'POST':
-        candidat = request.form["candidat"]
-        numero = request.form["numero"]
-        user = None
+        candidat: str = request.form["candidat"]
+        numero: str = request.form["numero"]
+
         db = getdb()
-        error = None
-        user = db.execute(
-            "SELECT nom FROM candidat WHERE code = ?", (numero,)
-        ).fetchone()
-        if user is None:
-            return '''<div> Error, please check that your name and candidate serial are correct<div>
-             <div> <a href="http://127.0.0.1:5000"> retour<div>'''
-        elif user != candidat:
-            error = '''<div> Error, please check that your name and candidate serial are correct<div>
-             <div> <a href="http://127.0.0.1:5000"> retour<div>'''
-            return error
+        user = None
+        error = "Erreur : Numéro ou nom de candidat incorrect"
 
-        if error is None:
-            return redirect(url_for('Prof', name=candidat))
+        if numero is None or numero == "":
+            if candidat is not None:
+                user = db.execute(
+                    "SELECT rne FROM etablissement WHERE nom = ?", (candidat.upper(),)
+                ).fetchall()
+                if user is not None and user != []:
+                    print("user:", user)
+                    numero = user[0][0]
 
-        """return '''<div> Error, please check that your name and candidate serial are correct<div>
-             <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
+        if numero is not None:
+            user = db.execute(
+                "SELECT rne FROM etablissement WHERE rne = ?", (numero,)
+            ).fetchall()
+            if user is not None and user != []:
+                url=str("http://127.0.0.1:5000/Prof/"+str(numero))
+                return redirect(url)
     with open("./static/some_new_file.html", "w") as f:
         f.write(render_template('proflogin.html', error=error))
     return render_template('proflogin.html', error=error)
@@ -213,58 +212,25 @@ def etablissement(name):
     return render_template('professeur.html', user=user, n=n, name=name, etabl=etabl, k=k)
 
 
-@app.route('/Register')
-def nouveau():
-    error = None
-    if request.method == 'POST':
-        candidat = request.form["candidat"]
-        numero = request.form["numero"]
-        user = None
-        db = getdb()
-        error = None
-        user = db.execute(
-            "SELECT nom FROM candidat WHERE code = ?", (numero,)
-        ).fetchone()
-        if user is None:
-            return '''<div> Error, please check that your name and candidate serial are correct<div>
-             <div> <a href="http://127.0.0.1:5000"> retour<div>'''
-        elif user != candidat:
-            error = '''<div> Error, please check that your name and candidate serial are correct<div>
-             <div> <a href="http://127.0.0.1:5000"> retour<div>'''
-            return error
-
-        if error is None:
-            return redirect(url_for('Candidat', name=candidat))
-
-        """return '''<div> Error, please check that your name and candidate serial are correct<div>
-             <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
-    with open("./static/some_new_file.html", "w") as f:
-        f.write(render_template('newcand.html', error=error))
-    return render_template('newcand.html', error=error)
-
-
-@app.route('/Admin')
+@app.route('/Admin', methods=['POST', 'GET'])
 def Admin():
     error = None
     if request.method == 'POST':
         candidat = request.form["candidat"]
         numero = request.form["numero"]
-        user = None
-        db = getdb()
+        user = 'Groupe21'
+        code='L3 M31LL3UR GR0UP3'
         error = None
         if numero is None:
-            return '''<div> Error, please check that your name and candidate serial are correct<div>
-             <div> <a href="http://127.0.0.1:5000"> retour<div>'''
-        elif user != candidat:
-            error = '''<div> Error, please check that your name and candidate serial are correct<div>
-             <div> <a href="http://127.0.0.1:5000"> retour<div>'''
+            return '''<div> Error, pas de code t<div>
+             <div> <a href="http://127.0.0.1:5000/Admin"> retour<div>'''
+        elif user != candidat or numero!=code:
+            error = '''<div> Error,pas les bons identifiants<div>
+             <div> <a href="http://127.0.0.1:5000/Admin"> retour<div>'''
             return error
 
         if error is None:
-            return redirect(url_for('Admin/select', name=candidat))
-
-        """return '''<div> Error, please check that your name and candidate serial are correct<div>
-             <div> <a href="http://127.0.0.1:5000"> retour<div>'''"""
+            return redirect('http://localhost:5000/Admin/select')
     with open("./static/some_new_file.html", "w") as f:
         f.write(render_template('adminlogin.html', error=error))
     return render_template('adminlogin.html', error=error)
@@ -327,9 +293,16 @@ def sql():
     return render_template('adminsql1.html')
 
 
-@app.route('/Admin/Files')
+@app.route('/Admin/Files', methods=['POST', 'GET'])
 def file():
-    return
+    yay=" "
+    if request.method == 'POST':
+        f = request.files['file']
+        f.save(f.filename)
+        yay="File uploaded successfully!"
+    with open("./static/some_new_file.html", "w") as f:
+                f.write(render_template(render_template('adminfiles.html',yay=yay)))
+    return render_template('adminfiles.html',yay=yay)
 
 
 @app.route('/Admin/search', methods=['GET', 'POST'])
@@ -364,14 +337,6 @@ def credit():
     with open("./static/some_new_file.html", "w") as f:
         f.write(render_template('credits.html'))
     return render_template('credits.html')
-
-
-@app.route('/Download')
-@app.route('/Download/<name>')
-def my_link():
-    pdfkit.from_url('http://127.0.0.1:5000/', 'out.pdf')
-    return redirect(url_for('/'))
-
 
 @app.route('/Curieux')
 def stats_crit():
@@ -465,7 +430,8 @@ def curieux_stats():
             error = "Aucune note disponible"
         else:
             error = "Aucun rang disponible"
-
+    with open("./static/some_new_file.html", "w") as f:
+        f.write(render_template('curieux_res.html', list=stats, type_stats=titre_stats, error=error))
     return render_template('curieux_res.html', list=stats, type_stats=titre_stats, error=error)
 
 
