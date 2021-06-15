@@ -22,7 +22,7 @@
                         <p class="content">
                         <big>
                         <h1>Rang classé :{{ranginfo[0][0]}} </h1>
-                        <h1>Voie : {{lib_user[17]}} </h1>
+                        <h1>Voie : {{lib_user[17][0][0]}} </h1>
                         <h1>Scei : {{ranginfo[0][2]}} </h1>
                         <h1>Moyenne génerale : {{ranginfo[0][3]}} </h1>
                         </big>
@@ -147,10 +147,10 @@
                         <p align="left">INE : {{user[0][36]}}</p>
                     {% endif %}
                     {% if user[0][37] != None %}
-                         <p align="left">Code csp père (libellé): {{user[0][37]}} ({{lib_user[20]}})</p>
+                         <p align="left">Code csp père (libellé): {{user[0][37]}} ({{lib_user[20][0][O]}})</p>
                     {% endif %}
                     {% if user[0][38] != None %}
-                         <p align="left">Code csp mère (libellé): {{user[0][38]}} ({{lib_user[21]}})</p>
+                         <p align="left">Code csp mère (libellé): {{user[0][38]}} ({{lib_user[21][0][0]}})</p>
                     {% endif %}
                     {% if lib_user[22] != [] %}
                         <p align="left">Etat dossier : {{lib_user[22][0][0]}}</p>
